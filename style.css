@@ -104,6 +104,7 @@ button:hover {
 
 .slide.active {
   display: block;
+  margin: auto;
 }
 
 .slider button {
@@ -225,4 +226,5 @@ header {
   border-radius: 6px;
   cursor: pointer;
 }
+
 
