@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>MiniBeasts 3D | Kyiv-based 3D Toy Studio</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+
+<body>
+  <header>
+    <img src="img/logo-minibeasts.png" alt="MiniBeasts 3D Logo" class="logo">
+    <h1>MiniBeasts 3D</h1>
+    <p>Kyiv-based 3D Toy Studio</p>
+  </header>
+
+  <div id="imageModal" class="modal" onclick="closeModal()">
+    <img id="modalImage" src="" alt="Перегляд зображення">
+  </div>
+
+    <main>
+  <section class="categories">
+    <button onclick="openCategory('ready')">🧸 Готові вироби</button>
+    <button onclick="openCategory('custom')">🛠 Друк на замовлення</button>
+  </section>
+
+  <section id="ready-products" style="display:none;">
+  <h2>🧸 Готові вироби</h2>
+<div class="filters">
+  <button onclick="filterByType('all')">Усі</button>
+  <button onclick="filterByType('labubu')">Labubu</button>
+  <button onclick="filterByType('cat')">Коти</button>
+  <button onclick="filterByType('set')">Набори</button>
+  <button onclick="filterByType('effect')">Ефекти</button>
+</div>
+
+  <input type="text" id="searchInput" placeholder="🔍 Пошук товару..." oninput="filterProducts()">
+
+    <!--// начало списка товаров -->
+
+    <!--// 1 товар-->
+    <div class="product-card labubu effect">
+      <img src="img/labubu-glow.jpg" alt="Нічна Лабубу">
+      <h3>Labubu — нічна версія</h3>
+      <p>PLA, 11 см, світиться в темряві</p>
+      <p><strong>Особливість:</strong> світиться в темряві</p>
+      <p>Ціна: 390 грн</p>
+      <div class="tags" style="display:none;">лабубу світиться glow нічна фігурка</div>
+      <button onclick="addToCart('Labubu — нічна версія', 390)">🛒 Замовити</button>
+    </div>
+
+    <!--// 2 товар-->
+<div class="product-card labubu set effect silk">
+  <div class="badge">🔥 Хіт продажу</div>
+
+    <div class="slider">
+      <img src="img/labubu-set-1.jpg" class="slide active" onclick="openModal(this.src)">
+      <img src="img/labubu-set-2.jpg" class="slide" onclick="openModal(this.src)">
+      <img src="img/labubu-set-3.jpg" class="slide" onclick="openModal(this.src)">
+      <button class="prev" onclick="prevSlide(this)">←</button>
+      <button class="next" onclick="nextSlide(this)">→</button>
+      </div>
+
+      <h3>Набір Labubu — шовковий трьохкольоровий</h3>
+      <p>PLA Silk, 8–10 см, набір з 3 фігурок</p>
+      <p><strong>Особливість:</strong> шовковий перелив, трьохкольорові текстури</p>
+      <p>Ціна: 500 грн</p>
+      <div class="tags" style="display:none;">
+        labubu набір silk шовковий трихвостиковий glow ручна робота хорейчик
+      </div>
+      <button onclick="addToCart('Набір Labubu — шовковий трьохкольоровий', 500)">🛒 Замовити</button>
+    </div>
+
+
+
+ <!--конец списка товаров-->
+
+
+
+  </section>
+
+  <section id="custom-order" style="display:none;">
+    <h2>🛠 Друк на замовлення</h2>
+    <form id="orderForm">
+      <label>📤 STL-файл</label><br>
+      <input type="file" name="file" accept=".stl,image/*"><br><br>
+
+      <label>🎨 Колір і розмір:</label><br>
+      <input type="text" name="color_size" placeholder="Наприклад: чорний, 10 см"><br><br>
+
+      <label>📦 Спосіб доставки:</label><br>
+      <input type="text" name="delivery" placeholder="Наприклад: Нова Пошта, відділення №12"><br><br>
+
+      <label>💬 Коментар:</label><br>
+      <textarea name="comment" rows="4" cols="30" placeholder="Опишіть ідею або побажання"></textarea><br><br>
+
+      <button type="submit">📨 Відправити заявку</button>
+    </form>
+  </section>
+</main>
+
+<div id="cart" class="cart">
+  <h2>🛒 Моя корзина</h2>
+  <ul id="cartItems"></ul>
+  <p id="cartTotal">Сума: 0 грн</p>
+  <button onclick="submitOrder()">📨 Оформити замовлення</button>
+</div>
+
+
+  <footer>
+    <p>© 2025 MiniBeasts 3D</p>
+  </footer>
+</body>
+</html>
