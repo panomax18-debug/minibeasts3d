@@ -1,5 +1,11 @@
+let cart = [];
+
+console.log("✅ script.js загружен");
+
 const tg = window.Telegram.WebApp;
 tg.expand(); // разворачивает WebApp на весь экран
+
+
 
 
 function openCategory(category) {
@@ -64,12 +70,13 @@ function closeModal() {
   document.getElementById("imageModal").style.display = "none";
 }
 
-let cart = [];
-
 function addToCart(name, price) {
   cart.push({ name, price });
-  updateCart();
+  updateCart(); // обновляем корзину на экране
+  alert(`${name} додано до кошика!`);
 }
+
+
 
 function updateCart() {
   const cartList = document.getElementById("cartItems");
@@ -87,15 +94,34 @@ function updateCart() {
   cartTotal.textContent = `Сума: ${total} грн`;
 }
 
+    if (!window.Telegram) {
+  window.Telegram = {
+    WebApp: {
+      sendData: (data) => console.log("📤 Емуляція sendData:", data),
+      close: () => console.log("🛑 Емуляція закриття WebApp")
+    }
+  };
+}
+
+
 function submitOrder() {
-  const tg = window.Telegram.WebApp;
+  const tg = window.Telegram?.WebApp || {
+    sendData: (data) => console.log("📤 Емуляція sendData:", data),
+    close: () => console.log("🛑 Емуляція закриття WebApp")
+  };
+
   const orderText = cart.map(item => `${item.name} — ${item.price} грн`).join('\n');
   const total = cart.reduce((sum, item) => sum + item.price, 0);
   const payload = `🛒 Замовлення:\n${orderText}\nСума: ${total} грн`;
 
-  tg.sendData(payload); // отправка заказа в бот
-  tg.close(); // закрытие магазина
+  tg.sendData(payload);
+  alert("✅ Замовлення надіслано!");
+  cart = [];
+  updateCart();
+  tg.close();
 }
+
+
 
 
 
