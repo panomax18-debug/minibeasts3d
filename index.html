@@ -14,14 +14,15 @@
     <p>Kyiv-based 3D Toy Studio</p>
   </header>
 
-  <div id="imageModal" class="modal" onclick="closeModal()">
+
+  <div id="imageModal" class="image-modal" onclick="closeImageModal()">
     <img id="modalImage" src="" alt="Перегляд зображення">
   </div>
 
     <main>
   <section class="categories">
-    <button onclick="openCategory('ready')">🧸 Готові вироби</button>
-    <button onclick="openCategory('custom')">🛠 Друк на замовлення</button>
+    <button id="btnReady">🧸 Готові вироби</button>
+    <button id="btnCustom">🛠 Друк на замовлення</button>
   </section>
 
   <section id="ready-products" style="display:none;">
@@ -39,45 +40,102 @@
     <!--// начало списка товаров -->
 
     <!--// 1 товар-->
-    <div class="product-card labubu effect">
-      <img src="img/labubu-glow.jpg" alt="Нічна Лабубу">
-      <h3>Labubu — нічна версія</h3>
-      <p>PLA, 11 см, світиться в темряві</p>
-      <p><strong>Особливість:</strong> світиться в темряві</p>
-      <p>Ціна: 390 грн</p>
-      <div class="tags" style="display:none;">лабубу світиться glow нічна фігурка</div>
-      <button onclick="addToCart('Labubu — нічна версія', 390)">🛒 Замовити</button>
-    </div>
+    <div class="product-card night labubu">
+      <div class="config" style="display:none;">
+    <span class="base">350</span>           <!-- 💰 Базова ціна товару -->
+    <span class="size80">0.9</span>         <!-- 📏 Націнка для розміру 80 мм -->
+    <span class="size100">1.0</span>        <!-- 📏 Націнка для розміру 100 мм -->
+    <span class="size120">1.2</span>        <!-- 📏 Націнка для розміру 120 мм -->
+    <span class="plastic1">1.0</span>       <!-- 🎨 Однотонний пластик -->
+    <span class="plastic2">1.05</span>      <!-- 🎨 Двоколірний пластик -->
+    <span class="plastic3">1.15</span>      <!-- 🎨 Триколірний пластик -->
+  </div>
+  <div class="slider">
+    <img src="img/labubu-glow.jpg" class="slide active" onclick="openModal(this.src)">
+    <img src="img/labubu-glow.jpg" class="slide" onclick="openModal(this.src)">
+    <img src="img/labubu-glow.jpg" class="slide" onclick="openModal(this.src)">
+    <button class="prev" onclick="prevSlide(this)">←</button>
+    <button class="next" onclick="nextSlide(this)">→</button>
+  </div>
+
+  <h3>Labubu яка світиться в темряві</h3>
+  <p>PLA Silk, 8–10 см</p>
+  <p><strong>Особливість:</strong> Світиться в темряві</p>
+  <p>Ціна: 350 грн</p>
+
+  <div class="tags" style="display:none;">
+    labubu світиться в темряві glow ручна робота
+  </div>
+
+  <button onclick="openCustomizationModal(this)">📊 Розрахувати вартість</button>
+</div>
+
 
     <!--// 2 товар-->
-<div class="product-card labubu set effect silk">
-  <div class="badge">🔥 Хіт продажу</div>
+    <div class="product-card labubu set effect silk">
+      <div class="config" style="display:none;">
+    <span class="base">500</span>           <!-- 💰 Базова ціна товару -->
+    <span class="size80">0.9</span>         <!-- 📏 Націнка для розміру 80 мм -->
+    <span class="size100">1.0</span>        <!-- 📏 Націнка для розміру 100 мм -->
+    <span class="size120">1.2</span>        <!-- 📏 Націнка для розміру 120 мм -->
+    <span class="plastic1">1.0</span>       <!-- 🎨 Однотонний пластик -->
+    <span class="plastic2">1.05</span>      <!-- 🎨 Двоколірний пластик -->
+    <span class="plastic3">1.15</span>      <!-- 🎨 Триколірний пластик -->
+  </div>
+      <div class="badge">🔥 Хіт продажу</div>
+  <div class="slider">
+    <img src="img/labubu-set-1.jpg" class="slide active" onclick="openModal(this.src)">
+    <img src="img/labubu-set-2.jpg" class="slide" onclick="openModal(this.src)">
+    <img src="img/labubu-set-3.jpg" class="slide" onclick="openModal(this.src)">
+    <button class="prev" onclick="prevSlide(this)">←</button>
+    <button class="next" onclick="nextSlide(this)">→</button>
+  </div>
 
-    <div class="slider">
-      <img src="img/labubu-set-1.jpg" class="slide active" onclick="openModal(this.src)">
-      <img src="img/labubu-set-2.jpg" class="slide" onclick="openModal(this.src)">
-      <img src="img/labubu-set-3.jpg" class="slide" onclick="openModal(this.src)">
-      <button class="prev" onclick="prevSlide(this)">←</button>
-      <button class="next" onclick="nextSlide(this)">→</button>
-      </div>
+  <h3>Набір Labubu — шовковий трьохкольоровий</h3>
+  <p>PLA Silk, 8–10 см, набір з 3 фігурок</p>
+  <p><strong>Особливість:</strong> шовковий перелив, трьохкольорові текстури</p>
+  <p>Ціна: 500 грн</p>
 
-      <h3>Набір Labubu — шовковий трьохкольоровий</h3>
-      <p>PLA Silk, 8–10 см, набір з 3 фігурок</p>
-      <p><strong>Особливість:</strong> шовковий перелив, трьохкольорові текстури</p>
-      <p>Ціна: 500 грн</p>
-      <div class="tags" style="display:none;">
-        labubu набір silk шовковий трихвостиковий glow ручна робота хорейчик
-      </div>
-      <button onclick="addToCart('Набір Labubu — шовковий трьохкольоровий', 500)">🛒 Замовити</button>
-    </div>
+  <div class="tags" style="display:none;">
+    labubu набір silk шовковий трихвостиковий glow ручна робота хорейчик
+  </div>
+
+  <button onclick="openCustomizationModal(this)">📊 Розрахувати вартість</button>
+</div>
+
 
 
 
  <!--конец списка товаров-->
-
-
-
   </section>
+
+<div id="checkoutOverlay" class="overlay" style="display:none;">
+  <div class="checkout-modal">
+    <button onclick="closeCheckout()" class="close-btn">❌</button>
+
+    <h3>Оберіть спосіб оплати:</h3>
+    <label><input type="radio" name="paymentMethod" value="card" checked> 💳 На карту</label><br>
+    <label><input type="radio" name="paymentMethod" value="ton"> 🪙 TON</label><br><br>
+
+    <h3>Доставка</h3>
+    <input id="cityInput" placeholder="Місто"><br>
+    <select id="deliveryService">
+      <option value="nova">Нова Пошта</option>
+      <option value="ukr">Укрпошта</option>
+    </select><br>
+    <input id="branchInput" placeholder="Відділення"><br><br>
+
+    <h3>Контактна інформація</h3>
+    <input id="nameInput" placeholder="ПІБ отримувача"><br>
+    <input id="phoneInput" placeholder="+380 __ ___ __ __"><br><br>
+
+    <button id="confirmBtn">Підтвердити замовлення</button>
+  </div>
+</div>
+
+
+
+
 
   <section id="custom-order" style="display:none;">
     <h2>🛠 Друк на замовлення</h2>
@@ -92,7 +150,7 @@
       <input type="text" name="delivery" placeholder="Наприклад: Нова Пошта, відділення №12"><br><br>
 
       <label>💬 Коментар:</label><br>
-      <textarea name="comment" rows="4" cols="30" placeholder="Опишіть ідею або побажання"></textarea><br><br>
+      <textarea name="comment" rows="4" cols="30" placeholder="Опишіть ідею або побажання, та Ваші контакти для зворотнього зв'язку"></textarea><br><br>
 
       <button type="submit">📨 Відправити заявку</button>
     </form>
@@ -100,15 +158,49 @@
 </main>
 
 <div id="cart" class="cart">
-  <h2>🛒 Моя корзина</h2>
+  <h4>🛒 Ваше замовлення</h4>
   <ul id="cartItems"></ul>
   <p id="cartTotal">Сума: 0 грн</p>
-  <button onclick="submitOrder()">📨 Оформити замовлення</button>
+  <button onclick="clearCart()">🗑 Очистити корзину</button>
+  <button onclick="submitOrder()">✅ Оформити замовлення</button>
 </div>
+
 
 
   <footer>
     <p>© 2025 MiniBeasts 3D</p>
   </footer>
+
+<div id="customModal" class="custom-modal" style="display:none;">
+  <div class="modal-content">
+    <h3 id="modalTitle">Кастомізація товару</h3>
+    <button class="close-modal" onclick="closeModal()">❌ Закрити</button> <!-- 🔧 Новая кнопка -->
+    <label>📏 Обери розмір (мм):</label>
+    <select id="sizeSelect">
+      <option value="80">80 мм</option>
+      <option value="100">100 мм</option>
+      <option value="120">120 мм</option>
+    </select>
+
+    <label>🎨 Тип пластика:</label>
+    <select id="plasticSelect">
+      <option value="1">Однотонний (без доплати)</option>
+      <option value="2">Двоколірний (+5%)</option>
+      <option value="3">Триколірний (+15%)</option>
+    </select>
+
+    <label>✍️ Коментар / Свій варіант:</label>
+    <textarea id="customComment" rows="3" placeholder="Напишіть побажання або свій варіант..."></textarea>
+
+    <p id="finalPrice">Ціна: ... грн</p>
+
+    <button onclick="calculatePrice()">📊 Розрахувати</button>
+    <button id="confirmButton" onclick="confirmCustomization()" style="display:none;">✅ Оформити замовлення</button>
+
+
+  </div>
+</div>
+
+
 </body>
 </html>
