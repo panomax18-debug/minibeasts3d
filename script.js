@@ -468,3 +468,5 @@ window.closeImageModal = closeImageModal;
 window.addToCart = addToCart;
 window.confirmCustomization = confirmCustomization;
 window.deleteFromCart = deleteFromCart;
+window.filterProducts = filterProducts;
+
