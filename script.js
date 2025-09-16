@@ -494,7 +494,10 @@ function openCheckout() {
 
 async function submitOrder(orderData) {
   try {
-    const docRef = await addDoc(collection(db, "orders"), orderData);
+    // 🧼 Удаляем undefined-поля рекурсивно
+    const cleanData = JSON.parse(JSON.stringify(orderData));
+
+    const docRef = await addDoc(collection(db, "orders"), cleanData);
     console.log("📦 Замовлення записано з ID:", docRef.id);
 
     Telegram.WebApp.sendData(JSON.stringify({
@@ -502,12 +505,13 @@ async function submitOrder(orderData) {
       orderId: docRef.id
     }));
 
-    showToast("✅ Замовлення прийнято! Очікуйте підтвердження."); // ✅ вместо alert
+    showToast("✅ Замовлення прийнято! Очікуйте підтвердження.");
   } catch (e) {
     console.error("❌ Помилка запису замовлення:", e);
     showToast("⚠️ Не вдалося записати замовлення. Спробуйте ще раз.");
   }
 }
+
 
 
 function closeCheckout() {
