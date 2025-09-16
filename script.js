@@ -475,12 +475,16 @@ async function submitOrder(orderData) {
 }
 
 
+// === Закрытие формы оформления ===
 function closeCheckout() {
-  document.getElementById("checkoutOverlay").style.display = "none";
-  console.log("✅ Скрипт обновлён — версия с closeCheckout загружена");
+  const overlay = document.getElementById("checkoutOverlay");
+  if (overlay && overlay.style.display !== "none") {
+    overlay.style.display = "none";
+    console.log("✅ Форма оформлення закрита через closeCheckout()");
+  }
 }
 
-
+// === Привязка функций к window ===
 window.filterByType = filterByType;
 window.openCustomizationModal = openCustomizationModal;
 window.clearCart = clearCart;
