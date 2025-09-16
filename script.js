@@ -21,20 +21,21 @@ const db = getFirestore(app);
 
 
 
-if (!window.Telegram) {
+if (!window.Telegram || !window.Telegram.WebApp) {
   window.Telegram = {
     WebApp: {
       sendData: (data) => console.log("📤 Емуляція sendData:", data),
       close: () => console.log("🛑 Емуляція закриття WebApp"),
       expand: () => console.log("🔍 Емуляція expand()")
+      console.log("📡 Telegram WebApp API:", tg);
+
     }
   };
 }
 
-const tg = window.Telegram.WebApp;
-tg.expand(); // теперь работает корректно
-
-console.log("✅ script.js загружен");
+if (tg && typeof tg.expand === "function") {
+  tg.expand();
+}
 
 
 
