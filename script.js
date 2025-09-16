@@ -1,6 +1,5 @@
 let cart = [];
 let currentProduct = null;
-const tg = window.Telegram?.WebApp;
 
 // === Привязка Firestore ===
 
