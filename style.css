@@ -485,3 +485,7 @@
     }
 
 
+#checkoutOverlay {
+  display: none; /* ✅ */
+  /* убедись, что нет visibility: visible !important */
+}

@@ -424,16 +424,18 @@ function confirmOrder() {
     showToast("🪙 TON-переказ:\nhttps://tonkeeper.app/transfer/...");
   }
 
-  // ✅ Финальное подтверждение и закрытие WebApp
-setTimeout(() => {
-  showToast("✅ Замовлення надіслано!");
-  cart = [];
-  updateCart();
-  closeCheckout(); // 👈 Закрывает overlay
-  tg.close();      // 👈 Закрывает WebApp
-}, 1500);
+  // ✅ Закрываем overlay сразу
+  closeCheckout();
 
+  // ✅ Финальное подтверждение и закрытие WebApp
+  setTimeout(() => {
+    showToast("✅ Замовлення надіслано!");
+    cart = [];
+    updateCart();
+    tg.close();
+  }, 1500);
 }
+
 
 // === Привязка обработчиков ===
 document.getElementById("confirmBtn").addEventListener("click", confirmOrder);
