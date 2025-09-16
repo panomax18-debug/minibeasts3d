@@ -169,7 +169,7 @@ function openModal(src) {
   modal.style.display = "flex";
 }
 
-function closeModal() {
+function closeImageModal() {
   document.getElementById("imageModal").style.display = "none";
 }
 
