@@ -50,8 +50,14 @@ function calculatePrice() {
   price = Math.round(price);
   document.getElementById("finalPrice").innerText = `Орієнтовна ціна: ${price} грн`;
 
-  document.getElementById("confirmButton").style.display = "inline-block";
   const confirmButton = document.getElementById("confirmButton");
+  confirmButton.style.display = "inline-block";
+
+  // ✅ Привязываем к добавлению в корзину
+  confirmButton.onclick = confirmCustomization;
+}
+
+
 
   confirmButton.addEventListener("click", () => {
     const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value || "card";
@@ -463,12 +469,13 @@ async function submitOrder(orderData) {
       orderId: docRef.id
     }));
 
-    alert("✅ Замовлення прийнято! Очікуйте підтвердження.");
+    showToast("✅ Замовлення прийнято! Очікуйте підтвердження."); // ✅ вместо alert
   } catch (e) {
     console.error("❌ Помилка запису замовлення:", e);
-    alert("⚠️ Не вдалося записати замовлення. Спробуйте ще раз.");
+    showToast("⚠️ Не вдалося записати замовлення. Спробуйте ще раз.");
   }
 }
+
 
 function closeCheckout() {
   document.getElementById("checkoutOverlay").style.display = "none";
