@@ -53,31 +53,33 @@ function calculatePrice() {
   document.getElementById("confirmButton").style.display = "inline-block";
   const confirmButton = document.getElementById("confirmButton");
 
-confirmButton.addEventListener("click", () => {
-  const orderData = {
-    userId: Telegram.WebApp.initDataUnsafe?.user?.id || "unknown",
-    username: Telegram.WebApp.initDataUnsafe?.user?.username || "",
-    first_name: Telegram.WebApp.initDataUnsafe?.user?.first_name || "",
-    cart: cart,
-    total: calculateTotal(cart),
-    delivery: {
-      city: cityInput.value,
-      branch: branchInput.value,
-      service: deliveryService.value
-    },
-    contact: {
-      name: nameInput.value,
-      phone: phoneInput.value
-    },
-    paymentMethod: selectedPaymentMethod,
-    status: "pending",
-    timestamp: new Date().toISOString()
-  };
+  confirmButton.addEventListener("click", () => {
+    const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value || "card";
 
-  submitOrder(orderData);
-});
+    const orderData = {
+      userId: Telegram.WebApp.initDataUnsafe?.user?.id || "unknown",
+      username: Telegram.WebApp.initDataUnsafe?.user?.username || "",
+      first_name: Telegram.WebApp.initDataUnsafe?.user?.first_name || "",
+      cart: cart,
+      total: calculateTotal(cart),
+      delivery: {
+        city: cityInput.value,
+        branch: branchInput.value,
+        service: deliveryService.value
+      },
+      contact: {
+        name: nameInput.value,
+        phone: phoneInput.value
+      },
+      paymentMethod: selectedPaymentMethod,
+      status: "pending",
+      timestamp: new Date().toISOString()
+    };
 
+    submitOrder(orderData);
+  });
 }
+
 
 // -- кнопку выще возможно прийдется удалить??
 
