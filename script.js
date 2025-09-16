@@ -509,6 +509,8 @@ window.confirmCustomization = confirmCustomization;
 window.deleteFromCart = deleteFromCart;
 window.filterProducts = filterProducts;
 
+
+
 // === 🖨️ Друк на замовлення ===
 
 async function submitCustomPrint(event) {
@@ -516,9 +518,10 @@ async function submitCustomPrint(event) {
 
   const fileInput = document.getElementById("fileInput");
   const comment = document.getElementById("commentInput").value.trim();
+  const contact = document.getElementById("contactInput").value.trim();
 
-  if (!fileInput.files[0] || !comment) {
-    showToast("⚠️ Додайте файл і заповніть коментар");
+  if (!fileInput.files[0] || !comment || !contact) {
+    showToast("⚠️ Додайте файл, коментар і контакт для зв'язку");
     return;
   }
 
@@ -529,6 +532,7 @@ async function submitCustomPrint(event) {
     fileName: file.name,
     fileType: file.name.split('.').pop().toLowerCase(),
     comment,
+    contact,
     telegramUser: {
       id: telegramUser.id || null,
       username: telegramUser.username || ""
@@ -541,8 +545,19 @@ async function submitCustomPrint(event) {
     const cleanData = JSON.parse(JSON.stringify(data));
     const docRef = await addDoc(collection(db, "customPrints"), cleanData);
     console.log("🖨️ Запит на друк записано з ID:", docRef.id);
-    showToast("✅ Запит прийнято! Очікуйте підтвердження.");
+    showToast("✅ Заявка прийнята! Ми зв'яжемось з вами.");
+
+    // 🧼 Очистка форми
     document.getElementById("orderForm").reset();
+
+    // 🛑 Закриття блоку
+    document.getElementById("custom-order").classList.add("hidden");
+
+    // ✅ Фінальне підтвердження
+    setTimeout(() => {
+      showToast("✅ Заявка надіслана!");
+    }, 1000);
+
   } catch (e) {
     console.error("❌ Помилка запису запиту:", e);
     showToast("⚠️ Не вдалося надіслати запит. Спробуйте ще раз.");
