@@ -1,5 +1,6 @@
 let cart = [];
 let currentProduct = null;
+const tg = window.Telegram?.WebApp;
 
 // === Привязка Firestore ===
 
@@ -345,12 +346,6 @@ function confirmCustomization() {
   updateCart(); // 🔄 Обновляем корзину на экране
   showToast("✅ Додано до корзини"); // 🔔 Показываем уведомление
   closeModal(); // ❌ Закрываем модальное окно
-}
-
-
-
-function closeImageModal() {
-  document.getElementById("imageModal").style.display = "none";
 }
 
 function closeModal() {
