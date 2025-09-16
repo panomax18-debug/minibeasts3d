@@ -55,6 +55,11 @@ function calculatePrice() {
 
   confirmButton.addEventListener("click", () => {
     const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value || "card";
+    const cityInput = document.getElementById("cityInput");
+    const branchInput = document.getElementById("branchInput");
+    const deliveryService = document.getElementById("deliveryService");
+    const nameInput = document.getElementById("nameInput");
+    const phoneInput = document.getElementById("phoneInput");
 
     const orderData = {
       userId: Telegram.WebApp.initDataUnsafe?.user?.id || "unknown",
