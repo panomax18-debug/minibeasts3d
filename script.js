@@ -34,8 +34,8 @@ function calculatePrice() {
   if (plasticType === 2) price *= 1.05;
   if (plasticType === 3) price *= 1.15;
 
-  if (size > 100) price *= 1.2;
-  if (size < 100) price *= 0.9;
+  if (size > 80) price *= 1.6667;
+  if (size > 100) price *= 1.8;
 
   price = Math.round(price);
   document.getElementById("finalPrice").innerText = `Орієнтовна ціна: ${price} грн`;
@@ -44,9 +44,23 @@ function calculatePrice() {
 }
 
 function openCategory(category) {
-  document.getElementById("ready-products").style.display = category === "ready" ? "block" : "none";
-  document.getElementById("custom-order").style.display = category === "custom" ? "block" : "none";
+  const ready = document.getElementById("ready-products");
+  const custom = document.getElementById("custom-order");
+
+  if (category === "ready") {
+    ready.classList.add("visible");
+    ready.classList.remove("hidden");
+    custom.classList.add("hidden");
+    custom.classList.remove("visible");
+  } else {
+    custom.classList.add("visible");
+    custom.classList.remove("hidden");
+    ready.classList.add("hidden");
+    ready.classList.remove("visible");
+  }
 }
+
+
 
 
 
@@ -270,24 +284,13 @@ function openCustomizationModal(button) {
   document.getElementById("sizeSelect").value = "100";
   document.getElementById("plasticSelect").value = "1";
 
-  updateFinalPrice();
+  calculatePrice();
   document.getElementById("customModal").style.display = "flex";
 }
 
 
-function updateFinalPrice() {
-  const plasticType = parseInt(document.getElementById("plasticSelect").value);
-  let price = currentProduct.basePrice;
-
-  if (plasticType === 2) price = Math.round(price * 1.05);
-  if (plasticType === 3) price = Math.round(price * 1.15);
-
-  document.getElementById("finalPrice").innerText = `Ціна: ${price} грн`;
-}
-
-document.getElementById("plasticSelect").addEventListener("change", updateFinalPrice);
-
 function confirmCustomization() {
+  calculatePrice(); // гарантируем актуальность
   const size = document.getElementById("sizeSelect").value;
   const plastic = document.getElementById("plasticSelect").value;
   const comment = document.getElementById("customComment").value;
@@ -349,7 +352,7 @@ function confirmOrder() {
     items: cart.map(item => ({
       name: item.name,
       size: item.size,
-      material: item.material,
+      material: item.plastic,
       quantity: item.quantity,
       price: item.price * item.quantity
     })),
@@ -394,3 +397,8 @@ function confirmOrder() {
 
 // === Привязка обработчика ===
 document.getElementById("confirmBtn").addEventListener("click", confirmOrder);
+document.getElementById("sizeSelect").addEventListener("change", calculatePrice);
+document.getElementById("plasticSelect").addEventListener("change", calculatePrice);
+
+document.getElementById("checkoutOverlay").style.display = "none";
+

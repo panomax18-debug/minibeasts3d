@@ -25,9 +25,10 @@
     <button id="btnCustom">🛠 Друк на замовлення</button>
   </section>
 
-  <section id="ready-products" style="display:none;">
-  <h2>🧸 Готові вироби</h2>
-<div class="filters">
+<section id="ready-products" class="visible">
+   <h2>🧸 Готові вироби</h2>
+ <div class="filters">
+     <input type="text" id="searchInput" placeholder="🔍 Пошук товару..." oninput="filterProducts()">
   <button onclick="filterByType('all')">Усі</button>
   <button onclick="filterByType('labubu')">Labubu</button>
   <button onclick="filterByType('cat')">Коти</button>
@@ -35,33 +36,33 @@
   <button onclick="filterByType('effect')">Ефекти</button>
 </div>
 
-  <input type="text" id="searchInput" placeholder="🔍 Пошук товару..." oninput="filterProducts()">
 
     <!--// начало списка товаров -->
 
     <!--// 1 товар-->
+  <div id="productGrid">
     <div class="product-card night labubu">
       <div class="config" style="display:none;">
-    <span class="base">350</span>           <!-- 💰 Базова ціна товару -->
-    <span class="size80">0.9</span>         <!-- 📏 Націнка для розміру 80 мм -->
-    <span class="size100">1.0</span>        <!-- 📏 Націнка для розміру 100 мм -->
-    <span class="size120">1.2</span>        <!-- 📏 Націнка для розміру 120 мм -->
+    <span class="base">150</span>           <!-- 💰 Базова ціна товару -->
+    <span class="size80">1.0</span>         <!-- 📏 Націнка для розміру 80 мм -->
+    <span class="size100">1.6667</span>        <!-- 📏 Націнка для розміру 100 мм -->
+    <span class="size120">3.0</span>        <!-- 📏 Націнка для розміру 120 мм -->
     <span class="plastic1">1.0</span>       <!-- 🎨 Однотонний пластик -->
     <span class="plastic2">1.05</span>      <!-- 🎨 Двоколірний пластик -->
     <span class="plastic3">1.15</span>      <!-- 🎨 Триколірний пластик -->
   </div>
   <div class="slider">
-    <img src="img/labubu-glow.jpg" class="slide active" onclick="openModal(this.src)">
-    <img src="img/labubu-glow.jpg" class="slide" onclick="openModal(this.src)">
-    <img src="img/labubu-glow.jpg" class="slide" onclick="openModal(this.src)">
-    <button class="prev" onclick="prevSlide(this)">←</button>
+    <img src="img/glow-1.jpg" class="slide active" onclick="openModal(this.src)">
+    <img src="img/glow-2.jpg" class="slide" onclick="openModal(this.src)">
+       <button class="prev" onclick="prevSlide(this)">←</button>
     <button class="next" onclick="nextSlide(this)">→</button>
   </div>
 
+
   <h3>Labubu яка світиться в темряві</h3>
-  <p>PLA Silk, 8–10 см</p>
+  <p>PLA Black, 8см</p>
   <p><strong>Особливість:</strong> Світиться в темряві</p>
-  <p>Ціна: 350 грн</p>
+  <p>Ціна: 150 грн</p>
 
   <div class="tags" style="display:none;">
     labubu світиться в темряві glow ручна робота
@@ -102,6 +103,7 @@
 
   <button onclick="openCustomizationModal(this)">📊 Розрахувати вартість</button>
 </div>
+    </div>
 
 
 
@@ -137,7 +139,7 @@
 
 
 
-  <section id="custom-order" style="display:none;">
+   <section id="custom-order" class="hidden">
     <h2>🛠 Друк на замовлення</h2>
     <form id="orderForm">
       <label>📤 STL-файл</label><br>
@@ -194,7 +196,6 @@
 
     <p id="finalPrice">Ціна: ... грн</p>
 
-    <button onclick="calculatePrice()">📊 Розрахувати</button>
     <button id="confirmButton" onclick="confirmCustomization()" style="display:none;">✅ Оформити замовлення</button>
 
 

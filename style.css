@@ -41,13 +41,16 @@ button:hover {
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   padding: 16px;
   margin: 12px;
-  width: 300px;
-  display: inline-block;
-  vertical-align: top;
+  width: 250px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   text-align: center;
   transition: transform 0.2s ease;
   position: relative;
 }
+
 
 .product-card:hover {
   transform: scale(1.02);
@@ -342,11 +345,12 @@ header {
 }
 
 #ready-products {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  display: block;
+  flex-wrap: wrap;
   gap: 20px;
-  padding: 20px;
+  justify-content: center;
 }
+
 
 
 .close-modal {
@@ -483,3 +487,22 @@ header {
 #confirmBtn:hover {
   transform: scale(1.05);
 }
+
+
+.visible {
+  display: block;
+}
+
+.hidden {
+  display: none !important;
+}
+
+
+#productGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+
