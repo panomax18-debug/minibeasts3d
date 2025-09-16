@@ -258,23 +258,6 @@ function deleteFromCart(index) {
 }
 
 
-
-function submitOrder() {
-  if (cart.length === 0) {
-    showToast("🚫 Корзина порожня. Додайте товари перед оформленням.");
-    return;
-  }
-
-  document.getElementById("checkoutOverlay").style.display = "flex";
-}
-
-function closeCheckout() {
-  document.getElementById("checkoutOverlay").style.display = "none";
-}
-
-
-
-
 function showToast(message) {
   const toast = document.createElement("div");
   toast.className = "toast";
@@ -446,6 +429,14 @@ document.getElementById("plasticSelect").addEventListener("change", calculatePri
 document.getElementById("checkoutOverlay").style.display = "none";
 
 
+function openCheckout() {
+  if (cart.length === 0) {
+    showToast("🚫 Корзина порожня. Додайте товари перед оформленням.");
+    return;
+  }
+
+  document.getElementById("checkoutOverlay").style.display = "flex";
+}
 
 // === Отправка заказа ===
 import { collection, addDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
