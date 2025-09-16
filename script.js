@@ -480,7 +480,6 @@ document.getElementById("plasticSelect").addEventListener("change", calculatePri
 
 document.getElementById("checkoutOverlay").style.display = "none";
 
-
 function openCheckout() {
   if (cart.length === 0) {
     showToast("🚫 Корзина порожня. Додайте товари перед оформленням.");
@@ -489,6 +488,7 @@ function openCheckout() {
 
   document.getElementById("checkoutOverlay").style.display = "flex";
 }
+
 
 // === Отправка заказа ===
 
