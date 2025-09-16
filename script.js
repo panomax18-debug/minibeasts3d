@@ -1,9 +1,24 @@
 let cart = [];
 let currentProduct = null;
 
-function calculateTotal(cart) {
-  return cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-}
+// === Привязка Firestore ===
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA2TAQM23nj7VOiHPv8HgDuXdWV_OVjX7A",
+  authDomain: "minibeasts-3d.firebaseapp.com",
+  projectId: "minibeasts-3d",
+  storageBucket: "minibeasts-3d.firebasestorage.app",
+  messagingSenderId: "192684036080",
+  appId: "1:192684036080:web:c306f5de3f62ef87199735",
+  measurementId: "G-MHG9HCXRCB"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 
 
 if (!window.Telegram) {
@@ -41,7 +56,35 @@ function calculatePrice() {
   document.getElementById("finalPrice").innerText = `Орієнтовна ціна: ${price} грн`;
 
   document.getElementById("confirmButton").style.display = "inline-block";
+  const confirmButton = document.getElementById("confirmButton");
+
+confirmButton.addEventListener("click", () => {
+  const orderData = {
+    userId: Telegram.WebApp.initDataUnsafe?.user?.id || "unknown",
+    username: Telegram.WebApp.initDataUnsafe?.user?.username || "",
+    first_name: Telegram.WebApp.initDataUnsafe?.user?.first_name || "",
+    cart: cart,
+    total: calculateTotal(cart),
+    delivery: {
+      city: cityInput.value,
+      branch: branchInput.value,
+      service: deliveryService.value
+    },
+    contact: {
+      name: nameInput.value,
+      phone: phoneInput.value
+    },
+    paymentMethod: selectedPaymentMethod,
+    status: "pending",
+    timestamp: new Date().toISOString()
+  };
+
+  submitOrder(orderData);
+});
+
 }
+
+// -- кнопку выще возможно прийдется удалить??
 
 function openCategory(category) {
   const ready = document.getElementById("ready-products");
@@ -402,3 +445,24 @@ document.getElementById("plasticSelect").addEventListener("change", calculatePri
 
 document.getElementById("checkoutOverlay").style.display = "none";
 
+
+
+// === Отправка заказа ===
+import { collection, addDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+async function submitOrder(orderData) {
+  try {
+    const docRef = await addDoc(collection(db, "orders"), orderData);
+    console.log("📦 Замовлення записано з ID:", docRef.id);
+
+    Telegram.WebApp.sendData(JSON.stringify({
+      status: "success",
+      orderId: docRef.id
+    }));
+
+    alert("✅ Замовлення прийнято! Очікуйте підтвердження.");
+  } catch (e) {
+    console.error("❌ Помилка запису замовлення:", e);
+    alert("⚠️ Не вдалося записати замовлення. Спробуйте ще раз.");
+  }
+}
