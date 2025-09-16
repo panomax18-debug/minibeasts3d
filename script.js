@@ -450,6 +450,9 @@ async function submitOrder(orderData) {
     alert("⚠️ Не вдалося записати замовлення. Спробуйте ще раз.");
   }
 }
+function closeCheckout() {
+  document.getElementById("checkoutOverlay").style.display = "none";
+}
 
 
 window.filterByType = filterByType;
