@@ -433,7 +433,6 @@ function openCheckout() {
 }
 
 // === Отправка заказа ===
-import { collection, addDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 async function submitOrder(orderData) {
   try {
