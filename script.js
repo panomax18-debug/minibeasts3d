@@ -342,33 +342,9 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// === Функция подтверждения заказа ===
-
+// === Расчёт суммы заказа ===
 function calculateTotal(cart) {
   return cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-}
-
-// === Подтверждение заказа ===
-function confirmOrder() {
-  // ...вся логика внутри функции, как ты уже написал
-}
-
-// === Привязка обработчиков ===
-document.getElementById("confirmBtn").addEventListener("click", confirmOrder);
-document.getElementById("sizeSelect").addEventListener("change", calculatePrice);
-document.getElementById("plasticSelect").addEventListener("change", calculatePrice);
-
-// === Инициализация ===
-document.getElementById("checkoutOverlay").style.display = "none";
-
-// === Открытие формы оформления ===
-function openCheckout() {
-  if (cart.length === 0) {
-    showToast("🚫 Корзина порожня. Додайте товари перед оформленням.");
-    return;
-  }
-
-  document.getElementById("checkoutOverlay").style.display = "flex";
 }
 
 // === Подтверждение заказа ===
@@ -423,6 +399,13 @@ function confirmOrder() {
     return;
   }
 
+  // 🧼 Удаление undefined/null-полей из telegramUser
+  Object.keys(orderData.telegramUser).forEach(key => {
+    if (orderData.telegramUser[key] === null || orderData.telegramUser[key] === undefined) {
+      delete orderData.telegramUser[key];
+    }
+  });
+
   // 🧾 Логирование перед отправкой
   console.log("📤 Відправка замовлення:", orderData);
 
@@ -449,6 +432,25 @@ function confirmOrder() {
     tg.close();
   }, 1500);
 }
+
+// === Привязка обработчиков ===
+document.getElementById("confirmBtn").addEventListener("click", confirmOrder);
+document.getElementById("sizeSelect").addEventListener("change", calculatePrice);
+document.getElementById("plasticSelect").addEventListener("change", calculatePrice);
+
+// === Инициализация ===
+document.getElementById("checkoutOverlay").style.display = "none";
+
+// === Открытие формы оформления ===
+function openCheckout() {
+  if (cart.length === 0) {
+    showToast("🚫 Корзина порожня. Додайте товари перед оформленням.");
+    return;
+  }
+
+  document.getElementById("checkoutOverlay").style.display = "flex";
+}
+
 
 
 // === Отправка заказа ===
