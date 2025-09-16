@@ -355,7 +355,15 @@ function confirmOrder() {
     close: () => console.log("🛑 Емуляція закриття WebApp")
   };
 
-  const telegramUser = Telegram.WebApp.initDataUnsafe?.user;
+  // 🧾 Безопасная сборка Telegram-пользователя
+  const rawUser = Telegram.WebApp.initDataUnsafe?.user || {};
+  const telegramUser = {
+    id: rawUser.id || null,
+    username: rawUser.username || "",
+    first_name: rawUser.first_name || "",
+    last_name: rawUser.last_name || "",
+    language_code: rawUser.language_code || ""
+  };
 
   const orderData = {
     items: cart.map(item => ({
@@ -375,17 +383,57 @@ function confirmOrder() {
       fullName: document.getElementById("nameInput").value.trim(),
       phone: document.getElementById("phoneInput").value.trim()
     },
-    telegramUser: {
-      id: telegramUser?.id,
-      username: telegramUser?.username,
-      first_name: telegramUser?.first_name,
-      last_name: telegramUser?.last_name,
-      language_code: telegramUser?.language_code
-    },
+    telegramUser: telegramUser,
     total: calculateTotal(cart),
     timestamp: new Date().toISOString(),
     status: "pending"
   };
+
+  // ✅ Валидация обязательных полей
+  if (
+    !orderData.customer.fullName ||
+    !orderData.customer.phone ||
+    !orderData.delivery.city ||
+    !orderData.delivery.branch
+  ) {
+    showToast("⚠️ Заповніть усі поля перед підтвердженням замовлення");
+    return;
+  }
+
+  // 🧼 Удаление undefined/null-полей из telegramUser (опционально)
+  Object.keys(orderData.telegramUser).forEach(key => {
+    if (orderData.telegramUser[key] === null || orderData.telegramUser[key] === undefined) {
+      delete orderData.telegramUser[key];
+    }
+  });
+
+  // 🧾 Сохраняем заказ в Firestore
+  submitOrder(orderData);
+
+  // 📡 Отправка в Telegram WebApp
+  tg.sendData(JSON.stringify(orderData));
+
+  // 🧾 Логирование в консоль
+  console.log("📤 Відправка замовлення:", orderData);
+
+  // 💳 Реквизиты оплаты
+  if (orderData.payment === "card") {
+    showToast("💳 Оплата на карту:\n4441 1144 1619 6630\nПризначення: MiniBeasts 3D");
+  }
+
+  if (orderData.payment === "ton") {
+    showToast("🪙 TON-переказ:\nhttps://tonkeeper.app/transfer/...");
+  }
+
+  // ✅ Финальное подтверждение и закрытие WebApp
+  setTimeout(() => {
+    showToast("✅ Замовлення надіслано!");
+    cart = [];
+    updateCart();
+    tg.close();
+  }, 1500);
+}
+
 
   // 🔍 Валидация перед отправкой
   if (
