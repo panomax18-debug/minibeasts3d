@@ -38,6 +38,16 @@ if (tg && typeof tg.expand === "function") {
   tg.expand();
 }
 
+window.Telegram = {
+  WebApp: {
+    sendData: (data) => console.log("📤 Емуляція sendData:", data),
+    close: () => console.log("🛑 Емуляція закриття WebApp"),
+    expand: () => console.log("🔍 Емуляція expand()")
+  }
+};
+
+const tg = window.Telegram.WebApp;
+console.log("📡 Telegram WebApp API:", tg);
 
 
 
