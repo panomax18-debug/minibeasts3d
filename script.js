@@ -135,6 +135,9 @@ function filterByType(type) {
   });
 }
 
+window.filterByType = filterByType;
+
+
 function nextSlide(button) {
   const slider = button.parentElement;
   const slides = slider.querySelectorAll('.slide');
