@@ -123,6 +123,8 @@ function filterProducts() {
     card.style.display = match ? "block" : "none";
   });
 }
+
+
 function filterByType(type) {
   const cards = document.querySelectorAll("#ready-products .product-card");
 
