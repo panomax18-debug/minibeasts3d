@@ -61,8 +61,6 @@
        <button class="prev" onclick="prevSlide(this)">←</button>
     <button class="next" onclick="nextSlide(this)">→</button>
   </div>
-
-
   <h3>Labubu яка світиться в темряві</h3>
   <p>PLA Black, 8см</p>
   <p><strong>Особливість:</strong> Світиться в темряві</p>
@@ -71,7 +69,6 @@
   <div class="tags" style="display:none;">
     labubu світиться в темряві glow ручна робота
   </div>
-
   <button onclick="openCustomizationModal(this)">📊 Розрахувати вартість</button>
 </div>
 
@@ -95,7 +92,6 @@
     <button class="prev" onclick="prevSlide(this)">←</button>
     <button class="next" onclick="nextSlide(this)">→</button>
   </div>
-
   <h3>Набір Labubu — шовковий трьохкольоровий</h3>
   <p>PLA Silk, 8–10 см, набір з 3 фігурок</p>
   <p><strong>Особливість:</strong> шовковий перелив, трьохкольорові текстури</p>
@@ -104,7 +100,6 @@
   <div class="tags" style="display:none;">
     labubu набір silk шовковий трихвостиковий glow ручна робота хорейчик
   </div>
-
   <button onclick="openCustomizationModal(this)">📊 Розрахувати вартість</button>
 </div>
     </div>
@@ -143,24 +138,19 @@
 
 
 
-   <section id="custom-order" class="hidden">
-    <h2>🛠 Друк на замовлення</h2>
-    <form id="orderForm">
-      <label>📤 STL-файл</label><br>
-      <input type="file" name="file" accept=".stl,image/*"><br><br>
+  <section id="custom-order" class="custom-order-section">
+  <h2>🛠 Друк на замовлення</h2>
+  <form id="orderForm">
+    <label for="fileInput">📤 STL-файл або зображення</label><br>
+    <input type="file" id="fileInput" name="file" accept=".stl,image/*"><br><br>
 
-      <label>🎨 Колір і розмір:</label><br>
-      <input type="text" name="color_size" placeholder="Наприклад: чорний, 10 см"><br><br>
+    <label for="commentInput">💬 Коментар:</label><br>
+    <textarea id="commentInput" name="comment" rows="4" placeholder="Опишіть розмір, тип пластику, колір, доставку та контакти"></textarea><br><br>
 
-      <label>📦 Спосіб доставки:</label><br>
-      <input type="text" name="delivery" placeholder="Наприклад: Нова Пошта, відділення №12"><br><br>
+    <button type="submit" class="submit-btn">📨 Відправити заявку</button>
+  </form>
+</section>
 
-      <label>💬 Коментар:</label><br>
-      <textarea name="comment" rows="4" cols="30" placeholder="Опишіть ідею або побажання, та Ваші контакти для зворотнього зв'язку"></textarea><br><br>
-
-      <button type="submit">📨 Відправити заявку</button>
-    </form>
-  </section>
 </main>
 
 <div id="cart" class="cart">

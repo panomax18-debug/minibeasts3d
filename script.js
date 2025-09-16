@@ -509,3 +509,45 @@ window.confirmCustomization = confirmCustomization;
 window.deleteFromCart = deleteFromCart;
 window.filterProducts = filterProducts;
 
+// === 🖨️ Друк на замовлення ===
+
+async function submitCustomPrint(event) {
+  event.preventDefault();
+
+  const fileInput = document.getElementById("fileInput");
+  const comment = document.getElementById("commentInput").value.trim();
+
+  if (!fileInput.files[0] || !comment) {
+    showToast("⚠️ Додайте файл і заповніть коментар");
+    return;
+  }
+
+  const file = fileInput.files[0];
+  const telegramUser = Telegram.WebApp.initDataUnsafe?.user || {};
+
+  const data = {
+    fileName: file.name,
+    fileType: file.name.split('.').pop().toLowerCase(),
+    comment,
+    telegramUser: {
+      id: telegramUser.id || null,
+      username: telegramUser.username || ""
+    },
+    timestamp: new Date().toISOString(),
+    status: "pending"
+  };
+
+  try {
+    const cleanData = JSON.parse(JSON.stringify(data));
+    const docRef = await addDoc(collection(db, "customPrints"), cleanData);
+    console.log("🖨️ Запит на друк записано з ID:", docRef.id);
+    showToast("✅ Запит прийнято! Очікуйте підтвердження.");
+    document.getElementById("orderForm").reset();
+  } catch (e) {
+    console.error("❌ Помилка запису запиту:", e);
+    showToast("⚠️ Не вдалося надіслати запит. Спробуйте ще раз.");
+  }
+}
+
+// === Прив'язка обробника форми ===
+document.getElementById("orderForm").addEventListener("submit", submitCustomPrint);

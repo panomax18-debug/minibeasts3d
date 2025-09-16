@@ -489,3 +489,52 @@
   display: none; /* ✅ */
   /* убедись, что нет visibility: visible !important */
 }
+
+
+
+.custom-order-section {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  max-width: 500px;
+  margin: 20px auto;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.custom-order-section h2 {
+  font-size: 1.5em;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.custom-order-section label {
+  font-weight: bold;
+  display: block;
+  margin-top: 10px;
+}
+
+.custom-order-section input[type="file"],
+.custom-order-section textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1em;
+}
+
+.submit-btn {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+  background-color: #45a049;
+}
