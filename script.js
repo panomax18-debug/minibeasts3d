@@ -460,3 +460,15 @@ async function submitOrder(orderData) {
     alert("⚠️ Не вдалося записати замовлення. Спробуйте ще раз.");
   }
 }
+
+
+window.filterByType = filterByType;
+window.openCustomizationModal = openCustomizationModal;
+window.clearCart = clearCart;
+window.openCheckout = openCheckout;
+window.closeCheckout = closeCheckout;
+window.closeModal = closeModal;
+window.closeImageModal = closeImageModal;
+window.addToCart = addToCart;
+window.confirmCustomization = confirmCustomization;
+window.deleteFromCart = deleteFromCart;
