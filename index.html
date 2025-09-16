@@ -115,29 +115,29 @@
  <!--конец списка товаров-->
   </section>
 
-<div id="checkoutOverlay" class="overlay" style="display:none;">
-  <div class="checkout-modal">
-    <button onclick="closeCheckout()" class="close-btn">❌</button>
+  <div id="checkoutOverlay" class="overlay" style="display:none;">
+    <div class="checkout-modal">
+      <button onclick="closeCheckout()" class="close-btn">❌</button>
 
-    <h3>Оберіть спосіб оплати:</h3>
-    <label><input type="radio" name="paymentMethod" value="card" checked> 💳 На карту</label><br>
-    <label><input type="radio" name="paymentMethod" value="ton"> 🪙 TON</label><br><br>
+      <h3>Оберіть спосіб оплати:</h3>
+      <label><input type="radio" name="paymentMethod" value="card" checked> 💳 На карту</label><br>
+      <label><input type="radio" name="paymentMethod" value="ton"> 🪙 TON</label><br><br>
 
-    <h3>Доставка</h3>
-    <input id="cityInput" placeholder="Місто"><br>
-    <select id="deliveryService">
-      <option value="nova">Нова Пошта</option>
-      <option value="ukr">Укрпошта</option>
-    </select><br>
-    <input id="branchInput" placeholder="Відділення"><br><br>
+      <h3>Доставка</h3>
+      <input id="cityInput" placeholder="Місто"><br>
+      <select id="deliveryService">
+        <option value="nova">Нова Пошта</option>
+        <option value="ukr">Укрпошта</option>
+      </select><br>
+      <input id="branchInput" placeholder="Відділення"><br><br>
 
-    <h3>Контактна інформація</h3>
-    <input id="nameInput" placeholder="ПІБ отримувача"><br>
-    <input id="phoneInput" placeholder="+380 __ ___ __ __"><br><br>
+      <h3>Контактна інформація</h3>
+      <input id="nameInput" placeholder="ПІБ отримувача"><br>
+      <input id="phoneInput" placeholder="+380 __ ___ __ __"><br><br>
 
-    <button id="confirmBtn">Підтвердити замовлення</button>
+      <button id="confirmBtn">Підтвердити замовлення</button>
+    </div>
   </div>
-</div>
 
 
 

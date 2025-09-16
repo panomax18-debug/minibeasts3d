@@ -350,9 +350,17 @@ function calculateTotal(cart) {
 // === Подтверждение заказа ===
 function confirmOrder() {
   const tg = window.Telegram?.WebApp || {
-    sendData: (data) => console.log("📤 Емуляція sendData:", data),
+      sendData: (data) => console.log("📤 Емуляція sendData:", data),
     close: () => console.log("🛑 Емуляція закриття WebApp")
   };
+
+console.log("📋 Значення форми:", {
+  fullName: document.getElementById("nameInput").value,
+  phone: document.getElementById("phoneInput").value,
+  city: document.getElementById("cityInput").value,
+  branch: document.getElementById("branchInput").value
+});
+
 
   // 🧾 Безопасная сборка Telegram-пользователя
   const rawUser = Telegram.WebApp.initDataUnsafe?.user || {};
