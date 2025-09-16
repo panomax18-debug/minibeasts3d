@@ -324,6 +324,7 @@ function openCustomizationModal(button) {
 
 function confirmCustomization() {
   calculatePrice(); // гарантируем актуальность
+
   const size = document.getElementById("sizeSelect").value;
   const plastic = document.getElementById("plasticSelect").value;
   const comment = document.getElementById("customComment").value;
@@ -346,7 +347,11 @@ function confirmCustomization() {
   updateCart(); // 🔄 Обновляем корзину на экране
   showToast("✅ Додано до корзини"); // 🔔 Показываем уведомление
   closeModal(); // ❌ Закрываем модальное окно
+
+  // 👇 Прокрутка к корзине
+  document.getElementById("cart").scrollIntoView({ behavior: "smooth" });
 }
+
 
 function closeModal() {
   document.getElementById("customModal").style.display = "none";
