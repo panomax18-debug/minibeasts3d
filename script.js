@@ -365,6 +365,7 @@ function calculateTotal(cart) {
   return cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 }
 
+// === Функция подтверждения заказа ===
 function confirmOrder() {
   const tg = window.Telegram?.WebApp || {
     sendData: (data) => console.log("📤 Емуляція sendData:", data),
@@ -411,6 +412,7 @@ function confirmOrder() {
   if (orderData.payment === "ton") {
     showToast("🪙 TON-переказ:\nhttps://tonkeeper.app/transfer/...");
   }
+
   setTimeout(() => {
     showToast("✅ Замовлення надіслано!");
     cart = [];
@@ -418,6 +420,7 @@ function confirmOrder() {
     tg.close();
   }, 1500);
 }
+
 
 // === Привязка обработчика ===
 document.getElementById("confirmBtn").addEventListener("click", confirmOrder);
