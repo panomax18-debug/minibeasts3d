@@ -22,22 +22,6 @@ const db = getFirestore(app);
 
 
 
-if (!window.Telegram || !window.Telegram.WebApp) {
-  window.Telegram = {
-    WebApp: {
-      sendData: (data) => console.log("📤 Емуляція sendData:", data),
-      close: () => console.log("🛑 Емуляція закриття WebApp"),
-      expand: () => console.log("🔍 Емуляція expand()")
-      console.log("📡 Telegram WebApp API:", tg);
-
-    }
-  };
-}
-
-if (tg && typeof tg.expand === "function") {
-  tg.expand();
-}
-
 window.Telegram = {
   WebApp: {
     sendData: (data) => console.log("📤 Емуляція sendData:", data),
