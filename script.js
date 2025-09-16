@@ -59,41 +59,6 @@ function calculatePrice() {
 
 
 
-  confirmButton.addEventListener("click", () => {
-    const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value || "card";
-    const cityInput = document.getElementById("cityInput");
-    const branchInput = document.getElementById("branchInput");
-    const deliveryService = document.getElementById("deliveryService");
-    const nameInput = document.getElementById("nameInput");
-    const phoneInput = document.getElementById("phoneInput");
-
-    const orderData = {
-      userId: Telegram.WebApp.initDataUnsafe?.user?.id || "unknown",
-      username: Telegram.WebApp.initDataUnsafe?.user?.username || "",
-      first_name: Telegram.WebApp.initDataUnsafe?.user?.first_name || "",
-      cart: cart,
-      total: calculateTotal(cart),
-      delivery: {
-        city: cityInput.value,
-        branch: branchInput.value,
-        service: deliveryService.value
-      },
-      contact: {
-        name: nameInput.value,
-        phone: phoneInput.value
-      },
-      paymentMethod: selectedPaymentMethod,
-      status: "pending",
-      timestamp: new Date().toISOString()
-    };
-
-    submitOrder(orderData);
-  });
-}
-
-
-// -- кнопку выще возможно прийдется удалить??
-
 function openCategory(category) {
   const ready = document.getElementById("ready-products");
   const custom = document.getElementById("custom-order");
@@ -418,11 +383,31 @@ function confirmOrder() {
       language_code: telegramUser?.language_code
     },
     total: calculateTotal(cart),
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    status: "pending"
   };
 
+  // 🔍 Валидация перед отправкой
+  if (
+    !orderData.customer.fullName ||
+    !orderData.customer.phone ||
+    !orderData.delivery.city ||
+    !orderData.delivery.branch
+  ) {
+    showToast("⚠️ Заповніть усі поля перед підтвердженням замовлення");
+    return;
+  }
+
+  // 🧾 Сохраняем заказ в Firestore
+  submitOrder(orderData);
+
+  // 📡 Отправка в Telegram WebApp
   tg.sendData(JSON.stringify(orderData));
 
+  // 🧾 Логирование в консоль
+  console.log("📤 Відправка замовлення:", orderData);
+
+  // 💳 Реквизиты оплаты
   if (orderData.payment === "card") {
     showToast("💳 Оплата на карту:\n4441 1144 1619 6630\nПризначення: MiniBeasts 3D");
   }
@@ -431,6 +416,7 @@ function confirmOrder() {
     showToast("🪙 TON-переказ:\nhttps://tonkeeper.app/transfer/...");
   }
 
+  // ✅ Финальное подтверждение
   setTimeout(() => {
     showToast("✅ Замовлення надіслано!");
     cart = [];
@@ -438,7 +424,6 @@ function confirmOrder() {
     tg.close();
   }, 1500);
 }
-
 
 // === Привязка обработчика ===
 document.getElementById("confirmBtn").addEventListener("click", confirmOrder);
