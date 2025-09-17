@@ -752,4 +752,3 @@ export function setupProductFormHandler() {
     form.reset(); // 🔄 Очистка формы
   });
 }
-};
