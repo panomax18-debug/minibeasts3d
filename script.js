@@ -630,7 +630,7 @@ export function showAddProductForm() {
     }
   });
 }
-    
+
 
 
 // == HTML-форма добавления товара
@@ -640,13 +640,6 @@ export function showAddProductForm() {
 // == 🔧 Навигация между модулями == //
 
 
-export function showProductList() {
-  document.getElementById("adminContent").innerHTML = "<p>📦 Список товарів...</p>";
-}
-
-export function showOrderList() {
-  document.getElementById("adminContent").innerHTML = "<p>📨 Список замовлень...</p>";
-}
 
 // == 🧱 Генерация формы добавления товара == //
 export function generateAddProductForm() {
