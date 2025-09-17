@@ -14,25 +14,7 @@ export function filterProducts() {
   });
 }
 
-// 👇 Робимо доступною глобально
-window.filterProducts = filterProducts;
-
-// == ✅ Навішування фільтра після визначення filterProducts == //
-const tryAttachFilter = () => {
-  const input = document.getElementById("searchInput");
-  if (input && typeof window.filterProducts === "function") {
-    input.addEventListener("input", window.filterProducts);
-    console.log("✅ Фільтр навішено успішно.");
-  } else {
-    console.warn("⚠️ filterProducts ще не визначена. Повторна спроба через 200мс...");
-    setTimeout(tryAttachFilter, 200);
-  }
-};
-
-document.addEventListener("DOMContentLoaded", tryAttachFilter);
-
 // == 🔧 Навигация между модулями == //
-
 export function showAddProductForm() {
   const container = document.getElementById("adminContent");
   container.innerHTML = generateAddProductForm();
@@ -110,8 +92,6 @@ export function showProductList() {
   container.innerHTML = html;
 }
 
-
-
 export function showOrderList() {
   const container = document.getElementById("adminContent");
   container.innerHTML = `
@@ -185,7 +165,6 @@ export function generateAddProductForm() {
   `;
 }
 
-
 // == 🖼️ Добавление новых полей для изображений == //
 export function addImageInput() {
   const container = document.getElementById("imageInputs");
@@ -196,7 +175,7 @@ export function addImageInput() {
   container.appendChild(input);
 }
 
-// == 📥 Обработка формы добавления товара == //
+// == 📥 Обработка форми додавання товару == //
 export function setupProductFormHandler() {
   const form = document.getElementById("productForm");
   if (!form) {
@@ -207,30 +186,34 @@ export function setupProductFormHandler() {
   form.addEventListener("submit", function (e) {
     e.preventDefault();
 
-    const data = {
-      name: form.querySelector("#productName").value.trim(),
-      description: form.querySelector("#productDescription").value.trim(),
-      feature: form.querySelector("#productFeature").value.trim(),
-      basePrice: parseFloat(form.querySelector("#basePrice").value),
-      size80: parseFloat(form.querySelector("#size80").value) || "",
-      size100: parseFloat(form.querySelector("#size100").value) || "",
-      size120: parseFloat(form.querySelector("#size120").value) || "",
-      plastic1: parseFloat(form.querySelector("#plastic1").value) || "",
-      plastic2: parseFloat(form.querySelector("#plastic2").value) || "",
-      plastic3: parseFloat(form.querySelector("#plastic3").value) || "",
-      tags: form.querySelector("#productTags").value.trim().split(" "),
-      images: Array.from(form.querySelectorAll(".image-url"))
-        .map(input => input.value.trim())
-        .filter(src => src !== ""),
-      manualPrices: form.querySelector("#manualPrices").value.trim()
-    };
+    const cardHTML = `
+      <div class="product-card">
+        <div class="config" style="display:none;">
+          <span class="base">${data.basePrice}</span>
+          <span class="size80">${data.size80}</span>
+          <span class="size100">${data.size100}</span>
+          <span class="size120">${data.size120}</span>
+          <span class="plastic1">${data.plastic1}</span>
+          <span class="plastic2">${data.plastic2}</span>
+          <span class="plastic3">${data.plastic3}</span>
+        </div>
 
-    const cardHTML = `<div class="product-card">
-      <h3>${data.name}</h3>
-      <p>${data.description}</p>
-      <p><strong>Ціна:</strong> ${data.basePrice} грн</p>
-      <p><strong>Теги:</strong> ${data.tags.join(", ")}</p>
-    </div>`;
+        <div class="slider">
+          ${data.images.map((src, i) => `
+            <img src="${src}" class="slide${i === 0 ? ' active' : ''}" onclick="openModal(this.src)">
+          `).join("")}
+          <button class="prev" onclick="prevSlide(this)">←</button>
+          <button class="next" onclick="nextSlide(this)">→</button>
+        </div>
+
+        <h3>${data.name}</h3>
+        <p>${data.description}</p>
+        <p><strong>Особливість:</strong> ${data.feature}</p>
+        <p><strong>Ціна:</strong> ${data.basePrice} грн</p>
+        <div class="tags" style="display:none;">${data.tags.join(" ")}</div>
+        <button onclick="openCustomizationModal(this)">📊 Розрахувати вартість</button>
+      </div>
+    `;
 
     const grid = document.getElementById("productGrid");
     if (grid) {
@@ -241,18 +224,3 @@ export function setupProductFormHandler() {
     form.reset();
   });
 }
-
-export function filterProducts() {
-  const input = document.getElementById("searchInput").value.toLowerCase();
-  const cards = document.querySelectorAll("#ready-products .product-card");
-
-  cards.forEach(card => {
-    const title = card.querySelector("h3").textContent.toLowerCase();
-    const tags = card.querySelector(".tags")?.textContent.toLowerCase() || "";
-    const match = title.includes(input) || tags.includes(input);
-    card.style.display = match ? "block" : "none";
-  });
-}
-
-window.filterProducts = filterProducts;
-
