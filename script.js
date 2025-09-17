@@ -34,21 +34,7 @@ window.Telegram = {
 const tg = window.Telegram.WebApp;
 console.log("📡 Telegram WebApp API:", tg);
 
-// == 🔧 Навигация между модулями == //
-export function showAddProductForm() {
-  const container = document.getElementById("adminContent");
-  container.innerHTML = generateAddProductForm();
 
-  // ⏳ Ждём, пока DOM обновится — безопасный способ
-  requestAnimationFrame(() => {
-    const form = document.getElementById("productForm");
-    if (form) {
-      setupProductFormHandler(); // ✅ вызываем только если форма реально есть
-    } else {
-      console.warn("⚠️ Форма не знайдена в DOM після вставки.");
-    }
-  });
-}
 
 export function showProductList() {
   document.getElementById("adminContent").innerHTML = "<p>📦 Список товарів...</p>";
@@ -627,25 +613,25 @@ document.getElementById("orderForm").addEventListener("submit", submitCustomPrin
 
 
 
-// === Шаг 2: JS-заглушки в script.js
-window.showAddProductForm = function() {
-  document.getElementById("adminContent").innerHTML = `
-    <h2>➕ Додати новий товар</h2>
-    <p>Тут буде форма додавання товару...</p>
-  `;
-};
-window.showProductList = function() {
-  document.getElementById("adminContent").innerHTML = `
-    <h2>📦 Список товарів</h2>
-    <p>Тут буде таблиця з усіма товарами...</p>
-  `;
-};
-window.showOrderList = function() {
-  document.getElementById("adminContent").innerHTML = `
-    <h2>📨 Замовлення</h2>
-    <p>Тут буде список заявок...</p>
-  `;
-};
+// ==АДМИНКА !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+// == 🔧 Навигация между модулями == //
+export function showAddProductForm() {
+  const container = document.getElementById("adminContent");
+  container.innerHTML = generateAddProductForm();
+
+  // ⏳ Ждём, пока DOM обновится — безопасный способ
+  requestAnimationFrame(() => {
+    const form = document.getElementById("productForm");
+    if (form) {
+      setupProductFormHandler(); // ✅ вызываем только если форма реально есть
+    } else {
+      console.warn("⚠️ Форма не знайдена в DOM після вставки.");
+    }
+  });
+}
+    
+
 
 // == HTML-форма добавления товара
 // == 📦 МОДУЛЬ АДМІНКИ MiniBeasts 3D == //
