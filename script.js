@@ -631,7 +631,11 @@ window.showOrderList = function() {
 // == 🔧 Навигация между модулями == //
 export function showAddProductForm() {
   document.getElementById("adminContent").innerHTML = generateAddProductForm();
-  setupProductFormHandler(); // ✅ Подключаем обработку формы
+
+  // ⏳ Ждём, пока DOM обновится — безопасный способ
+  requestAnimationFrame(() => {
+    setupProductFormHandler();
+  });
 }
 
 export function showProductList() {
