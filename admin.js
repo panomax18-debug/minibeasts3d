@@ -133,3 +133,18 @@ export function setupProductFormHandler() {
     form.reset();
   });
 }
+
+export function filterProducts() {
+  const input = document.getElementById("searchInput").value.toLowerCase();
+  const cards = document.querySelectorAll("#ready-products .product-card");
+
+  cards.forEach(card => {
+    const title = card.querySelector("h3").textContent.toLowerCase();
+    const tags = card.querySelector(".tags")?.textContent.toLowerCase() || "";
+    const match = title.includes(input) || tags.includes(input);
+    card.style.display = match ? "block" : "none";
+  });
+}
+
+window.filterProducts = filterProducts;
+
