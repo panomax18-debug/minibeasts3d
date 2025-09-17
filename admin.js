@@ -1,14 +1,6 @@
 // == 📦 МОДУЛЬ АДМІНКИ MiniBeasts 3D == //
 // Все функции экспортируются для использования в admin.html
 
-// == 🔧 Навигация между модулями == //
-export function showAddProductForm() { /* ... */ }
-export function showProductList() { /* ... */ }
-export function showOrderList() { /* ... */ }
-export function generateAddProductForm() { /* ... */ }
-export function addImageInput() { /* ... */ }
-export function setupProductFormHandler() { /* ... */ }
-
 // == 🔍 Фільтрація товарів == //
 export function filterProducts() {
   const input = document.getElementById("searchInput").value.toLowerCase();
