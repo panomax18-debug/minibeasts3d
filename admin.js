@@ -19,6 +19,15 @@ document.getElementById("orderForm").addEventListener("submit", function(e) {
   alert("Заявка на друк надіслана! Ми зв'яжемося з вами.");
 });
 
+export function showOrderList() {
+  const container = document.getElementById("adminContent");
+  container.innerHTML = `
+    <h2>📨 Замовлення</h2>
+    <p>Тут буде список заявок...</p>
+  `;
+}
+
+
 function filterProducts() {
   const input = document.getElementById("searchInput").value.toLowerCase();
   const cards = document.querySelectorAll("#ready-products .product-card");
