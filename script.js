@@ -369,9 +369,14 @@ function closeModal() {
 
 
 document.addEventListener("DOMContentLoaded", () => {
-  const customOrderSection = document.getElementById("custom-order");
-  const btnReady = document.getElementById("btnReady");
-  const btnCustom = document.getElementById("btnCustom");
+  const input = document.getElementById("searchInput");
+  if (input && typeof filterProducts === "function") {
+    input.addEventListener("input", filterProducts);
+  } else {
+    console.warn("⚠️ Не вдалося навісити фільтр.");
+  }
+});
+
 
   if (!customOrderSection) {
     console.warn("⚠️ Елемент #custom-order не знайдено.");
