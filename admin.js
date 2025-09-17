@@ -29,70 +29,66 @@ export function showAddProductForm() {
   });
 }
 
-export function showProductList() {
+export async function showProductList() {
   const container = document.getElementById("adminContent");
-  const cards = document.querySelectorAll(".product-card");
-  console.log("🔍 Знайдено товарів:", cards.length);
+  container.innerHTML = `<h2>📦 Всі товари</h2><div class="admin-product-list">Завантаження...</div>`;
 
-  if (!cards.length) {
-    container.innerHTML = `<p>⚠️ Товари не знайдено на сайті.</p>`;
+  const products = await fetchProducts();
+  const list = document.querySelector(".admin-product-list");
+
+  if (!products.length) {
+    list.innerHTML = `<p>⚠️ Товарів не знайдено.</p>`;
     return;
   }
-  let html = `<h2>📦 Всі товари на сайті</h2><div class="admin-product-list">`;
 
-  cards.forEach((card, index) => {
-    const name = card.querySelector("h3")?.textContent || "—";
-    const description = card.querySelector("p")?.textContent || "—";
-    const feature = card.querySelector("p strong")?.nextSibling?.textContent?.trim() || "—";
-    const priceText = Array.from(card.querySelectorAll("p"))
-      .find(p => p.textContent.includes("Ціна"))?.textContent || "—";
+  let html = "";
 
-    const tags = card.querySelector(".tags")?.textContent || "—";
-    const images = Array.from(card.querySelectorAll("img")).map(img => img.src);
-
-    const config = {};
-    const configBlock = card.querySelector(".config");
-    if (configBlock) {
-      config.base = configBlock.querySelector(".base")?.textContent || "—";
-      config.size80 = configBlock.querySelector(".size80")?.textContent || "—";
-      config.size100 = configBlock.querySelector(".size100")?.textContent || "—";
-      config.size120 = configBlock.querySelector(".size120")?.textContent || "—";
-      config.plastic1 = configBlock.querySelector(".plastic1")?.textContent || "—";
-      config.plastic2 = configBlock.querySelector(".plastic2")?.textContent || "—";
-      config.plastic3 = configBlock.querySelector(".plastic3")?.textContent || "—";
-    }
-
+  products.forEach((product, index) => {
     html += `
       <div class="admin-product-card">
-        <h3>${index + 1}. ${name}</h3>
-        <p><strong>Опис:</strong> ${description}</p>
-        <p><strong>Особливість:</strong> ${feature}</p>
-        <p><strong>${priceText}</strong></p>
-        <p><strong>Теги:</strong> ${tags}</p>
+        <h3>${index + 1}. ${product.name}</h3>
+        <p><strong>Опис:</strong> ${product.description}</p>
+        <p><strong>Особливість:</strong> ${product.feature}</p>
+        <p><strong>Ціна:</strong> ${product.basePrice} грн</p>
+        <p><strong>Теги:</strong> ${product.tags?.join(" ") || "—"}</p>
 
         <details>
           <summary>⚙️ Конфігурація</summary>
           <ul>
-            <li>💰 Базова ціна: ${config.base} грн</li>
-            <li>📏 Розміри: 80мм = ${config.size80}, 100мм = ${config.size100}, 120мм = ${config.size120}</li>
-            <li>🎨 Пластик: однотонний = ${config.plastic1}, двоколірний = ${config.plastic2}, триколірний = ${config.plastic3}</li>
+            <li>📏 Розміри: 80мм = ${product.size80}, 100мм = ${product.size100}, 120мм = ${product.size120}</li>
+            <li>🎨 Пластик: однотонний = ${product.plastic1}, двоколірний = ${product.plastic2}, триколірний = ${product.plastic3}</li>
           </ul>
         </details>
 
-        ${images.length ? `<p><strong>Зображення:</strong></p>` : ""}
+        ${product.images?.length ? `<p><strong>Зображення:</strong></p>` : ""}
         <div class="image-preview">
-          ${images.map(src => `<img src="${src}" width="80">`).join("")}
+          ${product.images?.map(src => `<img src="${src}" width="80">`).join("")}
+        </div>
+
+        <div class="actions">
+          <button onclick="editProduct('${product.id}')">✏️ Редагувати</button>
+          <button onclick="deleteProduct('${product.id}')">🗑️ Видалити</button>
         </div>
       </div>
       <hr>
     `;
   });
 
-  html += `</div>`;
-  container.innerHTML = html;
+  list.innerHTML = html;
 }
 
+
 // == 🔥 Отображение заказов из Firebase == //
+async function fetchProducts() {
+  try {
+    const snapshot = await firebase.firestore().collection("products").orderBy("createdAt", "desc").get();
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    console.error("❌ Помилка при завантаженні товарів:", error);
+    return [];
+  }
+}
+
 async function fetchOrders() {
   const snapshot = await firebase.firestore().collection("orders").orderBy("timestamp", "desc").get();
   return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
