@@ -1,5 +1,17 @@
 // == 📦 МОДУЛЬ АДМІНКИ MiniBeasts 3D == //
 // Все функции экспортируются для использования в admin.html
+const tryAttachFilter = () => {
+  const input = document.getElementById("searchInput");
+  if (input && typeof window.filterProducts === "function") {
+    input.addEventListener("input", window.filterProducts);
+    console.log("✅ Фільтр навішено успішно.");
+  } else {
+    console.warn("⚠️ filterProducts ще не визначена. Повторна спроба через 200мс...");
+    setTimeout(tryAttachFilter, 200);
+  }
+};
+
+document.addEventListener("DOMContentLoaded", tryAttachFilter);
 
 // == 🔧 Навигация между модулями == //
 

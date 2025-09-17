@@ -8,6 +8,22 @@ let currentSliderImages = [];
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
+import { filterProducts } from './admin.js'; // или абсолютный путь, если нужен
+
+document.addEventListener("DOMContentLoaded", () => {
+  const input = document.getElementById("searchInput");
+
+  if (input && typeof filterProducts === "function") {
+    input.addEventListener("input", filterProducts);
+    console.log("✅ Фільтр навішено успішно.");
+  } else {
+    console.warn("⚠️ filterProducts не визначена.");
+  }
+
+  // ... остальной код переключения категорий
+});
+
+
 const firebaseConfig = {
   apiKey: "AIzaSyA2TAQM23nj7VOiHPv8HgDuXdWV_OVjX7A",
   authDomain: "minibeasts-3d.firebaseapp.com",
