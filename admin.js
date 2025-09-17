@@ -1,8 +1,17 @@
-// == HTML-форма добавления товара
-// == 📦 МОДУЛЬ АДМІНКИ MiniBeasts 3D == //
-// Все функции экспортируются для использования в admin.html
+export function showAddProductForm() {
+  const container = document.getElementById("adminContent");
+  container.innerHTML = generateAddProductForm();
 
-// == 🔧 Навигация между модулями == //
+  // ⏳ Ждём, пока DOM точно обновится
+  requestAnimationFrame(() => {
+    const form = document.getElementById("productForm");
+    if (form) {
+      setupProductFormHandler();
+    } else {
+      console.warn("⚠️ Форма не знайдена після вставки.");
+    }
+  });
+}
 
 
 document.getElementById("orderForm").addEventListener("submit", function(e) {
