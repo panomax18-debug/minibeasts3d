@@ -34,7 +34,29 @@ window.Telegram = {
 const tg = window.Telegram.WebApp;
 console.log("📡 Telegram WebApp API:", tg);
 
+// == 🔧 Навигация между модулями == //
+export function showAddProductForm() {
+  const container = document.getElementById("adminContent");
+  container.innerHTML = generateAddProductForm();
 
+  // ⏳ Ждём, пока DOM точно обновится
+  const trySetup = () => {
+    const form = document.getElementById("productForm");
+    if (form) {
+      setupProductFormHandler();
+    } else {
+      // 🔁 Пробуем снова через 50мс, максимум 10 раз
+      if (trySetup.attempts < 10) {
+        trySetup.attempts++;
+        setTimeout(trySetup, 50);
+      } else {
+        console.warn("⚠️ Не вдалося знайти форму після вставки.");
+      }
+    }
+  };
+  trySetup.attempts = 0;
+  trySetup();
+}
 
 export function showProductList() {
   document.getElementById("adminContent").innerHTML = "<p>📦 Список товарів...</p>";
@@ -616,28 +638,6 @@ document.getElementById("orderForm").addEventListener("submit", submitCustomPrin
 // ==АДМИНКА !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 // == 🔧 Навигация между модулями == //
-export function showAddProductForm() {
-  const container = document.getElementById("adminContent");
-  container.innerHTML = generateAddProductForm();
-
-  // ⏳ Ждём, пока DOM точно обновится
-  const trySetup = () => {
-    const form = document.getElementById("productForm");
-    if (form) {
-      setupProductFormHandler();
-    } else {
-      // 🔁 Пробуем снова через 50мс, максимум 10 раз
-      if (trySetup.attempts < 10) {
-        trySetup.attempts++;
-        setTimeout(trySetup, 50);
-      } else {
-        console.warn("⚠️ Не вдалося знайти форму після вставки.");
-      }
-    }
-  };
-  trySetup.attempts = 0;
-  trySetup();
-}
 
 
 
