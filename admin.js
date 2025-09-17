@@ -39,44 +39,65 @@ export function generateAddProductForm() {
     <form id="productForm">
       <h2>➕ Додати новий товар</h2>
 
-      <label>📛 Назва товару:</label>
-      <input type="text" id="productName" required>
-
-      <label>📄 Опис:</label>
-      <input type="text" id="productDescription">
-
-      <label>✨ Особливість:</label>
-      <input type="text" id="productFeature">
-
-      <label>💰 Базова ціна (грн):</label>
-      <input type="number" id="basePrice" required>
-
-      <label>📏 Розміри (коеф.):</label>
-      <input type="number" id="size80" placeholder="80 мм">
-      <input type="number" id="size100" placeholder="100 мм">
-      <input type="number" id="size120" placeholder="120 мм">
-
-      <label>🎨 Типи пластику (коеф.):</label>
-      <input type="number" id="plastic1" placeholder="Однотонний">
-      <input type="number" id="plastic2" placeholder="Двоколірний">
-      <input type="number" id="plastic3" placeholder="Триколірний">
-
-      <label>🏷️ Теги (через пробіл):</label>
-      <input type="text" id="productTags" placeholder="labubu glow ручна робота">
-
-      <label>🖼️ Зображення товару:</label>
-      <div id="imageInputs">
-        <input type="text" class="image-url" placeholder="img/example.jpg">
+      <div class="form-group">
+        <label>📛 Назва товару:</label>
+        <input type="text" id="productName" required>
       </div>
-      <button type="button" onclick="addImageInput()">➕ Додати зображення</button>
 
-      <label>📊 Орієнтовні ціни реалізації:</label>
-      <textarea id="manualPrices" rows="4" placeholder="80мм + однотонний = 150 грн"></textarea>
+      <div class="form-group">
+        <label>📄 Опис:</label>
+        <input type="text" id="productDescription">
+      </div>
 
-      <button type="submit">💾 Зберегти товар</button>
+      <div class="form-group">
+        <label>✨ Особливість:</label>
+        <input type="text" id="productFeature">
+      </div>
+
+      <div class="form-group">
+        <label>💰 Базова ціна (грн):</label>
+        <input type="number" id="basePrice" required>
+      </div>
+
+      <div class="form-group">
+        <label>📏 Розміри (коеф.):</label>
+        <input type="number" id="size80" placeholder="80 мм">
+        <input type="number" id="size100" placeholder="100 мм">
+        <input type="number" id="size120" placeholder="120 мм">
+      </div>
+
+      <div class="form-group">
+        <label>🎨 Типи пластику (коеф.):</label>
+        <input type="number" id="plastic1" placeholder="Однотонний">
+        <input type="number" id="plastic2" placeholder="Двоколірний">
+        <input type="number" id="plastic3" placeholder="Триколірний">
+      </div>
+
+      <div class="form-group">
+        <label>🏷️ Теги (через пробіл):</label>
+        <input type="text" id="productTags" placeholder="labubu glow ручна робота">
+      </div>
+
+      <div class="form-group">
+        <label>🖼️ Зображення товару:</label>
+        <div id="imageInputs">
+          <input type="text" class="image-url" placeholder="img/example.jpg">
+        </div>
+        <button type="button" onclick="addImageInput()">➕ Додати зображення</button>
+      </div>
+
+      <div class="form-group">
+        <label>📊 Орієнтовні ціни реалізації:</label>
+        <textarea id="manualPrices" rows="4" placeholder="80мм + однотонний = 150 грн"></textarea>
+      </div>
+
+      <div class="form-group">
+        <button type="submit">💾 Зберегти товар</button>
+      </div>
     </form>
   `;
 }
+
 
 // == 🖼️ Добавление новых полей для изображений == //
 export function addImageInput() {

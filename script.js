@@ -369,25 +369,30 @@ function closeModal() {
 
 
 document.addEventListener("DOMContentLoaded", () => {
+  // 🔍 Навешиваем фильтр по тегам
   const input = document.getElementById("searchInput");
   if (input && typeof filterProducts === "function") {
     input.addEventListener("input", filterProducts);
   } else {
     console.warn("⚠️ Не вдалося навісити фільтр.");
   }
-});
 
+  // 🔄 Переключение категорий: ready / custom
+  const customOrderSection = document.getElementById("custom-order");
+  const btnReady = document.getElementById("btnReady");
+  const btnCustom = document.getElementById("btnCustom");
 
   if (!customOrderSection) {
     console.warn("⚠️ Елемент #custom-order не знайдено.");
-    return;
   }
 
   if (btnReady) {
     btnReady.addEventListener("click", () => {
       console.log("🔄 Переключення категорії: ready");
       openCategory("ready");
-      customOrderSection.style.display = "none";
+      if (customOrderSection) {
+        customOrderSection.style.display = "none";
+      }
     });
   } else {
     console.warn("⚠️ Кнопка #btnReady не знайдена.");
@@ -397,13 +402,14 @@ document.addEventListener("DOMContentLoaded", () => {
     btnCustom.addEventListener("click", () => {
       console.log("🔄 Переключення категорії: custom");
       openCategory("custom");
-      customOrderSection.style.display = "block";
+      if (customOrderSection) {
+        customOrderSection.style.display = "block";
+      }
     });
   } else {
     console.warn("⚠️ Кнопка #btnCustom не знайдена.");
   }
 });
-
 
 
 
