@@ -31,7 +31,7 @@ export function showAddProductForm() {
 
 export function showProductList() {
   const container = document.getElementById("adminContent");
-  const cards = document.querySelectorAll("#ready-products .product-card");
+  const cards = document.querySelectorAll("#productGrid .product-card");
   console.log("🔍 Знайдено товарів:", cards.length);
 
 
