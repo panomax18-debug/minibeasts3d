@@ -333,16 +333,22 @@ function closeModal() {
 
 
 document.addEventListener("DOMContentLoaded", () => {
+  const customOrderSection = document.getElementById("custom-order");
+
   document.getElementById("btnReady").addEventListener("click", () => {
     console.log("🔄 Переключення категорії: ready");
     openCategory("ready");
+    customOrderSection.style.display = "none"; // скрываем форму
   });
 
   document.getElementById("btnCustom").addEventListener("click", () => {
     console.log("🔄 Переключення категорії: custom");
     openCategory("custom");
+    customOrderSection.style.display = "block"; // показываем форму
   });
 });
+
+
 
 // === Расчёт суммы заказа ===
 function calculateTotal(cart) {
