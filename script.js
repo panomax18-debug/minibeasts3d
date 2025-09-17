@@ -34,6 +34,27 @@ window.Telegram = {
 const tg = window.Telegram.WebApp;
 console.log("📡 Telegram WebApp API:", tg);
 
+
+
+
+document.getElementById("orderForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+  alert("Заявка на друк надіслана! Ми зв'яжемося з вами.");
+});
+
+function filterProducts() {
+  const input = document.getElementById("searchInput").value.toLowerCase();
+  const cards = document.querySelectorAll("#ready-products .product-card");
+
+  cards.forEach(card => {
+    const title = card.querySelector("h3").textContent.toLowerCase();
+    const tags = card.querySelector(".tags")?.textContent.toLowerCase() || "";
+    const match = title.includes(input) || tags.includes(input);
+    card.style.display = match ? "block" : "none";
+  });
+}
+
+
 // == 🔧 Навигация между модулями == //
 export function showAddProductForm() {
   const container = document.getElementById("adminContent");
@@ -108,28 +129,6 @@ function openCategory(category) {
     ready.classList.remove("visible");
   }
 }
-
-
-
-
-
-document.getElementById("orderForm").addEventListener("submit", function(e) {
-  e.preventDefault();
-  alert("Заявка на друк надіслана! Ми зв'яжемося з вами.");
-});
-
-function filterProducts() {
-  const input = document.getElementById("searchInput").value.toLowerCase();
-  const cards = document.querySelectorAll("#ready-products .product-card");
-
-  cards.forEach(card => {
-    const title = card.querySelector("h3").textContent.toLowerCase();
-    const tags = card.querySelector(".tags")?.textContent.toLowerCase() || "";
-    const match = title.includes(input) || tags.includes(input);
-    card.style.display = match ? "block" : "none";
-  });
-}
-
 
 function filterByType(type) {
   const cards = document.querySelectorAll("#ready-products .product-card");
