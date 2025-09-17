@@ -4,8 +4,6 @@
   <meta charset="UTF-8">
   <title>Admin Panel | MiniBeasts 3D</title>
   <link rel="stylesheet" href="style.css">
-  <!-- Подключаем основной JS -->
-  <script src="script.js" defer></script>
 </head>
 <body>
 
@@ -25,6 +23,22 @@
       <p>👈 Виберіть дію з меню вище</p>
     </div>
   </section>
+
+  <!-- ✅ Единый импорт из GitHub -->
+<script type="module">
+  import {
+    showAddProductForm,
+    showProductList,
+    showOrderList,
+    addImageInput
+  } from 'https://panomax18-debug.github.io/minibeasts3d/script.js';
+
+  window.showAddProductForm = showAddProductForm;
+  window.showProductList = showProductList;
+  window.showOrderList = showOrderList;
+  window.addImageInput = addImageInput;
+</script>
+
 
 </body>
 </html>

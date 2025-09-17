@@ -625,65 +625,131 @@ window.showOrderList = function() {
 };
 
 // == HTML-форма добавления товара
-window.generateAddProductForm = function() {
+// == 📦 МОДУЛЬ АДМІНКИ MiniBeasts 3D == //
+// Все функции экспортируются для использования в admin.html
+
+// == 🔧 Навигация между модулями == //
+export function showAddProductForm() {
+  document.getElementById("adminContent").innerHTML = generateAddProductForm();
+  setupProductFormHandler(); // ✅ Подключаем обработку формы
+}
+
+export function showProductList() {
+  document.getElementById("adminContent").innerHTML = "<p>📦 Список товарів...</p>";
+}
+
+export function showOrderList() {
+  document.getElementById("adminContent").innerHTML = "<p>📨 Список замовлень...</p>";
+}
+
+// == 🧱 Генерация формы добавления товара == //
+export function generateAddProductForm() {
   return `
     <form id="productForm">
       <h2>➕ Додати новий товар</h2>
 
-      <!-- Назва -->
+      <!-- 📛 Назва товару -->
       <label>📛 Назва товару:</label>
       <input type="text" id="productName" required>
 
-      <!-- Опис -->
+      <!-- 📄 Опис -->
       <label>📄 Опис:</label>
       <input type="text" id="productDescription">
 
-      <!-- Особливість -->
+      <!-- ✨ Особливість -->
       <label>✨ Особливість:</label>
       <input type="text" id="productFeature">
 
-      <!-- Базова ціна -->
+      <!-- 💰 Базова ціна -->
       <label>💰 Базова ціна (грн):</label>
       <input type="number" id="basePrice" required>
 
-      <!-- Розміри -->
+      <!-- 📏 Розміри -->
       <label>📏 Розміри (коеф.):</label>
       <input type="number" id="size80" placeholder="80 мм">
       <input type="number" id="size100" placeholder="100 мм">
       <input type="number" id="size120" placeholder="120 мм">
 
-      <!-- Типи пластику -->
+      <!-- 🎨 Типи пластику -->
       <label>🎨 Типи пластику (коеф.):</label>
       <input type="number" id="plastic1" placeholder="Однотонний">
       <input type="number" id="plastic2" placeholder="Двоколірний">
       <input type="number" id="plastic3" placeholder="Триколірний">
 
-      <!-- Теги -->
+      <!-- 🏷️ Теги -->
       <label>🏷️ Теги (через пробіл):</label>
       <input type="text" id="productTags" placeholder="labubu glow ручна робота">
 
-      <!-- Зображення -->
+      <!-- 🖼️ Зображення -->
       <label>🖼️ Зображення товару:</label>
       <div id="imageInputs">
         <input type="text" class="image-url" placeholder="img/example.jpg">
       </div>
       <button type="button" onclick="addImageInput()">➕ Додати зображення</button>
 
-      <!-- Орієнтовні ціни -->
+      <!-- 📊 Орієнтовні ціни -->
       <label>📊 Орієнтовні ціни реалізації:</label>
       <textarea id="manualPrices" rows="4" placeholder="80мм + однотонний = 150 грн"></textarea>
 
-      <!-- Сохранение -->
+      <!-- 💾 Сохранение -->
       <button type="submit">💾 Зберегти товар</button>
     </form>
   `;
-};
-//==JS-функция addImageInput()📌 Позволяет добавлять любое количество изображений.
-window.addImageInput = function() {
+}
+
+// == 🖼️ Добавление новых полей для изображений == //
+export function addImageInput() {
   const container = document.getElementById("imageInputs");
   const input = document.createElement("input");
   input.type = "text";
   input.className = "image-url";
   input.placeholder = "img/example.jpg";
   container.appendChild(input);
+}
+
+// == 📥 Обработка формы добавления товара == //
+export function setupProductFormHandler() {
+  const form = document.getElementById("productForm");
+  if (!form) return;
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault(); // ⛔ Отключаем стандартную отправку
+
+    // 🧱 Считываем значения
+    const data = {
+      name: form.querySelector("#productName").value.trim(),
+      description: form.querySelector("#productDescription").value.trim(),
+      feature: form.querySelector("#productFeature").value.trim(),
+      basePrice: parseFloat(form.querySelector("#basePrice").value),
+      size80: parseFloat(form.querySelector("#size80").value) || "",
+      size100: parseFloat(form.querySelector("#size100").value) || "",
+      size120: parseFloat(form.querySelector("#size120").value) || "",
+      plastic1: parseFloat(form.querySelector("#plastic1").value) || "",
+      plastic2: parseFloat(form.querySelector("#plastic2").value) || "",
+      plastic3: parseFloat(form.querySelector("#plastic3").value) || "",
+      tags: form.querySelector("#productTags").value.trim().split(" "),
+      images: Array.from(form.querySelectorAll(".image-url"))
+        .map(input => input.value.trim())
+        .filter(src => src !== ""),
+      manualPrices: form.querySelector("#manualPrices").value.trim()
+    };
+
+    // 🧩 Генерация карточки (заглушка)
+    const cardHTML = `<div class="product-card">
+      <h3>${data.name}</h3>
+      <p>${data.description}</p>
+      <p><strong>Ціна:</strong> ${data.basePrice} грн</p>
+      <p><strong>Теги:</strong> ${data.tags.join(", ")}</p>
+    </div>`;
+
+    // 🗂️ Добавление в список товаров (если есть контейнер)
+    const grid = document.getElementById("productGrid");
+    if (grid) {
+      grid.insertAdjacentHTML("beforeend", cardHTML);
+    }
+
+    alert("✅ Товар додано!");
+    form.reset(); // 🔄 Очистка формы
+  });
+}
 };
