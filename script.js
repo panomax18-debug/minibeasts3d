@@ -369,15 +369,22 @@ function closeModal() {
 
 
 document.addEventListener("DOMContentLoaded", () => {
-  // 🔍 Навешиваем фильтр по тегам
+  // 🔍 Навішування фільтра по тегам з повторною перевіркою
   const input = document.getElementById("searchInput");
-  if (input && typeof filterProducts === "function") {
-    input.addEventListener("input", filterProducts);
-  } else {
-    console.warn("⚠️ Не вдалося навісити фільтр.");
-  }
 
-  // 🔄 Переключение категорий: ready / custom
+  const tryAttachFilter = () => {
+    if (input && typeof window.filterProducts === "function") {
+      input.addEventListener("input", window.filterProducts);
+      console.log("✅ Фільтр навішено успішно.");
+    } else {
+      console.warn("⚠️ filterProducts ще не визначена. Повторна спроба через 200мс...");
+      setTimeout(tryAttachFilter, 200);
+    }
+  };
+
+  tryAttachFilter();
+
+  // 🔄 Переключення категорій: ready / custom
   const customOrderSection = document.getElementById("custom-order");
   const btnReady = document.getElementById("btnReady");
   const btnCustom = document.getElementById("btnCustom");
@@ -410,6 +417,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.warn("⚠️ Кнопка #btnCustom не знайдена.");
   }
 });
+    
 
 
 
