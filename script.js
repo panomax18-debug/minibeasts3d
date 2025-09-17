@@ -709,10 +709,13 @@ export function addImageInput() {
 // == 📥 Обработка формы добавления товара == //
 export function setupProductFormHandler() {
   const form = document.getElementById("productForm");
-  if (!form) return;
+  if (!form) {
+    console.warn("⚠️ Форма не знайдена — setupProductFormHandler не виконується.");
+    return;
+  }
 
   form.addEventListener("submit", function (e) {
-    e.preventDefault(); // ⛔ Отключаем стандартную отправку
+    e.preventDefault();
 
     // 🧱 Считываем значения
     const data = {
