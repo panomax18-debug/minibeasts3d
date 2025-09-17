@@ -417,7 +417,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.warn("⚠️ Кнопка #btnCustom не знайдена.");
   }
 });
-    
+
 
 
 
