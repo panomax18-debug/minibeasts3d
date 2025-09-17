@@ -468,28 +468,30 @@ console.log("📋 Значення форми:", {
   };
 
   const orderData = {
-    items: cart.map(item => ({
-      name: item.name,
-      size: item.size,
-      material: item.plastic,
-      quantity: item.quantity,
-      price: item.price * item.quantity
-    })),
-    payment: document.querySelector('input[name="paymentMethod"]:checked')?.value || "card",
-    delivery: {
-      city: document.getElementById("cityInput").value.trim(),
-      service: document.getElementById("deliveryService").value,
-      branch: document.getElementById("branchInput").value.trim()
-    },
-    customer: {
-      fullName: document.getElementById("nameInput").value.trim(),
-      phone: document.getElementById("phoneInput").value.trim()
-    },
-    telegramUser: telegramUser,
-    total: calculateTotal(cart),
-    timestamp: new Date().toISOString(),
-    status: "pending"
-  };
+  contact: {
+    name: document.getElementById("nameInput").value.trim(),
+    phone: document.getElementById("phoneInput").value.trim()
+  },
+  delivery: {
+    city: document.getElementById("cityInput").value.trim(),
+    service: document.getElementById("deliveryService").value,
+    branch: document.getElementById("branchInput").value.trim()
+  },
+  order: cart.map(item => ({
+    name: item.name,
+    size: item.size,
+    plastic: item.plastic,
+    quantity: item.quantity,
+    price: item.price,
+    comment: item.comment || ""
+  })),
+  telegramUser,
+  paymentMethod: document.querySelector('input[name="paymentMethod"]:checked')?.value || "card",
+  total: calculateTotal(cart),
+  timestamp: new Date().toISOString(),
+  status: "pending"
+};
+
 
   // ✅ Валидация обязательных полей
   if (
