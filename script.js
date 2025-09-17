@@ -1,5 +1,7 @@
 let cart = [];
 let currentProduct = null;
+let currentSlideIndex = 0;
+let currentSliderImages = [];
 
 // === Привязка Firestore ===
 
@@ -139,6 +141,30 @@ window.openModal = function(src) {
   const modalImg = document.getElementById("modalImage");
   modalImg.src = src;
   modal.style.display = "flex";
+
+  // Найти текущий слайдер и все его изображения
+  const allSliders = document.querySelectorAll(".slider");
+  for (const slider of allSliders) {
+    const slides = slider.querySelectorAll(".slide");
+    const index = Array.from(slides).findIndex(img => img.src === src);
+    if (index !== -1) {
+      currentSliderImages = Array.from(slides);
+      currentSlideIndex = index;
+      break;
+    }
+  }
+};
+
+window.showNextModalImage = function() {
+  if (!currentSliderImages.length) return;
+  currentSlideIndex = (currentSlideIndex + 1) % currentSliderImages.length;
+  document.getElementById("modalImage").src = currentSliderImages[currentSlideIndex].src;
+};
+
+window.showPrevModalImage = function() {
+  if (!currentSliderImages.length) return;
+  currentSlideIndex = (currentSlideIndex - 1 + currentSliderImages.length) % currentSliderImages.length;
+  document.getElementById("modalImage").src = currentSliderImages[currentSlideIndex].src;
 };
 
 // === ❌ Закрытие модального окна ===

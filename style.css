@@ -292,6 +292,25 @@
       opacity: 1;
     }
 
+.modal-prev, .modal-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.8);
+  border: none;
+  font-size: 2rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  z-index: 10000;
+}
+
+.modal-prev { left: 20px; }
+.modal-next { right: 20px; }
+
+.modal-prev:hover, .modal-next:hover {
+  background: rgba(255,255,255,1);
+}
+
 
     .modal-content {
       background: #fff;

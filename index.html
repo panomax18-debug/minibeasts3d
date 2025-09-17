@@ -20,8 +20,11 @@
 
 
 <div id="imageModal" class="modal" style="display:none;" onclick="closeImageModal()">
+  <button class="modal-prev" onclick="event.stopPropagation(); showPrevModalImage()">←</button>
   <img id="modalImage" src="" alt="Перегляд зображення">
+  <button class="modal-next" onclick="event.stopPropagation(); showNextModalImage()">→</button>
 </div>
+
 
 
 
