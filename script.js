@@ -112,8 +112,8 @@ function filterByType(type) {
 
 window.filterByType = filterByType;
 
-
-function nextSlide(button) {
+// === ⬅️➡️ Переключение слайдов ===
+window.nextSlide = function(button) {
   const slider = button.parentElement;
   const slides = slider.querySelectorAll('.slide');
   let currentIndex = Array.from(slides).findIndex(slide => slide.classList.contains('active'));
@@ -121,9 +121,9 @@ function nextSlide(button) {
   slides.forEach(slide => slide.classList.remove('active'));
   const nextIndex = (currentIndex + 1) % slides.length;
   slides[nextIndex].classList.add('active');
-}
+};
 
-function prevSlide(button) {
+window.prevSlide = function(button) {
   const slider = button.parentElement;
   const slides = slider.querySelectorAll('.slide');
   let currentIndex = Array.from(slides).findIndex(slide => slide.classList.contains('active'));
@@ -131,19 +131,21 @@ function prevSlide(button) {
   slides.forEach(slide => slide.classList.remove('active'));
   const prevIndex = (currentIndex - 1 + slides.length) % slides.length;
   slides[prevIndex].classList.add('active');
-}
+};
 
-
-function openModal(src) {
+// === 🖼️ Открытие модального окна ===
+window.openModal = function(src) {
   const modal = document.getElementById("imageModal");
   const modalImg = document.getElementById("modalImage");
   modalImg.src = src;
   modal.style.display = "flex";
-}
+};
 
-function closeImageModal() {
+// === ❌ Закрытие модального окна ===
+window.closeImageModal = function() {
   document.getElementById("imageModal").style.display = "none";
-}
+};
+
 
 function addToCart(name, price) {
   cart.push({ name, price });
