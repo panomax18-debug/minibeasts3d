@@ -4,24 +4,23 @@
   <meta charset="UTF-8">
   <title>Admin Panel | MiniBeasts 3D</title>
   <link rel="stylesheet" href="style.css">
-  <!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js"></script>
 
-<script>
-  const firebaseConfig = {
-  apiKey: "AIzaSyA2TAQM23nj7VOiHPv8HgDuXdWV_OVjX7A",
-  authDomain: "minibeasts-3d.firebaseapp.com",
-  projectId: "minibeasts-3d",
-  storageBucket: "minibeasts-3d.firebasestorage.app",
-  messagingSenderId: "192684036080",
-  appId: "1:192684036080:web:c306f5de3f62ef87199735",
-  measurementId: "G-MHG9HCXRCB"
-};
+  <!-- ✅ Firebase SDK v8 (без модулей) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
-  firebase.initializeApp(firebaseConfig);
-</script>
-
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyA2TAQM23nj7VOiHPv8HgDuXdWV_OVjX7A",
+      authDomain: "minibeasts-3d.firebaseapp.com",
+      projectId: "minibeasts-3d",
+      storageBucket: "minibeasts-3d.firebasestorage.app",
+      messagingSenderId: "192684036080",
+      appId: "1:192684036080:web:c306f5de3f62ef87199735",
+      measurementId: "G-MHG9HCXRCB"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
 </head>
 <body>
 
@@ -29,45 +28,21 @@
   <section id="adminPanel">
     <h1>🔧 Панель адміністратора</h1>
 
-    <!-- 📌 Навигация между модулями -->
+    <!-- 📌 Навігація між модулями -->
     <nav class="admin-nav">
       <button onclick="showAddProductForm()">➕ Додати товар</button>
       <button onclick="showProductList()">📦 Всі товари</button>
       <button onclick="showOrderList()">📨 Замовлення</button>
     </nav>
 
-    <!-- 📦 Контентная зона: сюда подгружаются формы и списки -->
+    <!-- 📦 Контентна зона -->
     <div id="adminContent">
-      <h2>📨 Замовлення</h2>
-<p>Нижче відображаються всі заявки, які надійшли через форму або були додані вручну.</p>
-
-<div id="orderList" class="order-list">
-  <!-- Тут буде список замовлень -->
-</div>
-
       <p>👈 Виберіть дію з меню вище</p>
     </div>
   </section>
 
-  <!-- ✅ Единый импорт из GitHub -->
-<script type="module">
-  import {
-    showAddProductForm,
-    showProductList,
-    showOrderList,
-    addImageInput,
-    filterProducts
-  } from './admin.js';
-
-  window.showAddProductForm = showAddProductForm;
-  window.showProductList = showProductList;
-  window.showOrderList = showOrderList;
-  window.addImageInput = addImageInput;
-  window.filterProducts = filterProducts;
-</script>
-
-
-
+  <!-- ✅ Подключение admin.js как обычного скрипта -->
+  <script src="admin.js"></script>
 
 </body>
 </html>

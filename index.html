@@ -4,12 +4,25 @@
   <meta charset="UTF-8">
   <title>MiniBeasts 3D | Kyiv-based 3D Toy Studio</title>
   <link rel="stylesheet" href="style.css">
-  <!-- Firebase SDK -->
-<script type="module" src="https://panomax18-debug.github.io/minibeasts3d/script.js"></script>
 
+  <!-- ✅ Firebase SDK v8 (без модулей) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
-
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyA2TAQM23nj7VOiHPv8HgDuXdWV_OVjX7A",
+      authDomain: "minibeasts-3d.firebaseapp.com",
+      projectId: "minibeasts-3d",
+      storageBucket: "minibeasts-3d.firebasestorage.app",
+      messagingSenderId: "192684036080",
+      appId: "1:192684036080:web:c306f5de3f62ef87199735",
+      measurementId: "G-MHG9HCXRCB"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
 </head>
+
 
 <body>
   <header>
@@ -18,140 +31,78 @@
     <p>Kyiv-based 3D Toy Studio</p>
   </header>
 
-
-<div id="imageModal" class="modal" style="display:none;" onclick="closeImageModal()">
-  <button class="modal-prev" onclick="event.stopPropagation(); showPrevModalImage()">←</button>
-  <img id="modalImage" src="" alt="Перегляд зображення">
-  <button class="modal-next" onclick="event.stopPropagation(); showNextModalImage()">→</button>
-</div>
-
-
-
-
-    <main>
-  <section class="categories">
-    <button id="btnReady">🧸 Готові вироби</button>
-    <button id="btnCustom">🛠 Друк на замовлення</button>
-  </section>
-
-<section id="ready-products" class="visible">
-   <h2>🧸 Готові вироби</h2>
- <div class="filters">
-     <input type="text" id="searchInput" placeholder="🔍 Пошук товару..." oninput="filterProducts()">
-  <button onclick="filterByType('all')">Усі</button>
-  <button onclick="filterByType('labubu')">Labubu</button>
-  <button onclick="filterByType('cat')">Коти</button>
-  <button onclick="filterByType('set')">Набори</button>
-  <button onclick="filterByType('effect')">Ефекти</button>
-</div>
-
-
-    <!--// начало списка товаров -->
-
-    <!--// 1 товар-->
-  <div id="productGrid">
-    <div class="product-card night labubu">
-      <div class="config" style="display:none;">
-    <span class="base">150</span>           <!-- 💰 Базова ціна товару -->
-    <span class="size80">1.0</span>         <!-- 📏 Націнка для розміру 80 мм -->
-    <span class="size100">1.6667</span>        <!-- 📏 Націнка для розміру 100 мм -->
-    <span class="size120">3.0</span>        <!-- 📏 Націнка для розміру 120 мм -->
-    <span class="plastic1">1.0</span>       <!-- 🎨 Однотонний пластик -->
-    <span class="plastic2">1.05</span>      <!-- 🎨 Двоколірний пластик -->
-    <span class="plastic3">1.15</span>      <!-- 🎨 Триколірний пластик -->
+  <!-- 🖼️ Модальне вікно для перегляду зображень -->
+  <div id="imageModal" class="modal" style="display:none;" onclick="closeImageModal()">
+    <button class="modal-prev" onclick="event.stopPropagation(); showPrevModalImage()">←</button>
+    <img id="modalImage" src="" alt="Перегляд зображення">
+    <button class="modal-next" onclick="event.stopPropagation(); showNextModalImage()">→</button>
   </div>
-  <div class="slider">
-    <img src="img/glow-1.jpg" class="slide active" onclick="openModal(this.src)">
-    <img src="img/glow-2.jpg" class="slide" onclick="openModal(this.src)">
-       <button class="prev" onclick="prevSlide(this)">←</button>
-    <button class="next" onclick="nextSlide(this)">→</button>
-  </div>
-  <h3>Labubu яка світиться в темряві</h3>
-  <p>PLA Black, 8см</p>
-  <p><strong>Особливість:</strong> Світиться в темряві</p>
-  <p>Ціна: 150 грн</p>
 
-  <div class="tags" style="display:none;">
-    labubu світиться в темряві glow ручна робота
-  </div>
-  <button onclick="openCustomizationModal(this)">📊 Розрахувати вартість</button>
-</div>
+  <main>
+    <!-- 🔘 Перемикач категорій -->
+    <section class="categories">
+      <button id="btnReady">🧸 Готові вироби</button>
+      <button id="btnCustom">🛠 Друк на замовлення</button>
+    </section>
 
+    <!-- 🧸 Готові вироби -->
+    <section id="ready-products" class="visible">
+      <h2>🧸 Готові вироби</h2>
 
-    <!--// 2 товар-->
-    <div class="product-card labubu set effect silk">
-      <div class="config" style="display:none;">
-    <span class="base">500</span>           <!-- 💰 Базова ціна товару -->
-    <span class="size80">0.9</span>         <!-- 📏 Націнка для розміру 80 мм -->
-    <span class="size100">1.0</span>        <!-- 📏 Націнка для розміру 100 мм -->
-    <span class="size120">1.2</span>        <!-- 📏 Націнка для розміру 120 мм -->
-    <span class="plastic1">1.0</span>       <!-- 🎨 Однотонний пластик -->
-    <span class="plastic2">1.05</span>      <!-- 🎨 Двоколірний пластик -->
-    <span class="plastic3">1.15</span>      <!-- 🎨 Триколірний пластик -->
-  </div>
-      <div class="badge">🔥 Хіт продажу</div>
-  <div class="slider">
-    <img src="img/labubu-set-1.jpg" class="slide active" onclick="openModal(this.src)">
-    <img src="img/labubu-set-2.jpg" class="slide" onclick="openModal(this.src)">
-    <img src="img/labubu-set-3.jpg" class="slide" onclick="openModal(this.src)">
-    <button class="prev" onclick="prevSlide(this)">←</button>
-    <button class="next" onclick="nextSlide(this)">→</button>
-  </div>
-  <h3>Набір Labubu — шовковий трьохкольоровий</h3>
-  <p>PLA Silk, 8–10 см, набір з 3 фігурок</p>
-  <p><strong>Особливість:</strong> шовковий перелив, трьохкольорові текстури</p>
-  <p>Ціна: 500 грн</p>
+      <div class="filters">
+        <input type="text" id="searchInput" placeholder="🔍 Пошук товару..." oninput="filterProducts()">
+        <button onclick="filterByType('all')">Усі</button>
+        <button onclick="filterByType('labubu')">Labubu</button>
+        <button onclick="filterByType('cat')">Коти</button>
+        <button onclick="filterByType('set')">Набори</button>
+        <button onclick="filterByType('effect')">Ефекти</button>
+      </div>
 
-  <div class="tags" style="display:none;">
-    labubu набір silk шовковий трихвостиковий glow ручна робота хорейчик
-  </div>
-  <button onclick="openCustomizationModal(this)">📊 Розрахувати вартість</button>
-</div>
-    </div>
+      <!-- 📦 Сюди завантажуються товари з Firebase -->
+      <div id="productGrid"></div>
+    </section>
+  </main>
+</body>
 
-
-
-
- <!--конец списка товаров-->
-  </section>
-
-  <div id="checkoutOverlay" class="overlay" style="display:none;">
-    <div class="checkout-modal">
-      <button onclick="closeCheckout()" class="close-btn">❌</button>
-
+<div id="checkoutOverlay" class="overlay" style="display:none;">
+  <div class="checkout-modal">
+    <button onclick="closeCheckout()" class="close-btn">❌</button>
+    <form id="checkoutForm">
       <h3>Оберіть спосіб оплати:</h3>
       <label><input type="radio" name="paymentMethod" value="card" checked> 💳 На карту</label><br>
       <label><input type="radio" name="paymentMethod" value="ton"> 🪙 TON</label><br><br>
 
       <h3>Доставка</h3>
-      <input id="cityInput" placeholder="Місто"><br>
-      <select id="deliveryService">
+      <input id="cityInput" placeholder="Місто" required><br>
+      <select id="deliveryService" required>
+        <option value="" disabled selected>Оберіть службу доставки</option>
         <option value="nova">Нова Пошта</option>
         <option value="ukr">Укрпошта</option>
       </select><br>
-      <input id="branchInput" placeholder="Відділення"><br><br>
+      <input id="branchInput" placeholder="Відділення" required><br><br>
 
       <h3>Контактна інформація</h3>
-      <input id="nameInput" placeholder="ПІБ отримувача"><br>
-      <input id="phoneInput" placeholder="+380 __ ___ __ __"><br><br>
+      <input id="nameInput" placeholder="ПІБ отримувача" required><br>
+      <input id="phoneInput" placeholder="+380 __ ___ __ __" required><br><br>
 
-      <button id="confirmBtn">Підтвердити замовлення</button>
-    </div>
+      <button id="confirmBtn" type="submit">Підтвердити замовлення</button>
+    </form>
   </div>
+</div>
 
 
 
-
-
-  <section id="custom-order" class="custom-order-section" style="display: none;">
+<section id="custom-order" class="custom-order-section" style="display: none;">
   <h2>🛠 Друк на замовлення</h2>
-  <form id="orderForm">
+  <form id="orderForm" enctype="multipart/form-data">
     <label for="fileInput">📤 STL-файл або зображення</label><br>
     <input type="file" id="fileInput" name="file" accept=".stl,image/*"><br><br>
-<label for="contactInput">📱 Контакт для зв'язку (телефон або Telegram):</label><br>
-<input type="text" id="contactInput" name="contact" placeholder="+380... або @username"><br><br>
+
+    <label for="contactInput">📱 Контакт для зв'язку (телефон або Telegram):</label><br>
+    <input type="text" id="contactInput" name="contact" placeholder="+380... або @username" required><br><br>
+
     <label for="commentInput">💬 Коментар:</label><br>
-    <textarea id="commentInput" name="comment" rows="4" placeholder="Опишіть розмір, тип пластику, колір, доставку та контакти"></textarea><br><br>
+    <textarea id="commentInput" name="comment" rows="4" placeholder="Опишіть розмір, тип пластику, колір, доставку та контакти" required></textarea><br><br>
 
     <button type="submit" class="submit-btn">📨 Відправити заявку</button>
   </form>
@@ -167,16 +118,15 @@
   <button onclick="openCheckout()">✅ Оформити замовлення</button>
 </div>
 
-
-
-  <footer>
-    <p>© 2025 MiniBeasts 3D</p>
-  </footer>
+<footer>
+  <p>© 2025 MiniBeasts 3D</p>
+</footer>
 
 <div id="customModal" class="custom-modal" style="display:none;">
   <div class="modal-content">
     <h3 id="modalTitle">Кастомізація товару</h3>
-    <button class="close-modal" onclick="closeModal()">❌ Закрити</button> <!-- 🔧 Новая кнопка -->
+    <button class="close-modal" onclick="closeModal()">❌ Закрити</button>
+
     <label>📏 Обери розмір (мм):</label>
     <select id="sizeSelect">
       <option value="80">80 мм</option>
@@ -197,15 +147,8 @@
     <p id="finalPrice">Ціна: ... грн</p>
 
     <button id="confirmButton" onclick="confirmCustomization()" style="display:none;">➕ Додати до кошика</button>
-    showToast("🛒 Товар додано до кошика");
-
-
-
-
   </div>
 </div>
-
-
 
 </body>
 </html>

@@ -1,8 +1,8 @@
 // == 📦 МОДУЛЬ АДМІНКИ MiniBeasts 3D == //
-// Все функции экспортируются для использования в admin.html
+// Все функции доступны через window.functionName
 
 // == 🔍 Фільтрація товарів == //
-export function filterProducts() {
+window.filterProducts = function () {
   const input = document.getElementById("searchInput").value.toLowerCase();
   const cards = document.querySelectorAll("#ready-products .product-card");
 
@@ -12,10 +12,10 @@ export function filterProducts() {
     const match = title.includes(input) || tags.includes(input);
     card.style.display = match ? "block" : "none";
   });
-}
+};
 
 // == 🔧 Навигация между модулями == //
-export function showAddProductForm() {
+window.showAddProductForm = function () {
   const container = document.getElementById("adminContent");
   container.innerHTML = generateAddProductForm();
 
@@ -27,9 +27,9 @@ export function showAddProductForm() {
       console.warn("⚠️ Форма не знайдена після вставки.");
     }
   });
-}
+};
 
-export async function showProductList() {
+window.showProductList = async function () {
   const container = document.getElementById("adminContent");
   container.innerHTML = `<h2>📦 Всі товари</h2><div class="admin-product-list">Завантаження...</div>`;
 
@@ -75,11 +75,10 @@ export async function showProductList() {
   });
 
   list.innerHTML = html;
-}
+};
 
-
-// == 🔥 Отображение заказов из Firebase == //
-async function fetchProducts() {
+// == 🔥 Отображення товарів та замовлень з Firebase == //
+window.fetchProducts = async function () {
   try {
     const snapshot = await firebase.firestore().collection("products").orderBy("createdAt", "desc").get();
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -87,14 +86,19 @@ async function fetchProducts() {
     console.error("❌ Помилка при завантаженні товарів:", error);
     return [];
   }
-}
+};
 
-async function fetchOrders() {
-  const snapshot = await firebase.firestore().collection("orders").orderBy("timestamp", "desc").get();
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-}
+window.fetchOrders = async function () {
+  try {
+    const snapshot = await firebase.firestore().collection("orders").orderBy("timestamp", "desc").get();
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    console.error("❌ Помилка при завантаженні замовлень:", error);
+    return [];
+  }
+};
 
-export async function showOrderList() {
+window.showOrderList = async function () {
   const container = document.getElementById("adminContent");
 
   container.innerHTML = `
@@ -148,8 +152,9 @@ export async function showOrderList() {
     `;
     tbody.appendChild(row);
   });
-}
-function renderStatus(code) {
+};
+
+window.renderStatus = function (code) {
   const map = {
     pending: "🟡 Очікує",
     paid: "💳 Оплачено",
@@ -158,12 +163,11 @@ function renderStatus(code) {
     done: "✅ Виконано"
   };
   return map[code] || "—";
-}
+};
 
 
-
-// == 🧱 Генерация форми додавання товару == //
-export function generateAddProductForm() {
+// == 🧱 Генерація форми додавання товару == //
+window.generateAddProductForm = function () {
   return `
     <form id="productForm">
       <h2>➕ Додати новий товар</h2>
@@ -225,44 +229,45 @@ export function generateAddProductForm() {
       </div>
     </form>
   `;
-}
-
-// == 🖼️ Добавление новых полей для изображений == //
-export function addImageInput() {
+};
+// == 🖼️ Додавання нових полів для зображень == //
+window.addImageInput = function () {
   const container = document.getElementById("imageInputs");
   const input = document.createElement("input");
   input.type = "text";
   input.className = "image-url";
   input.placeholder = "img/example.jpg";
   container.appendChild(input);
-}
+};
 
-// == 📥 Обработка форми додавання товару == //
-export function setupProductFormHandler() {
+// == 📥 Обробка форми додавання товару == //
+window.setupProductFormHandler = function () {
   const form = document.getElementById("productForm");
   if (!form) {
     console.warn("⚠️ Форма не знайдена — обробник не підключено.");
     return;
   }
+
   form.addEventListener("submit", function (e) {
     e.preventDefault();
-  const data = {
-    name: form.querySelector("#productName").value.trim(),
-    description: form.querySelector("#productDescription").value.trim(),
-    feature: form.querySelector("#productFeature").value.trim(),
-    basePrice: parseFloat(form.querySelector("#basePrice").value),
-    size80: parseFloat(form.querySelector("#size80").value) || "",
-    size100: parseFloat(form.querySelector("#size100").value) || "",
-    size120: parseFloat(form.querySelector("#size120").value) || "",
-    plastic1: parseFloat(form.querySelector("#plastic1").value) || "",
-    plastic2: parseFloat(form.querySelector("#plastic2").value) || "",
-    plastic3: parseFloat(form.querySelector("#plastic3").value) || "",
-    tags: form.querySelector("#productTags").value.trim().split(" "),
-    images: Array.from(form.querySelectorAll(".image-url"))
-      .map(input => input.value.trim())
-      .filter(src => src !== ""),
-    manualPrices: form.querySelector("#manualPrices").value.trim()
-  };
+
+    const data = {
+      name: form.querySelector("#productName").value.trim(),
+      description: form.querySelector("#productDescription").value.trim(),
+      feature: form.querySelector("#productFeature").value.trim(),
+      basePrice: parseFloat(form.querySelector("#basePrice").value),
+      size80: parseFloat(form.querySelector("#size80").value) || "",
+      size100: parseFloat(form.querySelector("#size100").value) || "",
+      size120: parseFloat(form.querySelector("#size120").value) || "",
+      plastic1: parseFloat(form.querySelector("#plastic1").value) || "",
+      plastic2: parseFloat(form.querySelector("#plastic2").value) || "",
+      plastic3: parseFloat(form.querySelector("#plastic3").value) || "",
+      tags: form.querySelector("#productTags").value.trim().split(" "),
+      images: Array.from(form.querySelectorAll(".image-url"))
+        .map(input => input.value.trim())
+        .filter(src => src !== ""),
+      manualPrices: form.querySelector("#manualPrices").value.trim()
+    };
 
     const cardHTML = `
       <div class="product-card">
@@ -301,4 +306,4 @@ export function setupProductFormHandler() {
     alert("✅ Товар додано!");
     form.reset();
   });
-}
+};
