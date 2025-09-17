@@ -590,3 +590,14 @@
   border: 1px solid #ccc;
   border-radius: 4px;
 }
+.admin-product-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-product-card img {
+  margin-right: 8px;
+  margin-top: 4px;
+  border-radius: 4px;
+}

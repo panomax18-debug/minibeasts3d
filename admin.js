@@ -19,11 +19,39 @@ export function showAddProductForm() {
 
 export function showProductList() {
   const container = document.getElementById("adminContent");
-  container.innerHTML = `
-    <h2>📦 Список товарів</h2>
-    <p>Тут буде таблиця з усіма товарами...</p>
-  `;
+  const cards = document.querySelectorAll("#ready-products .product-card");
+
+  if (!cards.length) {
+    container.innerHTML = `<p>⚠️ Товари не знайдено на сайті.</p>`;
+    return;
+  }
+
+  let html = `<h2>📦 Всі товари на сайті</h2><div class="admin-product-list">`;
+
+  cards.forEach((card, index) => {
+    const name = card.querySelector("h3")?.textContent || "—";
+    const description = card.querySelector("p")?.textContent || "—";
+    const price = card.querySelector("strong")?.nextSibling?.textContent?.trim() || "—";
+    const tags = card.querySelector(".tags")?.textContent || "—";
+    const images = Array.from(card.querySelectorAll("img")).map(img => img.src);
+
+    html += `
+      <div class="admin-product-card">
+        <h3>${index + 1}. ${name}</h3>
+        <p><strong>Опис:</strong> ${description}</p>
+        <p><strong>Ціна:</strong> ${price}</p>
+        <p><strong>Теги:</strong> ${tags}</p>
+        ${images.length ? `<p><strong>Зображення:</strong></p>` : ""}
+        ${images.map(src => `<img src="${src}" width="80">`).join("")}
+      </div>
+      <hr>
+    `;
+  });
+
+  html += `</div>`;
+  container.innerHTML = html;
 }
+
 
 export function showOrderList() {
   const container = document.getElementById("adminContent");
