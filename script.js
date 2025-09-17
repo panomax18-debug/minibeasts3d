@@ -34,6 +34,29 @@ window.Telegram = {
 const tg = window.Telegram.WebApp;
 console.log("📡 Telegram WebApp API:", tg);
 
+// == 🔧 Навигация между модулями == //
+export function showAddProductForm() {
+  const container = document.getElementById("adminContent");
+  container.innerHTML = generateAddProductForm();
+
+  // ⏳ Ждём, пока DOM обновится — безопасный способ
+  requestAnimationFrame(() => {
+    const form = document.getElementById("productForm");
+    if (form) {
+      setupProductFormHandler(); // ✅ вызываем только если форма реально есть
+    } else {
+      console.warn("⚠️ Форма не знайдена в DOM після вставки.");
+    }
+  });
+}
+
+export function showProductList() {
+  document.getElementById("adminContent").innerHTML = "<p>📦 Список товарів...</p>";
+}
+
+export function showOrderList() {
+  document.getElementById("adminContent").innerHTML = "<p>📨 Список замовлень...</p>";
+}
 
 
 
@@ -629,14 +652,7 @@ window.showOrderList = function() {
 // Все функции экспортируются для использования в admin.html
 
 // == 🔧 Навигация между модулями == //
-export function showAddProductForm() {
-  document.getElementById("adminContent").innerHTML = generateAddProductForm();
 
-  // ⏳ Ждём, пока DOM обновится — безопасный способ
-  requestAnimationFrame(() => {
-    setupProductFormHandler();
-  });
-}
 
 export function showProductList() {
   document.getElementById("adminContent").innerHTML = "<p>📦 Список товарів...</p>";
