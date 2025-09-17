@@ -368,22 +368,37 @@ function closeModal() {
 }
 
 
-
 document.addEventListener("DOMContentLoaded", () => {
   const customOrderSection = document.getElementById("custom-order");
+  const btnReady = document.getElementById("btnReady");
+  const btnCustom = document.getElementById("btnCustom");
 
-  document.getElementById("btnReady").addEventListener("click", () => {
-    console.log("🔄 Переключення категорії: ready");
-    openCategory("ready");
-    customOrderSection.style.display = "none"; // скрываем форму
-  });
+  if (!customOrderSection) {
+    console.warn("⚠️ Елемент #custom-order не знайдено.");
+    return;
+  }
 
-  document.getElementById("btnCustom").addEventListener("click", () => {
-    console.log("🔄 Переключення категорії: custom");
-    openCategory("custom");
-    customOrderSection.style.display = "block"; // показываем форму
-  });
+  if (btnReady) {
+    btnReady.addEventListener("click", () => {
+      console.log("🔄 Переключення категорії: ready");
+      openCategory("ready");
+      customOrderSection.style.display = "none";
+    });
+  } else {
+    console.warn("⚠️ Кнопка #btnReady не знайдена.");
+  }
+
+  if (btnCustom) {
+    btnCustom.addEventListener("click", () => {
+      console.log("🔄 Переключення категорії: custom");
+      openCategory("custom");
+      customOrderSection.style.display = "block";
+    });
+  } else {
+    console.warn("⚠️ Кнопка #btnCustom не знайдена.");
+  }
 });
+
 
 
 
