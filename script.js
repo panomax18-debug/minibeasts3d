@@ -620,16 +620,25 @@ export function showAddProductForm() {
   const container = document.getElementById("adminContent");
   container.innerHTML = generateAddProductForm();
 
-  // ⏳ Ждём, пока DOM обновится — безопасный способ
-  requestAnimationFrame(() => {
+  // ⏳ Ждём, пока DOM точно обновится
+  const trySetup = () => {
     const form = document.getElementById("productForm");
     if (form) {
-      setupProductFormHandler(); // ✅ вызываем только если форма реально есть
+      setupProductFormHandler();
     } else {
-      console.warn("⚠️ Форма не знайдена в DOM після вставки.");
+      // 🔁 Пробуем снова через 50мс, максимум 10 раз
+      if (trySetup.attempts < 10) {
+        trySetup.attempts++;
+        setTimeout(trySetup, 50);
+      } else {
+        console.warn("⚠️ Не вдалося знайти форму після вставки.");
+      }
     }
-  });
+  };
+  trySetup.attempts = 0;
+  trySetup();
 }
+
 
 
 
