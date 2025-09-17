@@ -97,11 +97,53 @@ export function showProductList() {
 
 export function showOrderList() {
   const container = document.getElementById("adminContent");
-  container.innerHTML = `
-    <h2>📨 Замовлення</h2>
-    <p>Тут буде список заявок...</p>
-  `;
+
+  const orders = [
+    {
+      name: "Олена",
+      contact: "@elena_art",
+      product: "Labubu світиться в темряві",
+      size: "100 мм",
+      plastic: "двоколірний",
+      comment: "Хочу з ефектом glow, як на фото.",
+      date: "2025-09-17",
+      status: "нове"
+    },
+    {
+      name: "Ігор",
+      contact: "igor@example.com",
+      product: "Набір Labubu",
+      size: "80 мм",
+      plastic: "однотонний",
+      comment: "Можна зробити у шовковому PLA?",
+      date: "2025-09-16",
+      status: "в обробці"
+    }
+  ];
+
+  let html = `<h2>📨 Замовлення</h2><div class="order-list">`;
+
+  orders.forEach((order, index) => {
+    html += `
+      <div class="order-card">
+        <h3>№${index + 1} — ${order.name}</h3>
+        <p><strong>Контакт:</strong> ${order.contact}</p>
+        <p><strong>Товар:</strong> ${order.product}</p>
+        <p><strong>Розмір:</strong> ${order.size}</p>
+        <p><strong>Пластик:</strong> ${order.plastic}</p>
+        <p><strong>Коментар:</strong> ${order.comment}</p>
+        <p><strong>Дата:</strong> ${order.date}</p>
+        <p><strong>Статус:</strong> ${order.status}</p>
+        <button onclick="markAsDone(this)">✅ Виконано</button>
+      </div>
+      <hr>
+    `;
+  });
+
+  html += `</div>`;
+  container.innerHTML = html;
 }
+
 
 // == 🧱 Генерация форми додавання товару == //
 export function generateAddProductForm() {

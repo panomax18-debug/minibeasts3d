@@ -601,3 +601,15 @@
   margin-top: 4px;
   border-radius: 4px;
 }
+.order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.order-card {
+  background: #f9f9f9;
+  padding: 12px;
+  border-radius: 6px;
+  box-shadow: 0 0 4px rgba(0,0,0,0.1);
+}

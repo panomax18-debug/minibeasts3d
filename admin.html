@@ -20,6 +20,13 @@
 
     <!-- 📦 Контентная зона: сюда подгружаются формы и списки -->
     <div id="adminContent">
+      <h2>📨 Замовлення</h2>
+<p>Нижче відображаються всі заявки, які надійшли через форму або були додані вручну.</p>
+
+<div id="orderList" class="order-list">
+  <!-- Тут буде список замовлень -->
+</div>
+
       <p>👈 Виберіть дію з меню вище</p>
     </div>
   </section>
@@ -32,7 +39,7 @@
     showOrderList,
     addImageInput,
     filterProducts
-  } from 'https://panomax18-debug.github.io/minibeasts3d/admin.js';
+  } from './admin.js';
 
   window.showAddProductForm = showAddProductForm;
   window.showProductList = showProductList;
@@ -40,6 +47,7 @@
   window.addImageInput = addImageInput;
   window.filterProducts = filterProducts;
 </script>
+
 
 
 
