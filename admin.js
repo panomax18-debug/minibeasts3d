@@ -31,7 +31,7 @@ export function showAddProductForm() {
 
 export function showProductList() {
   const container = document.getElementById("adminContent");
-  const cards = document.querySelectorAll("#ready-products .product-card");
+  const cards = document.querySelectorAll("#productGrid .product-card");
 
   if (!cards.length) {
     container.innerHTML = `<p>⚠️ Товари не знайдено на сайті.</p>`;
@@ -43,18 +43,46 @@ export function showProductList() {
   cards.forEach((card, index) => {
     const name = card.querySelector("h3")?.textContent || "—";
     const description = card.querySelector("p")?.textContent || "—";
-    const price = card.querySelector("strong")?.nextSibling?.textContent?.trim() || "—";
+    const feature = card.querySelector("p strong")?.nextSibling?.textContent?.trim() || "—";
+    const priceText = Array.from(card.querySelectorAll("p"))
+      .find(p => p.textContent.includes("Ціна"))?.textContent || "—";
+
     const tags = card.querySelector(".tags")?.textContent || "—";
     const images = Array.from(card.querySelectorAll("img")).map(img => img.src);
+
+    const config = {};
+    const configBlock = card.querySelector(".config");
+    if (configBlock) {
+      config.base = configBlock.querySelector(".base")?.textContent || "—";
+      config.size80 = configBlock.querySelector(".size80")?.textContent || "—";
+      config.size100 = configBlock.querySelector(".size100")?.textContent || "—";
+      config.size120 = configBlock.querySelector(".size120")?.textContent || "—";
+      config.plastic1 = configBlock.querySelector(".plastic1")?.textContent || "—";
+      config.plastic2 = configBlock.querySelector(".plastic2")?.textContent || "—";
+      config.plastic3 = configBlock.querySelector(".plastic3")?.textContent || "—";
+    }
 
     html += `
       <div class="admin-product-card">
         <h3>${index + 1}. ${name}</h3>
         <p><strong>Опис:</strong> ${description}</p>
-        <p><strong>Ціна:</strong> ${price}</p>
+        <p><strong>Особливість:</strong> ${feature}</p>
+        <p><strong>${priceText}</strong></p>
         <p><strong>Теги:</strong> ${tags}</p>
+
+        <details>
+          <summary>⚙️ Конфігурація</summary>
+          <ul>
+            <li>💰 Базова ціна: ${config.base} грн</li>
+            <li>📏 Розміри: 80мм = ${config.size80}, 100мм = ${config.size100}, 120мм = ${config.size120}</li>
+            <li>🎨 Пластик: однотонний = ${config.plastic1}, двоколірний = ${config.plastic2}, триколірний = ${config.plastic3}</li>
+          </ul>
+        </details>
+
         ${images.length ? `<p><strong>Зображення:</strong></p>` : ""}
-        ${images.map(src => `<img src="${src}" width="80">`).join("")}
+        <div class="image-preview">
+          ${images.map(src => `<img src="${src}" width="80">`).join("")}
+        </div>
       </div>
       <hr>
     `;
@@ -63,6 +91,7 @@ export function showProductList() {
   html += `</div>`;
   container.innerHTML = html;
 }
+
 
 
 export function showOrderList() {
