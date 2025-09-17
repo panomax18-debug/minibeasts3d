@@ -31,16 +31,13 @@ export function showAddProductForm() {
 
 export function showProductList() {
   const container = document.getElementById("adminContent");
-  const cards = document.querySelectorAll("#productGrid .product-card");
+  const cards = document.querySelectorAll(".product-card");
   console.log("🔍 Знайдено товарів:", cards.length);
-
-
 
   if (!cards.length) {
     container.innerHTML = `<p>⚠️ Товари не знайдено на сайті.</p>`;
     return;
   }
-
   let html = `<h2>📦 Всі товари на сайті</h2><div class="admin-product-list">`;
 
   cards.forEach((card, index) => {
@@ -95,54 +92,78 @@ export function showProductList() {
   container.innerHTML = html;
 }
 
-export function showOrderList() {
+// == 🔥 Отображение заказов из Firebase == //
+async function fetchOrders() {
+  const snapshot = await firebase.firestore().collection("orders").orderBy("timestamp", "desc").get();
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+}
+
+export async function showOrderList() {
   const container = document.getElementById("adminContent");
 
-  const orders = [
-    {
-      name: "Олена",
-      contact: "@elena_art",
-      product: "Labubu світиться в темряві",
-      size: "100 мм",
-      plastic: "двоколірний",
-      comment: "Хочу з ефектом glow, як на фото.",
-      date: "2025-09-17",
-      status: "нове"
-    },
-    {
-      name: "Ігор",
-      contact: "igor@example.com",
-      product: "Набір Labubu",
-      size: "80 мм",
-      plastic: "однотонний",
-      comment: "Можна зробити у шовковому PLA?",
-      date: "2025-09-16",
-      status: "в обробці"
-    }
-  ];
+  container.innerHTML = `
+    <h2>📨 Замовлення</h2>
+    <input type="text" id="orderSearch" placeholder="🔍 Пошук замовлення..." oninput="filterOrders()">
+    <table id="orderTable">
+      <thead>
+        <tr>
+          <th>№</th>
+          <th>Ім’я</th>
+          <th>Телефон</th>
+          <th>Товар</th>
+          <th>Розмір</th>
+          <th>Пластик</th>
+          <th>Коментар</th>
+          <th>Дата</th>
+          <th>Статус</th>
+          <th>Дія</th>
+        </tr>
+      </thead>
+      <tbody id="orderBody"></tbody>
+    </table>
+  `;
 
-  let html = `<h2>📨 Замовлення</h2><div class="order-list">`;
+  const orders = await fetchOrders();
+  const tbody = document.getElementById("orderBody");
 
   orders.forEach((order, index) => {
-    html += `
-      <div class="order-card">
-        <h3>№${index + 1} — ${order.name}</h3>
-        <p><strong>Контакт:</strong> ${order.contact}</p>
-        <p><strong>Товар:</strong> ${order.product}</p>
-        <p><strong>Розмір:</strong> ${order.size}</p>
-        <p><strong>Пластик:</strong> ${order.plastic}</p>
-        <p><strong>Коментар:</strong> ${order.comment}</p>
-        <p><strong>Дата:</strong> ${order.date}</p>
-        <p><strong>Статус:</strong> ${order.status}</p>
-        <button onclick="markAsDone(this)">✅ Виконано</button>
-      </div>
-      <hr>
+    const item = order.order?.[0] || {};
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${index + 1}</td>
+      <td>${order.contact?.name || "—"}</td>
+      <td>${order.contact?.phone || "—"}</td>
+      <td>${item.name || "—"}</td>
+      <td>${item.size || "—"}</td>
+      <td>${item.plastic || "—"}</td>
+      <td>${item.comment || order.customPrints?.comment || "—"}</td>
+      <td>${new Date(order.timestamp).toLocaleDateString()}</td>
+      <td>${renderStatus(order.status)}</td>
+      <td>
+        <select onchange="updateOrderStatus('${order.id}', this.value)">
+          <option value="pending">🟡 Очікує</option>
+          <option value="paid">💳 Оплачено</option>
+          <option value="accepted">📦 В роботі</option>
+          <option value="shipped">🚚 Відправлено</option>
+          <option value="done">✅ Виконано</option>
+        </select>
+        <button onclick="openChat('${order.telegramUser?.username}', '${order.contact?.phone}')">💬</button>
+      </td>
     `;
+    tbody.appendChild(row);
   });
-
-  html += `</div>`;
-  container.innerHTML = html;
 }
+function renderStatus(code) {
+  const map = {
+    pending: "🟡 Очікує",
+    paid: "💳 Оплачено",
+    accepted: "📦 В роботі",
+    shipped: "🚚 Відправлено",
+    done: "✅ Виконано"
+  };
+  return map[code] || "—";
+}
+
 
 
 // == 🧱 Генерация форми додавання товару == //
@@ -227,9 +248,25 @@ export function setupProductFormHandler() {
     console.warn("⚠️ Форма не знайдена — обробник не підключено.");
     return;
   }
-
   form.addEventListener("submit", function (e) {
     e.preventDefault();
+  const data = {
+    name: form.querySelector("#productName").value.trim(),
+    description: form.querySelector("#productDescription").value.trim(),
+    feature: form.querySelector("#productFeature").value.trim(),
+    basePrice: parseFloat(form.querySelector("#basePrice").value),
+    size80: parseFloat(form.querySelector("#size80").value) || "",
+    size100: parseFloat(form.querySelector("#size100").value) || "",
+    size120: parseFloat(form.querySelector("#size120").value) || "",
+    plastic1: parseFloat(form.querySelector("#plastic1").value) || "",
+    plastic2: parseFloat(form.querySelector("#plastic2").value) || "",
+    plastic3: parseFloat(form.querySelector("#plastic3").value) || "",
+    tags: form.querySelector("#productTags").value.trim().split(" "),
+    images: Array.from(form.querySelectorAll(".image-url"))
+      .map(input => input.value.trim())
+      .filter(src => src !== ""),
+    manualPrices: form.querySelector("#manualPrices").value.trim()
+  };
 
     const cardHTML = `
       <div class="product-card">
