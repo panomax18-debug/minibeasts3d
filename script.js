@@ -600,3 +600,90 @@ async function submitCustomPrint(event) {
 
 // === Прив'язка обробника форми ===
 document.getElementById("orderForm").addEventListener("submit", submitCustomPrint);
+
+
+
+
+// === Шаг 2: JS-заглушки в script.js
+window.showAddProductForm = function() {
+  document.getElementById("adminContent").innerHTML = `
+    <h2>➕ Додати новий товар</h2>
+    <p>Тут буде форма додавання товару...</p>
+  `;
+};
+window.showProductList = function() {
+  document.getElementById("adminContent").innerHTML = `
+    <h2>📦 Список товарів</h2>
+    <p>Тут буде таблиця з усіма товарами...</p>
+  `;
+};
+window.showOrderList = function() {
+  document.getElementById("adminContent").innerHTML = `
+    <h2>📨 Замовлення</h2>
+    <p>Тут буде список заявок...</p>
+  `;
+};
+
+// == HTML-форма добавления товара
+window.generateAddProductForm = function() {
+  return `
+    <form id="productForm">
+      <h2>➕ Додати новий товар</h2>
+
+      <!-- Назва -->
+      <label>📛 Назва товару:</label>
+      <input type="text" id="productName" required>
+
+      <!-- Опис -->
+      <label>📄 Опис:</label>
+      <input type="text" id="productDescription">
+
+      <!-- Особливість -->
+      <label>✨ Особливість:</label>
+      <input type="text" id="productFeature">
+
+      <!-- Базова ціна -->
+      <label>💰 Базова ціна (грн):</label>
+      <input type="number" id="basePrice" required>
+
+      <!-- Розміри -->
+      <label>📏 Розміри (коеф.):</label>
+      <input type="number" id="size80" placeholder="80 мм">
+      <input type="number" id="size100" placeholder="100 мм">
+      <input type="number" id="size120" placeholder="120 мм">
+
+      <!-- Типи пластику -->
+      <label>🎨 Типи пластику (коеф.):</label>
+      <input type="number" id="plastic1" placeholder="Однотонний">
+      <input type="number" id="plastic2" placeholder="Двоколірний">
+      <input type="number" id="plastic3" placeholder="Триколірний">
+
+      <!-- Теги -->
+      <label>🏷️ Теги (через пробіл):</label>
+      <input type="text" id="productTags" placeholder="labubu glow ручна робота">
+
+      <!-- Зображення -->
+      <label>🖼️ Зображення товару:</label>
+      <div id="imageInputs">
+        <input type="text" class="image-url" placeholder="img/example.jpg">
+      </div>
+      <button type="button" onclick="addImageInput()">➕ Додати зображення</button>
+
+      <!-- Орієнтовні ціни -->
+      <label>📊 Орієнтовні ціни реалізації:</label>
+      <textarea id="manualPrices" rows="4" placeholder="80мм + однотонний = 150 грн"></textarea>
+
+      <!-- Сохранение -->
+      <button type="submit">💾 Зберегти товар</button>
+    </form>
+  `;
+};
+//==JS-функция addImageInput()📌 Позволяет добавлять любое количество изображений.
+window.addImageInput = function() {
+  const container = document.getElementById("imageInputs");
+  const input = document.createElement("input");
+  input.type = "text";
+  input.className = "image-url";
+  input.placeholder = "img/example.jpg";
+  container.appendChild(input);
+};

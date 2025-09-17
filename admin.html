@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel | MiniBeasts 3D</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Подключаем основной JS -->
+  <script src="script.js" defer></script>
+</head>
+<body>
+
+  <!-- 🔧 Панель адміністратора -->
+  <section id="adminPanel">
+    <h1>🔧 Панель адміністратора</h1>
+
+    <!-- 📌 Навигация между модулями -->
+    <nav class="admin-nav">
+      <button onclick="showAddProductForm()">➕ Додати товар</button>
+      <button onclick="showProductList()">📦 Всі товари</button>
+      <button onclick="showOrderList()">📨 Замовлення</button>
+    </nav>
+
+    <!-- 📦 Контентная зона: сюда подгружаются формы и списки -->
+    <div id="adminContent">
+      <p>👈 Виберіть дію з меню вище</p>
+    </div>
+  </section>
+
+</body>
+</html>
