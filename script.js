@@ -127,6 +127,17 @@ function filterByType(type) {
 
 window.filterByType = filterByType;
 
+window.filterByType = function (tag) {
+  const cards = document.querySelectorAll("#productGrid .product-card");
+
+  cards.forEach(card => {
+    const tags = card.querySelector(".tags")?.textContent || "";
+    card.style.display = (tag === "all" || tags.includes(tag)) ? "block" : "none";
+  });
+};
+
+
+
 // === ⬅️➡️ Переключение слайдов ===
 window.nextSlide = function(button) {
   const slider = button.parentElement;
@@ -368,7 +379,23 @@ function confirmCustomization() {
 function closeModal() {
   document.getElementById("customModal").style.display = "none";
 }
+// == 🔧 Переключення категорій ==
+window.openCategory = function (category) {
+  const ready = document.getElementById("ready-products");
+  const custom = document.getElementById("custom-order");
 
+  if (category === "ready") {
+    ready.classList.add("visible");
+    ready.classList.remove("hidden");
+    custom.classList.add("hidden");
+    custom.classList.remove("visible");
+  } else {
+    custom.classList.add("visible");
+    custom.classList.remove("hidden");
+    ready.classList.add("hidden");
+    ready.classList.remove("visible");
+  }
+};
 
 document.addEventListener("DOMContentLoaded", () => {
   // 🔍 Навішування фільтра по тегам
