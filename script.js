@@ -411,36 +411,41 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  firebase.firestore().collection("products").orderBy("timestamp", "desc").get()
-    .then(snapshot => {
-      snapshot.forEach(doc => {
-        const data = doc.data();
+firebase.firestore().collection("products").orderBy("timestamp", "desc").get()
+  .then(snapshot => {
+    snapshot.forEach(doc => {
+      const data = doc.data();
 
-        const cardHTML = `
-          <div class="product-card">
-            <div class="slider">
-              ${data.images.map((src, i) => `
-                <img src="${src}" class="slide${i === 0 ? ' active' : ''}" onclick="openModal(this.src)">
-              `).join("")}
-              <button class="prev" onclick="prevSlide(this)">←</button>
-              <button class="next" onclick="nextSlide(this)">→</button>
-            </div>
-
-            <h3>${data.name}</h3>
-            <p>${data.description}</p>
-            <p><strong>Особливість:</strong> ${data.feature}</p>
-            <p><strong>Ціна:</strong> ${data.basePrice} грн</p>
-            <button onclick="openCustomizationModal(this)">📊 Розрахувати вартість</button>
+      const cardHTML = `
+        <div class="product-card">
+          <div class="slider">
+            ${data.images.map((src, i) => `
+              <img src="${src}" class="slide${i === 0 ? ' active' : ''}" onclick="openModal(this.src)">
+            `).join("")}
+            <button class="prev" onclick="prevSlide(this)">←</button>
+            <button class="next" onclick="nextSlide(this)">→</button>
           </div>
-        `;
 
-        grid.insertAdjacentHTML("beforeend", cardHTML);
-      });
-    })
-    .catch(err => {
-      console.error("❌ Помилка завантаження товарів:", err.message);
+          <h3>${data.name}</h3>
+          <p>${data.description}</p>
+          <p><strong>Особливість:</strong> ${data.feature}</p>
+          <p><strong>Ціна:</strong> ${data.basePrice} грн</p>
+          <button onclick="openCustomizationModal(this)">📊 Розрахувати вартість</button>
+        </div>
+      `;
+
+      const isCustom = !!data.size80 || !!data.plastic1 || !!data.manualPrices;
+      const containerId = isCustom ? "custom-order" : "ready-products";
+      const container = document.getElementById(containerId);
+      if (container) {
+        container.insertAdjacentHTML("beforeend", cardHTML);
+      }
     });
-});
+  })
+  .catch(err => {
+    console.error("❌ Помилка завантаження товарів:", err.message);
+  });
+
 
 
 
