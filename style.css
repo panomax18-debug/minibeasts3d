@@ -613,3 +613,22 @@
   border-radius: 6px;
   box-shadow: 0 0 4px rgba(0,0,0,0.1);
 }
+.filter-button.active-filter {
+  background-color: #222;
+  color: #fff;
+  border: 1px solid #444;
+}
+#stlUploadForm {
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #ccc;
+  background: #f9f9f9;
+}
+
+#stlUploadForm input,
+#stlUploadForm button {
+  display: block;
+  margin-bottom: 10px;
+  width: 100%;
+  padding: 8px;
+}

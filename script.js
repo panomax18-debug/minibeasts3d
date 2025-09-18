@@ -4,8 +4,7 @@ let currentSlideIndex = 0;
 let currentSliderImages = [];
 
 // === Привязка Firestore ===
-
-import { filterProducts } from './admin.js'; // или абсолютный путь, если нужен
+// import удалён — filterProducts уже доступна через window
 
 const firebaseConfig = {
   apiKey: "AIzaSyA2TAQM23nj7VOiHPv8HgDuXdWV_OVjX7A",
@@ -28,10 +27,8 @@ window.Telegram = {
 const tg = window.Telegram.WebApp;
 console.log("📡 Telegram WebApp API:", tg);
 
-
-
 // == 🔧 Навигация между модулями == //
-export function showAddProductForm() {
+window.showAddProductForm = function () {
   const container = document.getElementById("adminContent");
   container.innerHTML = generateAddProductForm();
 
@@ -52,15 +49,15 @@ export function showAddProductForm() {
   };
   trySetup.attempts = 0;
   trySetup();
-}
+};
 
-export function showProductList() {
+window.showProductList = function () {
   document.getElementById("adminContent").innerHTML = "<p>📦 Список товарів...</p>";
-}
+};
 
-export function showOrderList() {
+window.showOrderList = function () {
   document.getElementById("adminContent").innerHTML = "<p>📨 Список замовлень...</p>";
-}
+};
 
 
 
@@ -114,7 +111,17 @@ window.filterByType = function (tag) {
     const tags = card.querySelector(".tags")?.textContent || "";
     card.style.display = (tag === "all" || tags.includes(tag)) ? "block" : "none";
   });
+
+  // 🎨 Обновляем активную кнопку фильтра
+  const buttons = document.querySelectorAll(".filter-button");
+  buttons.forEach(btn => {
+    btn.classList.remove("active-filter");
+    if (btn.dataset.tag === tag) {
+      btn.classList.add("active-filter");
+    }
+  });
 };
+
 
 
 
@@ -509,52 +516,52 @@ const orderData = {
 
 
   // ✅ Валидация обязательных полей
-  if (
-    !orderData.customer.fullName ||
-    !orderData.customer.phone ||
-    !orderData.delivery.city ||
-    !orderData.delivery.branch
-  ) {
-    showToast("⚠️ Заповніть усі поля перед підтвердженням замовлення");
-    return;
-  }
-
-  // 🧼 Удаление undefined/null-полей из telegramUser
-  Object.keys(orderData.telegramUser).forEach(key => {
-    if (orderData.telegramUser[key] === null || orderData.telegramUser[key] === undefined) {
-      delete orderData.telegramUser[key];
-    }
-  });
-
-  // 🧾 Логирование перед отправкой
-  console.log("📤 Відправка замовлення:", orderData);
-
-  // 🧾 Сохраняем заказ в Firestore
-  submitOrder(orderData);
-
-  // 📡 Отправка в Telegram WebApp
-  tg.sendData(JSON.stringify(orderData));
-
-  // 💳 Реквизиты оплаты
-  if (orderData.payment === "card") {
-    showToast("💳 Оплата на карту:\n4441 1144 1619 6630\nПризначення: MiniBeasts 3D");
-  }
-
-  if (orderData.payment === "ton") {
-    showToast("🪙 TON-переказ:\nhttps://tonkeeper.app/transfer/...");
-  }
-
-  // ✅ Закрываем overlay сразу
-  closeCheckout();
-
-  // ✅ Финальное подтверждение и закрытие WebApp
-  setTimeout(() => {
-    showToast("✅ Замовлення надіслано!");
-    cart = [];
-    updateCart();
-    tg.close();
-  }, 1500);
+if (
+  !orderData.contact.name ||
+  !orderData.contact.phone ||
+  !orderData.delivery.city ||
+  !orderData.delivery.branch
+) {
+  showToast("⚠️ Заповніть усі поля перед підтвердженням замовлення");
+  return;
 }
+
+// 🧼 Удаление undefined/null-полей из telegramUser
+Object.keys(orderData.telegramUser).forEach(key => {
+  if (orderData.telegramUser[key] === null || orderData.telegramUser[key] === undefined) {
+    delete orderData.telegramUser[key];
+  }
+});
+
+// 🧾 Логирование перед отправкой
+console.log("📤 Відправка замовлення:", orderData);
+
+// 🧾 Сохраняем заказ в Firestore
+submitOrder(orderData);
+
+// 📡 Отправка в Telegram WebApp
+tg.sendData(JSON.stringify(orderData));
+
+// 💳 Реквизиты оплаты
+if (orderData.paymentMethod === "card") {
+  showToast("💳 Оплата на карту:\n4441 1144 1619 6630\nПризначення: MiniBeasts 3D");
+}
+
+if (orderData.paymentMethod === "ton") {
+  showToast("🪙 TON-переказ:\nhttps://tonkeeper.app/transfer/...");
+}
+
+// ✅ Закрываем overlay сразу
+closeCheckout();
+
+// ✅ Финальное подтверждение и закрытие WebApp
+setTimeout(() => {
+  showToast("✅ Замовлення надіслано!");
+  cart = [];
+  updateCart();
+  tg.close();
+}, 1500);
+
 
 
 // === Привязка обработчиков ===
@@ -674,3 +681,9 @@ async function submitCustomPrint(event) {
 
 // === Прив'язка обробника форми ===
 document.getElementById("orderForm").addEventListener("submit", submitCustomPrint);
+document.querySelectorAll(".filter-button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const tag = btn.dataset.tag;
+    filterByType(tag);
+  });
+});

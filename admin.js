@@ -238,6 +238,9 @@ window.setupProductFormHandler = function () {
     return;
   }
 
+  // 🛡️ Перевірка на адміна (можна замінити на реальну перевірку)
+  const isAdmin = true;
+
   form.addEventListener("submit", function (e) {
     e.preventDefault();
 
@@ -261,7 +264,7 @@ window.setupProductFormHandler = function () {
     };
 
     firebase.firestore().collection("products").add(data)
-      .then(() => {
+      .then(docRef => {
         const cardHTML = `
           <div class="product-card">
             <div class="config" style="display:none;">
@@ -286,8 +289,19 @@ window.setupProductFormHandler = function () {
             <p>${data.description}</p>
             <p><strong>Особливість:</strong> ${data.feature}</p>
             <p><strong>Ціна:</strong> ${data.basePrice} грн</p>
-            <div class="tags" style="display:none;">${data.tags.join(" ")}</div>
+
+            ${Array.isArray(data.tags) && data.tags.length > 0
+              ? `<div class="tags" style="display:none;">${data.tags.join(" ")}</div>`
+              : ""}
+
             <button onclick="openCustomizationModal(this)">📊 Розрахувати вартість</button>
+
+            ${isAdmin ? `
+              <div class="admin-controls">
+                <button onclick="editProduct('${docRef.id}')">✏️ Редагувати</button>
+                <button onclick="deleteProduct('${docRef.id}', this)">🗑 Видалити</button>
+              </div>
+            ` : ""}
           </div>
         `;
 
@@ -304,3 +318,102 @@ window.setupProductFormHandler = function () {
       });
   });
 };
+
+// 🗑 Видалення товару
+window.deleteProduct = async function(productId, button) {
+  if (!confirm("❌ Ви впевнені, що хочете видалити цей товар?")) return;
+
+  try {
+    await firebase.firestore().collection("products").doc(productId).delete();
+    button.closest(".product-card")?.remove();
+    showToast("🗑 Товар видалено");
+  } catch (e) {
+    console.error("❌ Помилка видалення:", e);
+    showToast("⚠️ Не вдалося видалити товар");
+  }
+};
+
+// ✏️ Редагування товару
+window.editProduct = async function(productId) {
+  try {
+    const doc = await firebase.firestore().collection("products").doc(productId).get();
+    const data = doc.data();
+
+    document.getElementById("editName").value = data.name || "";
+    document.getElementById("editDescription").value = data.description || "";
+    document.getElementById("editBasePrice").value = data.basePrice || 0;
+    // Додай інші поля при потребі
+
+    document.getElementById("editForm").dataset.productId = productId;
+    document.getElementById("editOverlay").style.display = "flex";
+  } catch (e) {
+    console.error("❌ Помилка завантаження товару:", e);
+    showToast("⚠️ Не вдалося завантажити товар");
+  }
+};
+
+document.getElementById("editForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+  const productId = e.target.dataset.productId;
+
+  const updatedData = {
+    name: document.getElementById("editName").value.trim(),
+    description: document.getElementById("editDescription").value.trim(),
+    basePrice: parseFloat(document.getElementById("editBasePrice").value) || 0
+    // Додай інші поля при потребі
+  };
+
+  try {
+    await firebase.firestore().collection("products").doc(productId).update(updatedData);
+    showToast("✅ Товар оновлено");
+    document.getElementById("editOverlay").style.display = "none";
+    location.reload(); // або перерисуй картку вручну
+  } catch (e) {
+    console.error("❌ Помилка оновлення:", e);
+    showToast("⚠️ Не вдалося оновити товар");
+  }
+});
+
+document.getElementById("stlUploadForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  const fileInput = document.getElementById("stlFileInput");
+  const file = fileInput.files[0];
+  const comment = document.getElementById("stlComment").value.trim();
+  const contact = document.getElementById("stlContact").value.trim();
+
+  if (!file || !comment || !contact) {
+    showToast("⚠️ Заповніть усі поля і додайте STL-файл");
+    return;
+  }
+
+  const fileName = `${Date.now()}_${file.name}`;
+  const storageRef = firebase.storage().ref(`stl_uploads/${fileName}`);
+
+  try {
+    const snapshot = await storageRef.put(file);
+    const downloadURL = await snapshot.ref.getDownloadURL();
+
+    const telegramUser = Telegram.WebApp.initDataUnsafe?.user || {};
+
+    const record = {
+      fileName: file.name,
+      fileURL: downloadURL,
+      comment,
+      contact,
+      telegramUser: {
+        id: telegramUser.id || null,
+        username: telegramUser.username || ""
+      },
+      timestamp: new Date().toISOString(),
+      status: "pending"
+    };
+
+    await firebase.firestore().collection("stlRequests").add(record);
+    showToast("✅ STL-файл надіслано! Ми зв'яжемось з вами.");
+    e.target.reset();
+  } catch (err) {
+    console.error("❌ Помилка завантаження STL:", err);
+    showToast("⚠️ Не вдалося надіслати STL. Спробуйте ще раз.");
+  }
+});

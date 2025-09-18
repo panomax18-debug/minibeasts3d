@@ -8,13 +8,14 @@
   <!-- ✅ Firebase SDK v8 (без модулей) -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyA2TAQM23nj7VOiHPv8HgDuXdWV_OVjX7A",
       authDomain: "minibeasts-3d.firebaseapp.com",
       projectId: "minibeasts-3d",
-      storageBucket: "minibeasts-3d.firebasestorage.app",
+      storageBucket: "minibeasts-3d.appspot.com",
       messagingSenderId: "192684036080",
       appId: "1:192684036080:web:c306f5de3f62ef87199735",
       measurementId: "G-MHG9HCXRCB"
@@ -38,11 +39,21 @@
     <!-- 📦 Контентна зона -->
     <div id="adminContent">
       <p>👈 Виберіть дію з меню вище</p>
+
+      <!-- 📤 Форма завантаження STL -->
+      <form id="stlUploadForm" style="margin-top: 30px;">
+        <h3>📤 Завантажити STL-модель</h3>
+        <input type="file" id="stlFileInput" accept=".stl" required>
+        <input type="text" id="stlComment" placeholder="Коментар до моделі" required>
+        <input type="text" id="stlContact" placeholder="Контакт для зв'язку" required>
+        <button type="submit">📤 Надіслати STL</button>
+      </form>
     </div>
   </section>
 
   <!-- ✅ Подключение admin.js как обычного скрипта -->
   <script src="admin.js"></script>
+  <script src="script.js"></script>
 
 </body>
 </html>
