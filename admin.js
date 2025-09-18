@@ -80,20 +80,10 @@ window.showProductList = async function () {
 // == 🔥 Отображення товарів та замовлень з Firebase == //
 window.fetchProducts = async function () {
   try {
-    const snapshot = await firebase.firestore().collection("products").orderBy("createdAt", "desc").get();
+    const snapshot = await firebase.firestore().collection("products").orderBy("timestamp", "desc").get();
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   } catch (error) {
     console.error("❌ Помилка при завантаженні товарів:", error);
-    return [];
-  }
-};
-
-window.fetchOrders = async function () {
-  try {
-    const snapshot = await firebase.firestore().collection("orders").orderBy("timestamp", "desc").get();
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-  } catch (error) {
-    console.error("❌ Помилка при завантаженні замовлень:", error);
     return [];
   }
 };
