@@ -270,10 +270,8 @@ window.setupProductFormHandler = function () {
       timestamp: new Date().toISOString()
     };
 
-    // ✅ Сохраняем в Firestore
     firebase.firestore().collection("products").add(data)
       .then(() => {
-        // 🧱 Вставляем карточку на страницу
         const cardHTML = `
           <div class="product-card">
             <div class="config" style="display:none;">
@@ -315,4 +313,4 @@ window.setupProductFormHandler = function () {
         alert("❌ Помилка при збереженні: " + err.message);
       });
   });
-}; // ← вот эта скобка закрывает setupProductFormHandler
+};
