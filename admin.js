@@ -249,61 +249,90 @@ window.setupProductFormHandler = function () {
   }
 
   form.addEventListener("submit", function (e) {
-    e.preventDefault();
+  e.preventDefault();
 
-    const data = {
-      name: form.querySelector("#productName").value.trim(),
-      description: form.querySelector("#productDescription").value.trim(),
-      feature: form.querySelector("#productFeature").value.trim(),
-      basePrice: parseFloat(form.querySelector("#basePrice").value),
-      size80: parseFloat(form.querySelector("#size80").value) || "",
-      size100: parseFloat(form.querySelector("#size100").value) || "",
-      size120: parseFloat(form.querySelector("#size120").value) || "",
-      plastic1: parseFloat(form.querySelector("#plastic1").value) || "",
-      plastic2: parseFloat(form.querySelector("#plastic2").value) || "",
-      plastic3: parseFloat(form.querySelector("#plastic3").value) || "",
-      tags: form.querySelector("#productTags").value.trim().split(" "),
-      images: Array.from(form.querySelectorAll(".image-url"))
-        .map(input => input.value.trim())
-        .filter(src => src !== ""),
-      manualPrices: form.querySelector("#manualPrices").value.trim()
-    };
+  const data = {
+    name: form.querySelector("#productName").value.trim(),
+    description: form.querySelector("#productDescription").value.trim(),
+    feature: form.querySelector("#productFeature").value.trim(),
+    basePrice: parseFloat(form.querySelector("#basePrice").value),
+    size80: parseFloat(form.querySelector("#size80").value) || "",
+    size100: parseFloat(form.querySelector("#size100").value) || "",
+    size120: parseFloat(form.querySelector("#size120").value) || "",
+    plastic1: parseFloat(form.querySelector("#plastic1").value) || "",
+    plastic2: parseFloat(form.querySelector("#plastic2").value) || "",
+    plastic3: parseFloat(form.querySelector("#plastic3").value) || "",
+    tags: form.querySelector("#productTags").value.trim().split(" "),
+    images: Array.from(form.querySelectorAll(".image-url"))
+      .map(input => input.value.trim())
+      .filter(src => src !== ""),
+    manualPrices: form.querySelector("#manualPrices").value.trim(),
+    timestamp: new Date().toISOString()
+  };
 
-    const cardHTML = `
-      <div class="product-card">
-        <div class="config" style="display:none;">
-          <span class="base">${data.basePrice}</span>
-          <span class="size80">${data.size80}</span>
-          <span class="size100">${data.size100}</span>
-          <span class="size120">${data.size120}</span>
-          <span class="plastic1">${data.plastic1}</span>
-          <span class="plastic2">${data.plastic2}</span>
-          <span class="plastic3">${data.plastic3}</span>
+  // ✅ Сохраняем в Firestore
+  firebase.firestore().collection("products").add(data)
+    .then(() => {
+      // 🧱 Вставляем карточку на страницу
+      const cardHTML = `
+        <div class="product-card">
+          <div class="config" style="display:none;">
+            <span class="base">${data.basePrice}</span>
+            <span class="size80">${data.size80}</span>
+            <span class="size100">${data.size100}</span>
+            <span class="size120">${data.size120}</span>
+            <span class="plastic1">${data.plastic1}</span>
+            <span class="plastic2">${data.plastic2}</span>
+            <span class="plastic3">${data.plastic3}</span>
+          </div>
+
+          <div class="slider">
+            ${data.images.map((src, i) => `
+              <img src="${src}" class="slide${i === 0 ? ' active' : ''}" onclick="openModal(this.src)">
+            `).join("")}
+            <button class="prev" onclick="prevSlide(this)">←</button>
+            <button class="next" onclick="nextSlide(this)">→</button>
+          </div>
+
+          <h3>${data.name}</h3>
+          <p>${data.description}</p>
+          <p><strong>Особливість:</strong> ${data.feature}</p>
+          <p><strong>Ціна:</strong> ${data.basePrice} грн</p>
+          <div class="tags" style="display:none;">${data.tags.join(" ")}</div>
+          <button onclick="openCustomizationModal(this)">📊 Розрахувати вартість</button>
         </div>
+      `;
 
-        <div class="slider">
-          ${data.images.map((src, i) => `
-            <img src="${src}" class="slide${i === 0 ? ' active' : ''}" onclick="openModal(this.src)">
-          `).join("")}
-          <button class="prev" onclick="prevSlide(this)">←</button>
-          <button class="next" onclick="nextSlide(this)">→</button>
-        </div>
+      const grid = document.getElementById("productGrid");
+      if (grid) {
+        grid.insertAdjacentHTML("beforeend", cardHTML);
+      }
 
-        <h3>${data.name}</h3>
-        <p>${data.description}</p>
-        <p><strong>Особливість:</strong> ${data.feature}</p>
-        <p><strong>Ціна:</strong> ${data.basePrice} грн</p>
-        <div class="tags" style="display:none;">${data.tags.join(" ")}</div>
-        <button onclick="openCustomizationModal(this)">📊 Розрахувати вартість</button>
-      </div>
-    `;
+      alert("✅ Товар збережено в Firebase!");
+      form.reset();
+    })
+    .catch(err => {
+      alert("❌ Помилка при збереженні: " + err.message);
+    });
+});
 
-    const grid = document.getElementById("productGrid");
-    if (grid) {
-      grid.insertAdjacentHTML("beforeend", cardHTML);
-    }
+function submitProduct() {
+  const productData = {
+    name: document.getElementById("productName").value.trim(),
+    price: parseFloat(document.getElementById("productPrice").value),
+    image: document.getElementById("productImage").value.trim(),
+    type: document.getElementById("productType").value,
+    description: document.getElementById("productDescription").value.trim(),
+    size: document.getElementById("productSize").value,
+    plastic: document.getElementById("productPlastic").value
+  };
 
-    alert("✅ Товар додано!");
-    form.reset();
-  });
-};
+  console.log("📤 Відправка товару:", productData);
+
+  firebase.firestore().collection("products").add(productData)
+    .then(() => showToast("✅ Товар додано"))
+    .catch(err => showToast("❌ Помилка: " + err.message));
+}
+
+// === Привязка кнопки добавления товара ===
+document.getElementById("addProductBtn").addEventListener("click", submitProduct);

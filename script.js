@@ -467,7 +467,7 @@ console.log("📋 Значення форми:", {
     language_code: rawUser.language_code || ""
   };
 
-  const orderData = {
+const orderData = {
   contact: {
     name: document.getElementById("nameInput").value.trim(),
     phone: document.getElementById("phoneInput").value.trim()
@@ -491,6 +491,7 @@ console.log("📋 Значення форми:", {
   timestamp: new Date().toISOString(),
   status: "pending"
 };
+
 
 
   // ✅ Валидация обязательных полей
