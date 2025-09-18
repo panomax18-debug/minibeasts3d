@@ -10,20 +10,6 @@ import { getFirestore, collection, addDoc } from "https://www.gstatic.com/fireba
 
 import { filterProducts } from './admin.js'; // или абсолютный путь, если нужен
 
-document.addEventListener("DOMContentLoaded", () => {
-  const input = document.getElementById("searchInput");
-
-  if (input && typeof filterProducts === "function") {
-    input.addEventListener("input", filterProducts);
-    console.log("✅ Фільтр навішено успішно.");
-  } else {
-    console.warn("⚠️ filterProducts не визначена.");
-  }
-
-  // ... остальной код переключения категорий
-});
-
-
 const firebaseConfig = {
   apiKey: "AIzaSyA2TAQM23nj7VOiHPv8HgDuXdWV_OVjX7A",
   authDomain: "minibeasts-3d.firebaseapp.com",
@@ -385,7 +371,7 @@ function closeModal() {
 
 
 document.addEventListener("DOMContentLoaded", () => {
-  // 🔍 Навішування фільтра по тегам з повторною перевіркою
+  // 🔍 Навішування фільтра по тегам
   const input = document.getElementById("searchInput");
 
   const tryAttachFilter = () => {
@@ -397,7 +383,6 @@ document.addEventListener("DOMContentLoaded", () => {
       setTimeout(tryAttachFilter, 200);
     }
   };
-
   tryAttachFilter();
 
   // 🔄 Переключення категорій: ready / custom
@@ -405,32 +390,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnReady = document.getElementById("btnReady");
   const btnCustom = document.getElementById("btnCustom");
 
-  if (!customOrderSection) {
-    console.warn("⚠️ Елемент #custom-order не знайдено.");
-  }
-
   if (btnReady) {
     btnReady.addEventListener("click", () => {
-      console.log("🔄 Переключення категорії: ready");
       openCategory("ready");
-      if (customOrderSection) {
-        customOrderSection.style.display = "none";
-      }
+      if (customOrderSection) customOrderSection.style.display = "none";
     });
-  } else {
-    console.warn("⚠️ Кнопка #btnReady не знайдена.");
   }
 
   if (btnCustom) {
     btnCustom.addEventListener("click", () => {
-      console.log("🔄 Переключення категорії: custom");
       openCategory("custom");
-      if (customOrderSection) {
-        customOrderSection.style.display = "block";
-      }
+      if (customOrderSection) customOrderSection.style.display = "block";
     });
-  } else {
-    console.warn("⚠️ Кнопка #btnCustom не знайдена.");
   }
 
   // 🧲 Завантаження товарів з Firestore
@@ -440,7 +411,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  firebase.firestore().collection("products").get()
+  firebase.firestore().collection("products").orderBy("timestamp", "desc").get()
     .then(snapshot => {
       snapshot.forEach(doc => {
         const data = doc.data();
@@ -459,7 +430,6 @@ document.addEventListener("DOMContentLoaded", () => {
             <p>${data.description}</p>
             <p><strong>Особливість:</strong> ${data.feature}</p>
             <p><strong>Ціна:</strong> ${data.basePrice} грн</p>
-            <div class="tags" style="display:none;">${data.tags.join(" ")}</div>
             <button onclick="openCustomizationModal(this)">📊 Розрахувати вартість</button>
           </div>
         `;
@@ -471,6 +441,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("❌ Помилка завантаження товарів:", err.message);
     });
 });
+
 
 
 // === Расчёт суммы заказа ===
