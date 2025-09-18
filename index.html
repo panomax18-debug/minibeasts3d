@@ -51,13 +51,14 @@
       <h2>🧸 Готові вироби</h2>
 
       <div class="filters">
-        <input type="text" id="searchInput" placeholder="🔍 Пошук товару..." oninput="filterProducts()">
-        <button onclick="filterByType('all')">Усі</button>
-        <button onclick="filterByType('labubu')">Labubu</button>
-        <button onclick="filterByType('cat')">Коти</button>
-        <button onclick="filterByType('set')">Набори</button>
-        <button onclick="filterByType('effect')">Ефекти</button>
-      </div>
+  <input type="text" id="searchInput" placeholder="🔍 Пошук товару...">
+  <button onclick="filterByType('all')">Усі</button>
+  <button onclick="filterByType('labubu')">Labubu</button>
+  <button onclick="filterByType('cat')">Коти</button>
+  <button onclick="filterByType('set')">Набори</button>
+  <button onclick="filterByType('effect')">Ефекти</button>
+</div>
+
 
       <!-- 📦 Сюди завантажуються товари з Firebase -->
       <div id="productGrid"></div>

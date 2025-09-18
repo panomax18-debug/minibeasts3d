@@ -5,9 +5,6 @@ let currentSliderImages = [];
 
 // === Привязка Firestore ===
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
-
 import { filterProducts } from './admin.js'; // или абсолютный путь, если нужен
 
 const firebaseConfig = {
@@ -19,11 +16,6 @@ const firebaseConfig = {
   appId: "1:192684036080:web:c306f5de3f62ef87199735",
   measurementId: "G-MHG9HCXRCB"
 };
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-
 
 window.Telegram = {
   WebApp: {
@@ -113,19 +105,7 @@ function openCategory(category) {
   }
 }
 
-function filterByType(type) {
-  const cards = document.querySelectorAll("#ready-products .product-card");
 
-  cards.forEach(card => {
-    if (type === "all") {
-      card.style.display = "block";
-    } else {
-      card.style.display = card.classList.contains(type) ? "block" : "none";
-    }
-  });
-}
-
-window.filterByType = filterByType;
 
 window.filterByType = function (tag) {
   const cards = document.querySelectorAll("#productGrid .product-card");
@@ -417,19 +397,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnReady = document.getElementById("btnReady");
   const btnCustom = document.getElementById("btnCustom");
 
-  if (btnReady) {
-    btnReady.addEventListener("click", () => {
-      openCategory("ready");
-      if (customOrderSection) customOrderSection.style.display = "none";
-    });
-  }
+if (btnReady) {
+  btnReady.addEventListener("click", () => openCategory("ready"));
+}
 
-  if (btnCustom) {
-    btnCustom.addEventListener("click", () => {
-      openCategory("custom");
-      if (customOrderSection) customOrderSection.style.display = "block";
-    });
-  }
+if (btnCustom) {
+  btnCustom.addEventListener("click", () => openCategory("custom"));
+}
+
 
   // 🧲 Завантаження товарів з Firestore
   const grid = document.getElementById("productGrid");
@@ -603,12 +578,12 @@ function openCheckout() {
 
 
 // === Отправка заказа ===
+// === Подтверждение замовлення ===
 async function submitOrder(orderData) {
   try {
-    // 🧼 Удаляем undefined-поля рекурсивно
-    const cleanData = JSON.parse(JSON.stringify(orderData));
+    const cleanData = JSON.parse(JSON.stringify(orderData)); // 🧼 Удаляем undefined/null
 
-    const docRef = await addDoc(collection(db, "orders"), cleanData);
+    const docRef = await firebase.firestore().collection("orders").add(cleanData);
     console.log("📦 Замовлення записано з ID:", docRef.id);
 
     Telegram.WebApp.sendData(JSON.stringify({
@@ -623,8 +598,7 @@ async function submitOrder(orderData) {
   }
 }
 
-
-// === Закрытие формы оформления ===
+// === Закриття форми оформлення ===
 function closeCheckout() {
   const overlay = document.getElementById("checkoutOverlay");
   if (overlay && overlay.style.display !== "none") {
@@ -633,7 +607,7 @@ function closeCheckout() {
   }
 }
 
-// === Привязка функций к window ===
+// === Прив'язка функцій до window ===
 window.filterByType = filterByType;
 window.openCustomizationModal = openCustomizationModal;
 window.clearCart = clearCart;
@@ -646,10 +620,7 @@ window.confirmCustomization = confirmCustomization;
 window.deleteFromCart = deleteFromCart;
 window.filterProducts = filterProducts;
 
-
-
 // === 🖨️ Друк на замовлення ===
-
 async function submitCustomPrint(event) {
   event.preventDefault();
 
@@ -680,17 +651,17 @@ async function submitCustomPrint(event) {
 
   try {
     const cleanData = JSON.parse(JSON.stringify(data));
-    const docRef = await addDoc(collection(db, "customPrints"), cleanData);
+    const docRef = await firebase.firestore().collection("customPrints").add(cleanData);
     console.log("🖨️ Запит на друк записано з ID:", docRef.id);
     showToast("✅ Заявка прийнята! Ми зв'яжемось з вами.");
 
-    // 🧼 Очистка форми
-    document.getElementById("orderForm").reset();
+    document.getElementById("orderForm").reset(); // 🧼 Очистка форми
+    document.getElementById("custom-order").classList.add("hidden"); // 🛑 Закриття блоку
 
-    // 🛑 Закриття блоку
-    document.getElementById("custom-order").classList.add("hidden");
+    // ✅ Повернення до готових виробів
+    document.getElementById("ready-products").classList.add("visible");
+    document.getElementById("ready-products").classList.remove("hidden");
 
-    // ✅ Фінальне підтвердження
     setTimeout(() => {
       showToast("✅ Заявка надіслана!");
     }, 1000);
@@ -703,4 +674,3 @@ async function submitCustomPrint(event) {
 
 // === Прив'язка обробника форми ===
 document.getElementById("orderForm").addEventListener("submit", submitCustomPrint);
-
