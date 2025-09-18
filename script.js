@@ -432,9 +432,45 @@ document.addEventListener("DOMContentLoaded", () => {
   } else {
     console.warn("⚠️ Кнопка #btnCustom не знайдена.");
   }
+
+  // 🧲 Завантаження товарів з Firestore
+  const grid = document.getElementById("productGrid");
+  if (!grid) {
+    console.warn("⚠️ Контейнер #productGrid не знайдено.");
+    return;
+  }
+
+  firebase.firestore().collection("products").get()
+    .then(snapshot => {
+      snapshot.forEach(doc => {
+        const data = doc.data();
+
+        const cardHTML = `
+          <div class="product-card">
+            <div class="slider">
+              ${data.images.map((src, i) => `
+                <img src="${src}" class="slide${i === 0 ? ' active' : ''}" onclick="openModal(this.src)">
+              `).join("")}
+              <button class="prev" onclick="prevSlide(this)">←</button>
+              <button class="next" onclick="nextSlide(this)">→</button>
+            </div>
+
+            <h3>${data.name}</h3>
+            <p>${data.description}</p>
+            <p><strong>Особливість:</strong> ${data.feature}</p>
+            <p><strong>Ціна:</strong> ${data.basePrice} грн</p>
+            <div class="tags" style="display:none;">${data.tags.join(" ")}</div>
+            <button onclick="openCustomizationModal(this)">📊 Розрахувати вартість</button>
+          </div>
+        `;
+
+        grid.insertAdjacentHTML("beforeend", cardHTML);
+      });
+    })
+    .catch(err => {
+      console.error("❌ Помилка завантаження товарів:", err.message);
+    });
 });
-
-
 
 
 // === Расчёт суммы заказа ===
