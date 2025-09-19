@@ -374,7 +374,7 @@ function confirmOrder() {
     tg.close();
   }, 1500);
 }
-// 🧾 Запис замовлення в Firestore
+
 // 🧾 Запис замовлення в Firestore
 async function submitOrder(orderData) {
   try {
@@ -391,17 +391,6 @@ async function submitOrder(orderData) {
   } catch (e) {
     console.error("❌ Помилка запису замовлення:", e);
     showToast("⚠️ Не вдалося записати замовлення. Спробуйте ще раз.");
-  }
-}
-
-// ❌ Закриття overlay оформлення
-function closeCheckout() {
-  const overlay = document.getElementById("checkoutOverlay");
-  if (overlay && overlay.style) {
-    overlay.style.display = "none";
-    console.log("✅ Форма оформлення закрита через closeCheckout()");
-  } else {
-    console.warn("ℹ️ checkoutOverlay не знайдено — можливо, ви в адмінці");
   }
 }
 
