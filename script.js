@@ -101,20 +101,22 @@ window.showProductList = function () {
       }
 
       snapshot.forEach(doc => {
-        const data = doc.data();
-        const item = document.createElement("div");
-        item.className = "admin-product";
+  const data = doc.data();
+  const item = document.createElement("div");
+  item.className = "admin-product";
 
-        item.innerHTML = `
-          <strong>${data.name}</strong><br>
-          Ціна: ${data.base} грн<br>
-          Теги: ${data.tags?.join(", ")}<br>
-          <img src="${data.images?.[0] || ''}" alt="${data.name}" width="100">
-          <hr>
-        `;
+  item.innerHTML = `
+    <strong>${data.name}</strong><br>
+    Ціна: ${data.base} грн<br>
+    Теги: ${data.tags?.join(", ")}<br>
+    <img src="${data.images?.[0] || ''}" alt="${data.name}" width="100"><br>
+    <button onclick="deleteProduct('${doc.id}')">❌ Видалити</button>
+    <hr>
+  `;
 
-        list.appendChild(item);
-      });
+  list.appendChild(item);
+});
+
     })
     .catch(err => {
       console.error("❌ Помилка завантаження товарів:", err);
