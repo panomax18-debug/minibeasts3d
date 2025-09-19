@@ -45,6 +45,11 @@ function generateAddProductForm() {
       </div>
 
       <div class="form-group">
+        <label>Ціни по розміру (мм)</label>
+        <textarea id="sizePriceMapInput" rows="3" placeholder="80:150, 100:250, 120:400"></textarea>
+      </div>
+
+      <div class="form-group">
         <label>Зображення (URL через кому)</label>
         <textarea id="imagesInput" rows="3" placeholder="https://..."></textarea>
       </div>
@@ -53,6 +58,7 @@ function generateAddProductForm() {
     </form>
   `;
 }
+
 // 🧾 Обробка форми додавання товару
 function setupProductFormHandler() {
   const form = document.getElementById("productForm");
@@ -71,12 +77,30 @@ function setupProductFormHandler() {
     const plastic3 = parseFloat(document.getElementById("plastic3").value);
     const tags = document.getElementById("tagsInput").value.trim().split(",").map(t => t.trim());
     const images = document.getElementById("imagesInput").value.trim().split(",").map(url => url.trim());
-    const feature = document.getElementById("featureInput").value.trim(); // ← вот эта строка
+    const feature = document.getElementById("featureInput").value.trim();
+    const sizePriceRaw = document.getElementById("sizePriceMapInput").value.trim();
 
+    // 🧩 Парсинг sizePriceMap
+    const sizePriceMap = {};
+    let sizePriceValid = true;
+
+    sizePriceRaw.split(",").forEach(pair => {
+      const [size, price] = pair.split(":").map(v => v.trim());
+      if (!size || isNaN(price)) {
+        sizePriceValid = false;
+      } else {
+        sizePriceMap[size] = parseFloat(price);
+      }
+    });
 
     // ✅ Валідація
-    if (!name || !base || !size80 || !size100 || !size120 || !plastic1 || !plastic2 || !plastic3 || images.length === 0) {
-      alert("⚠️ Заповніть усі поля коректно");
+    if (
+      !name || isNaN(base) ||
+      isNaN(size80) || isNaN(size100) || isNaN(size120) ||
+      isNaN(plastic1) || isNaN(plastic2) || isNaN(plastic3) ||
+      images.length === 0 || !sizePriceValid || Object.keys(sizePriceMap).length === 0
+    ) {
+      alert("⚠️ Заповніть усі поля коректно, включаючи ціни по розміру");
       return;
     }
 
@@ -92,6 +116,7 @@ function setupProductFormHandler() {
       tags,
       images,
       feature,
+      sizePriceMap, // ✅ нове поле
       createdAt: new Date().toISOString()
     };
 

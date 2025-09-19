@@ -37,6 +37,7 @@ window.showAddProductForm = function () {
   trySetup.attempts = 0;
   trySetup();
 };
+
 // 📄 Відображення замовлень
 window.showOrderList = function () {
   const container = document.getElementById("adminContent");
@@ -66,7 +67,10 @@ window.showOrderList = function () {
           Статус: ${data.status}<br>
           <details>
             <summary>📦 Деталі</summary>
-            ${data.order?.map(item => `${item.name} (${item.size}мм, пластик ${item.plastic}) — ${item.price} грн`).join("<br>")}
+            ${data.order?.map(item => {
+              const feature = item.feature ? ` — ${item.feature}` : "";
+              return `${item.name} (${item.size}мм, пластик ${item.plastic})${feature} — ${item.price} грн`;
+            }).join("<br>")}
           </details>
           <hr>
         `;
@@ -79,6 +83,7 @@ window.showOrderList = function () {
       list.innerHTML = "<p>⚠️ Не вдалося завантажити замовлення</p>";
     });
 }
+
 // 📦 Відображення всіх товарів
 window.showProductList = function () {
   const container = document.getElementById("adminContent");
@@ -214,8 +219,52 @@ function openCustomizationModal(button) {
   const title = card.querySelector("h3")?.textContent || "Товар";
   document.getElementById("modalTitle").textContent = title;
 
-  document.getElementById("customModal").style.display = "flex";
-  calculatePrice();
+  // 🧩 Отримання sizePriceMap з Firestore
+  const productId = card.dataset.id;
+  firebase.firestore().collection("products").doc(productId).get().then(doc => {
+    if (!doc.exists) {
+      alert("❌ Товар не знайдено");
+      return;
+    }
+
+    const data = doc.data();
+    const sizePriceMap = data.sizePriceMap || {};
+    const sizeSelect = document.getElementById("sizeSelect");
+    const plasticSelect = document.getElementById("plasticSelect");
+    const finalPriceField = document.getElementById("finalPrice");
+
+    // 🧼 Очистка селекту
+    sizeSelect.innerHTML = "";
+
+    // 🧩 Генерація опцій розміру
+    Object.entries(sizePriceMap).forEach(([size, price]) => {
+      const option = document.createElement("option");
+      option.value = size;
+      option.textContent = `${size} мм`;
+      sizeSelect.appendChild(option);
+    });
+
+    // 📦 Відображення модалки
+    document.getElementById("customModal").style.display = "flex";
+
+    // 🧮 Розрахунок ціни
+    function calculatePrice() {
+      const selectedSize = sizeSelect.value;
+      const base = sizePriceMap[selectedSize];
+      const plastic = parseInt(plasticSelect.value);
+      const plasticMultiplier = plastic === 1 ? 1.0 : plastic === 2 ? 1.05 : 1.15;
+      const final = Math.round(base * plasticMultiplier);
+      finalPriceField.textContent = `Ціна: ${final} грн`;
+      document.getElementById("confirmButton").style.display = "block";
+    }
+
+    // 🔄 Слухачі змін
+    sizeSelect.addEventListener("change", calculatePrice);
+    plasticSelect.addEventListener("change", calculatePrice);
+
+    // 🔄 Початковий розрахунок
+    calculatePrice();
+  });
 }
 
 // ❌ Закриття модального вікна
@@ -224,22 +273,7 @@ function closeModal() {
   currentProduct = null;
 }
 
-// 📐 Розрахунок ціни на основі вибору
-function calculatePrice() {
-  if (!currentProduct) return;
-
-  const base = parseFloat(currentProduct.querySelector(".base")?.textContent || 0);
-  const size = document.getElementById("sizeSelect").value;
-  const plastic = document.getElementById("plasticSelect").value;
-
-  const sizeCoef = parseFloat(currentProduct.querySelector(`.size${size}`)?.textContent || 1);
-  const plasticCoef = parseFloat(currentProduct.querySelector(`.plastic${plastic}`)?.textContent || 1);
-
-  const final = Math.round(base * sizeCoef * (1 + (plasticCoef / 100)));
-  document.getElementById("finalPrice").textContent = `Ціна: ${final} грн`;
-
-  document.getElementById("confirmButton").style.display = "block";
-}
+// 📐 Розрахунок ціни (використовується тільки всередині openCustomizationModal)
 
 // ➕ Додавання товару до корзини
 function confirmCustomization() {
@@ -433,15 +467,14 @@ async function loadProducts() {
       card.className = "product-card";
 
       card.innerHTML = `
-      <h3>${data.name}</h3>
-      <p class="feature">Особливість: ${data.feature || "—"}</p>
-      <img src="${data.images?.[0] || ''}" alt="${data.name}" loading="lazy">
-      <p class="base">Базова ціна: ${data.base} грн</p>
-      <button onclick="openCustomizationModal(this)">⚙️ Кастомізувати</button>
-    `;
+        <h3>${data.name}</h3>
+        <p class="feature">${data.feature || ""}</p>
+        <img src="${data.images?.[0] || ''}" alt="${data.name}" loading="lazy">
+        <p class="base">${data.base} грн — базова модель (80мм, однотонний пластик)</p>
+        <button onclick="openCustomizationModal(this)">⚙️ Кастомізувати</button>
+      `;
 
-
-      grid.appendChild(card);
+      grid.appendChild(card); // ✅ теперь внутри forEach
     });
   } catch (err) {
     console.error("❌ Помилка завантаження товарів:", err);
