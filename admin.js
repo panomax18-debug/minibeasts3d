@@ -40,6 +40,11 @@ function generateAddProductForm() {
       </div>
 
       <div class="form-group">
+        <label>Особливість (унікальна властивість)</label>
+        <input type="text" id="featureInput" placeholder="світиться в темряві, рухомі частини...">
+      </div>
+
+      <div class="form-group">
         <label>Зображення (URL через кому)</label>
         <textarea id="imagesInput" rows="3" placeholder="https://..."></textarea>
       </div>
@@ -66,6 +71,8 @@ function setupProductFormHandler() {
     const plastic3 = parseFloat(document.getElementById("plastic3").value);
     const tags = document.getElementById("tagsInput").value.trim().split(",").map(t => t.trim());
     const images = document.getElementById("imagesInput").value.trim().split(",").map(url => url.trim());
+    const feature = document.getElementById("featureInput").value.trim(); // ← вот эта строка
+
 
     // ✅ Валідація
     if (!name || !base || !size80 || !size100 || !size120 || !plastic1 || !plastic2 || !plastic3 || images.length === 0) {
@@ -84,6 +91,7 @@ function setupProductFormHandler() {
       plastic3,
       tags,
       images,
+      feature,
       createdAt: new Date().toISOString()
     };
 

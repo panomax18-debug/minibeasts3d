@@ -433,17 +433,13 @@ async function loadProducts() {
       card.className = "product-card";
 
       card.innerHTML = `
-        <h3>${data.name}</h3>
-        <img src="${data.images?.[0] || ''}" alt="${data.name}" loading="lazy">
-        <p class="base">${data.base}</p>
-        <p class="size80">${data.size80}</p>
-        <p class="size100">${data.size100}</p>
-        <p class="size120">${data.size120}</p>
-        <p class="plastic1">${data.plastic1}</p>
-        <p class="plastic2">${data.plastic2}</p>
-        <p class="plastic3">${data.plastic3}</p>
-        <button onclick="openCustomizationModal(this)">⚙️ Кастомізувати</button>
-      `;
+      <h3>${data.name}</h3>
+      <p class="feature">Особливість: ${data.feature || "—"}</p>
+      <img src="${data.images?.[0] || ''}" alt="${data.name}" loading="lazy">
+      <p class="base">Базова ціна: ${data.base} грн</p>
+      <button onclick="openCustomizationModal(this)">⚙️ Кастомізувати</button>
+    `;
+
 
       grid.appendChild(card);
     });
