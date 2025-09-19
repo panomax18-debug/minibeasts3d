@@ -121,6 +121,19 @@ window.showProductList = function () {
       list.innerHTML = "<p>⚠️ Не вдалося завантажити товари</p>";
     });
 }
+function deleteProduct(productId) {
+  if (!confirm("❌ Ви впевнені, що хочете видалити цей товар?")) return;
+
+  firebase.firestore().collection("products").doc(productId).delete()
+    .then(() => {
+      showToast("🗑 Товар видалено");
+      showProductList(); // 🔄 Перезавантаження списку
+    })
+    .catch(err => {
+      console.error("❌ Помилка видалення товару:", err);
+      showToast("⚠️ Не вдалося видалити товар");
+    });
+}
 
 // 📊 Перемикач категорій (готові / кастом)
 function openCategory(category) {
