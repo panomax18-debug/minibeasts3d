@@ -29,30 +29,36 @@
     <button class="modal-next" onclick="event.stopPropagation(); showNextModalImage()">→</button>
   </div>
   <main>
-    <!-- 🔘 Перемикач категорій -->
-    <section class="categories">
-      <button id="btnReady">🧸 Готові вироби</button>
-      <button id="btnCustom">🛠 Друк на замовлення</button>
-    </section>
+  <!-- 🔘 Перемикач категорій -->
+  <div class="category-switch">
+    <button onclick="openCategory('ready')">Готові моделі</button>
+    <button onclick="openCategory('custom')">Друк на замовлення</button>
+  </div>
 
-    <!-- 🧸 Готові вироби -->
-    <section id="ready-products" class="visible">
-      <h2>🧸 Готові вироби</h2>
+  <!-- 📦 Готові товари -->
+  <section id="ready-products" class="visible">
+    <h2>Готові моделі</h2>
+    <div id="productGrid"></div>
+  </section>
 
-      <!-- 🔍 Пошук та фільтри -->
-      <div class="filters">
-        <input type="text" id="searchInput" placeholder="🔍 Пошук товару...">
-        <button class="filter-button" data-tag="all">Усі</button>
-        <button class="filter-button" data-tag="labubu">Labubu</button>
-        <button class="filter-button" data-tag="cat">Коти</button>
-        <button class="filter-button" data-tag="set">Набори</button>
-        <button class="filter-button" data-tag="effect">Ефекти</button>
-      </div>
+  <!-- 🧾 Форма друку на замовлення -->
+  <section id="custom-order" class="hidden">
+    <h2>Друк на замовлення</h2>
+    <form id="customOrderForm" class="custom-order-section">
+      <label for="customFile">STL-файл або зображення</label>
+      <input type="file" id="customFile" required>
 
-      <!-- 📦 Контейнер для товарів -->
-      <div id="productGrid"></div>
-    </section>
-  </main>
+      <label for="customContact">Контакт для зв'язку:</label>
+      <input type="text" id="customContact" placeholder="+380... або @username" required>
+
+      <label for="customComment">Коментар:</label>
+      <textarea id="customComment" rows="4" placeholder="Опишіть розмір, тип пластик, колір, доставку та контакти" required></textarea>
+
+      <button type="submit" class="submit-btn">📤 Відправити заявку</button>
+    </form>
+  </section>
+</main>
+
 <!-- 🛠 Друк на замовлення -->
 <section id="custom-order" class="custom-order-section hidden">
   <h2>🛠 Друк на замовлення</h2>

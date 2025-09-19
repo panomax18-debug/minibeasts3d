@@ -476,3 +476,10 @@ button:hover {
   width: 100%;
   padding: 8px;
 }
+.visible {
+  display: block;
+}
+
+.hidden {
+  display: none;
+}

@@ -63,6 +63,7 @@ function openCategory(category) {
     ready.classList.remove("visible");
   }
 }
+
 // 🔍 Фільтрація товарів по тегу
 function filterByType(event) {
   const tag = event.target.dataset.tag;
