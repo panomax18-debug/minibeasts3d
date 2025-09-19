@@ -1,50 +1,33 @@
-<!DOCTYPE html>
+      <!DOCTYPE html>
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
-  <title>Admin Panel | MiniBeasts 3D</title>
+  <title>Панель адміністратора</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
-
-  <!-- ✅ Firebase SDK v8 -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
-
-  <!-- ✅ Централизованная конфигурация -->
-  <script src="firebase-init.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 </head>
-
 <body>
+  <main>
+    <h2>Панель адміністратора</h2>
 
-  <!-- 🔧 Панель адміністратора -->
-  <section id="adminPanel">
-    <h1>🔧 Панель адміністратора</h1>
-
-    <!-- 📌 Навігація між модулями -->
-    <nav class="admin-nav">
-      <button onclick="showAddProductForm()">➕ Додати товар</button>
-      <button onclick="showProductList()">📦 Всі товари</button>
-      <button onclick="showOrderList()">📨 Замовлення</button>
-    </nav>
-
-    <!-- 📦 Контентна зона -->
-    <div id="adminContent">
-      <p>👈 Виберіть дію з меню вище</p>
-
-      <!-- 📤 Форма завантаження STL -->
-      <form id="stlUploadForm" style="margin-top: 30px;">
-        <h3>📤 Завантажити STL-модель</h3>
-        <input type="file" id="stlFileInput" accept=".stl" required>
-        <input type="text" id="stlComment" placeholder="Коментар до моделі" required>
-        <input type="text" id="stlContact" placeholder="Контакт для зв'язку" required>
-        <button type="submit">📤 Надіслати STL</button>
-      </form>
+    <!-- 🧭 Навігація -->
+    <div class="admin-nav">
+      <button id="navAdd">➕ Додати товар</button>
+      <button id="navList">📦 Всі товари</button>
+      <button id="navOrders">📄 Замовлення</button>
     </div>
-  </section>
 
-  <!-- ✅ Подключение admin.js как обычного скрипта -->
-  <script src="admin.js"></script>
+    <!-- 📦 Контейнер для контенту -->
+    <div id="adminContent">
+      <p>Виберіть дію з меню вище</p>
+    </div>
+  </main>
+
+  <!-- 🔌 Скрипти -->
+  <script src="firebase-init.js"></script>
   <script src="script.js"></script>
-
+  <script src="admin.js"></script>
 </body>
 </html>
