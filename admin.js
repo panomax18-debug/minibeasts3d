@@ -2,17 +2,20 @@
 // Все функции доступны через window.functionName
 
 // == 🔍 Фільтрація товарів == //
-window.filterProducts = function () {
-  const input = document.getElementById("searchInput").value.toLowerCase();
-  const cards = document.querySelectorAll("#ready-products .product-card");
+if (document.getElementById("productGrid")) {
+  window.filterProducts = function (event) {
+    const query = event.target.value.toLowerCase();
+    const cards = document.querySelectorAll(".product-card");
 
-  cards.forEach(card => {
-    const title = card.querySelector("h3").textContent.toLowerCase();
-    const tags = card.querySelector(".tags")?.textContent.toLowerCase() || "";
-    const match = title.includes(input) || tags.includes(input);
-    card.style.display = match ? "block" : "none";
-  });
-};
+    cards.forEach(card => {
+      const title = card.querySelector(".product-title")?.textContent.toLowerCase() || "";
+      const tags = card.dataset.tags?.toLowerCase() || "";
+
+      const match = title.includes(query) || tags.includes(query);
+      card.style.display = match ? "block" : "none";
+    });
+  };
+}
 
 // == 🔧 Навигация между модулями == //
 window.showAddProductForm = function () {
