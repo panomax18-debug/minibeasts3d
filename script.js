@@ -587,6 +587,7 @@ setTimeout(() => {
   updateCart();
   tg.close();
 }, 1500);
+} // ← Закрывает function confirmOrder
 
 
 
