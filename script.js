@@ -116,7 +116,7 @@ window.showProductList = function () {
 
   list.appendChild(item);
 });
-
+};
     })
     .catch(err => {
       console.error("❌ Помилка завантаження товарів:", err);
