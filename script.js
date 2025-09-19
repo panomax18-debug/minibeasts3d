@@ -248,7 +248,7 @@ function openCustomizationModal(button) {
     document.getElementById("customModal").style.display = "flex";
 
     // 🧮 Розрахунок ціни
-    function calculatePrice() {
+    function updatePrice() {
       const selectedSize = sizeSelect.value;
       const base = sizePriceMap[selectedSize];
       const plastic = parseInt(plasticSelect.value);
@@ -259,13 +259,14 @@ function openCustomizationModal(button) {
     }
 
     // 🔄 Слухачі змін
-    sizeSelect.addEventListener("change", calculatePrice);
-    plasticSelect.addEventListener("change", calculatePrice);
+    sizeSelect.addEventListener("change", updatePrice);
+    plasticSelect.addEventListener("change", updatePrice);
 
     // 🔄 Початковий розрахунок
-    calculatePrice();
+    updatePrice();
   });
 }
+
 
 // ❌ Закриття модального вікна
 function closeModal() {
