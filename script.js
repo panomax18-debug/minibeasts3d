@@ -582,9 +582,21 @@ setTimeout(() => {
 
 
 // === Привязка обработчиков ===
-document.getElementById("confirmBtn").addEventListener("click", confirmOrder);
-document.getElementById("sizeSelect").addEventListener("change", calculatePrice);
-document.getElementById("plasticSelect").addEventListener("change", calculatePrice);
+const confirmBtn = document.getElementById("confirmBtn");
+if (confirmBtn) {
+  confirmBtn.addEventListener("click", confirmOrder);
+}
+
+const sizeSelect = document.getElementById("sizeSelect");
+if (sizeSelect) {
+  sizeSelect.addEventListener("change", calculatePrice);
+}
+
+const plasticSelect = document.getElementById("plasticSelect");
+if (plasticSelect) {
+  plasticSelect.addEventListener("change", calculatePrice);
+}
+
 
 // === Инициализация ===
 document.getElementById("checkoutOverlay").style.display = "none";
