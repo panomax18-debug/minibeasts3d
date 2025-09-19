@@ -37,14 +37,85 @@ window.showAddProductForm = function () {
   trySetup.attempts = 0;
   trySetup();
 };
-
-window.showProductList = function () {
-  document.getElementById("adminContent").innerHTML = "<p>📦 Список товарів...</p>";
-};
-
+// 📄 Відображення замовлень
 window.showOrderList = function () {
-  document.getElementById("adminContent").innerHTML = "<p>📨 Список замовлень...</p>";
-};
+  const container = document.getElementById("adminContent");
+  container.innerHTML = "<h3>📄 Замовлення</h3><div id='orderList'></div>";
+
+  const list = document.getElementById("orderList");
+  list.innerHTML = "<p>⏳ Завантаження...</p>";
+
+  firebase.firestore().collection("orders").orderBy("timestamp", "desc").get()
+    .then(snapshot => {
+      list.innerHTML = "";
+      if (snapshot.empty) {
+        list.innerHTML = "<p>😕 Замовлень поки немає</p>";
+        return;
+      }
+
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const item = document.createElement("div");
+        item.className = "admin-order";
+
+        item.innerHTML = `
+          <strong>${data.contact?.name || "Без імені"}</strong> — ${data.contact?.phone || "Без телефону"}<br>
+          Доставка: ${data.delivery?.city}, №${data.delivery?.branch}<br>
+          Оплата: ${data.paymentMethod}<br>
+          Сума: ${data.order?.reduce((sum, item) => sum + item.price, 0)} грн<br>
+          Статус: ${data.status}<br>
+          <details>
+            <summary>📦 Деталі</summary>
+            ${data.order?.map(item => `${item.name} (${item.size}мм, пластик ${item.plastic}) — ${item.price} грн`).join("<br>")}
+          </details>
+          <hr>
+        `;
+
+        list.appendChild(item);
+      });
+    })
+    .catch(err => {
+      console.error("❌ Помилка завантаження замовлень:", err);
+      list.innerHTML = "<p>⚠️ Не вдалося завантажити замовлення</p>";
+    });
+}
+// 📦 Відображення всіх товарів
+window.showProductList = function () {
+  const container = document.getElementById("adminContent");
+  container.innerHTML = "<h3>📦 Всі товари</h3><div id='productList'></div>";
+
+  const list = document.getElementById("productList");
+  list.innerHTML = "<p>⏳ Завантаження...</p>";
+
+  firebase.firestore().collection("products").get()
+    .then(snapshot => {
+      list.innerHTML = "";
+      if (snapshot.empty) {
+        list.innerHTML = "<p>😕 Немає товарів</p>";
+        return;
+      }
+
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const item = document.createElement("div");
+        item.className = "admin-product";
+
+        item.innerHTML = `
+          <strong>${data.name}</strong><br>
+          Ціна: ${data.base} грн<br>
+          Теги: ${data.tags?.join(", ")}<br>
+          <img src="${data.images?.[0] || ''}" alt="${data.name}" width="100">
+          <hr>
+        `;
+
+        list.appendChild(item);
+      });
+    })
+    .catch(err => {
+      console.error("❌ Помилка завантаження товарів:", err);
+      list.innerHTML = "<p>⚠️ Не вдалося завантажити товари</p>";
+    });
+}
 
 // 📊 Перемикач категорій (готові / кастом)
 function openCategory(category) {
@@ -304,6 +375,7 @@ function confirmOrder() {
   }, 1500);
 }
 // 🧾 Запис замовлення в Firestore
+// 🧾 Запис замовлення в Firestore
 async function submitOrder(orderData) {
   try {
     const cleanData = JSON.parse(JSON.stringify(orderData)); // 🧼 Видалення null/undefined
@@ -325,16 +397,72 @@ async function submitOrder(orderData) {
 // ❌ Закриття overlay оформлення
 function closeCheckout() {
   const overlay = document.getElementById("checkoutOverlay");
-  if (overlay && overlay.style.display !== "none") {
+  if (overlay && overlay.style) {
     overlay.style.display = "none";
     console.log("✅ Форма оформлення закрита через closeCheckout()");
+  } else {
+    console.warn("ℹ️ checkoutOverlay не знайдено — можливо, ви в адмінці");
   }
 }
 
-// 🔗 Прив'язка обробників
+// 🔗 Прив'язка обробників (тільки якщо елементи існують)
 document.getElementById("confirmBtn")?.addEventListener("click", confirmOrder);
 document.getElementById("sizeSelect")?.addEventListener("change", calculatePrice);
 document.getElementById("plasticSelect")?.addEventListener("change", calculatePrice);
 
-// 🧾 Ініціалізація
-document.getElementById("checkoutOverlay").style.display = "none";
+// 🧾 Ініціалізація (тільки якщо overlay існує)
+const checkoutOverlay = document.getElementById("checkoutOverlay");
+if (checkoutOverlay && checkoutOverlay.style) {
+  checkoutOverlay.style.display = "none";
+} else {
+  console.warn("ℹ️ checkoutOverlay не знайдено при ініціалізації — можливо, це адмінка");
+}
+// 📦 Завантаження готових моделей з Firestore
+async function loadProducts() {
+  const grid = document.getElementById("productGrid");
+  if (!grid) {
+    console.warn("⚠️ productGrid не знайдено");
+    return;
+  }
+
+  grid.innerHTML = "<p>⏳ Завантаження товарів...</p>";
+
+  try {
+    const snapshot = await firebase.firestore().collection("products").get();
+    grid.innerHTML = "";
+
+    if (snapshot.empty) {
+      grid.innerHTML = "<p>😕 Немає доступних товарів</p>";
+      return;
+    }
+
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const card = document.createElement("div");
+      card.className = "product-card";
+
+      card.innerHTML = `
+        <h3>${data.name}</h3>
+        <img src="${data.images?.[0] || ''}" alt="${data.name}" loading="lazy">
+        <p class="base">${data.base}</p>
+        <p class="size80">${data.size80}</p>
+        <p class="size100">${data.size100}</p>
+        <p class="size120">${data.size120}</p>
+        <p class="plastic1">${data.plastic1}</p>
+        <p class="plastic2">${data.plastic2}</p>
+        <p class="plastic3">${data.plastic3}</p>
+        <button onclick="openCustomizationModal(this)">⚙️ Кастомізувати</button>
+      `;
+
+      grid.appendChild(card);
+    });
+  } catch (err) {
+    console.error("❌ Помилка завантаження товарів:", err);
+    grid.innerHTML = "<p>⚠️ Не вдалося завантажити товари</p>";
+  }
+}
+
+// 🚀 Виклик при завантаженні сторінки
+document.addEventListener("DOMContentLoaded", () => {
+  loadProducts();
+});
