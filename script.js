@@ -261,12 +261,11 @@ qty.addEventListener("change", () => {
     li.appendChild(content); // текст справа
     cartList.appendChild(li);
 
-    total += item.price * item.quantity;
+   total += item.price * item.quantity;
   });
 
-  cartTotal.textContent = `Сума: ${total} грн`;
+  cartTotal.innerText = `Всього: ${total} грн`;
 }
-
 
 function deleteFromCart(index) {
   cart.splice(index, 1);
@@ -454,7 +453,7 @@ firebase.firestore().collection("products").orderBy("timestamp", "desc").get()
   .catch(err => {
     console.error("❌ Помилка завантаження товарів:", err.message);
   });
-
+});
 
 
 
