@@ -463,20 +463,32 @@ async function loadProducts() {
     }
 
     snapshot.forEach(doc => {
-      const data = doc.data();
-      const card = document.createElement("div");
-      card.className = "product-card";
+  const data = doc.data();
+  const card = document.createElement("div");
+  card.className = "product-card";
+  card.dataset.id = doc.id; // ✅ нужно для кастомизации
 
-      card.innerHTML = `
-        <h3>${data.name}</h3>
-        <p class="feature">${data.feature || ""}</p>
-        <img src="${data.images?.[0] || ''}" alt="${data.name}" loading="lazy">
-        <p class="base">${data.base} грн — базова модель (80мм, однотонний пластик)</p>
-        <button onclick="openCustomizationModal(this)">⚙️ Кастомізувати</button>
-      `;
+  // 🧩 Формування опису розмірів
+  let sizeText = "";
+  if (data.sizePriceMap && Object.keys(data.sizePriceMap).length > 0) {
+    sizeText = Object.entries(data.sizePriceMap)
+      .map(([size, price]) => `${size}мм — ${price} грн`)
+      .join("<br>");
+  } else {
+    sizeText = `${data.base} грн — базова модель (80мм, однотонний пластик)`;
+  }
 
-      grid.appendChild(card); // ✅ теперь внутри forEach
-    });
+  card.innerHTML = `
+    <h3>${data.name}</h3>
+    <p class="feature">${data.feature || ""}</p>
+    <img src="${data.images?.[0] || ''}" alt="${data.name}" loading="lazy">
+    <p class="base">📐 Розміри:<br>${sizeText}</p>
+    <button onclick="openCustomizationModal(this)">⚙️ Кастомізувати</button>
+  `;
+
+  grid.appendChild(card);
+});
+
   } catch (err) {
     console.error("❌ Помилка завантаження товарів:", err);
     grid.innerHTML = "<p>⚠️ Не вдалося завантажити товари</p>";
