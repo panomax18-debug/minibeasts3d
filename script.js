@@ -292,8 +292,21 @@ function showToast(message) {
 function clearCart() {
   cart = [];
   updateCart();
-  showToast("🗑 Корзину очищено");
+  showToast("🗑 Корзина очищена");
 }
+
+function updateCart() {
+  const cartList = document.getElementById("cartItems");
+  const cartTotal = document.getElementById("cartTotal");
+
+  cartList.innerHTML = cart.map(item => `
+    <li>${item.name} — ${item.price} грн</li>
+  `).join("");
+
+  const total = calculateTotal(cart);
+  cartTotal.textContent = `Сума: ${total} грн`;
+}
+
 
 function openCustomizationModal(button) {
   const card = button.closest('.product-card');
@@ -424,26 +437,40 @@ firebase.firestore().collection("products").orderBy("timestamp", "desc").get()
     snapshot.forEach(doc => {
       const data = doc.data();
 
-      const cardHTML = `
-        <div class="product-card">
-          <div class="slider">
-            ${data.images.map((src, i) => `
-              <img src="${src}" class="slide${i === 0 ? ' active' : ''}" onclick="openModal(this.src)">
-            `).join("")}
-            <button class="prev" onclick="prevSlide(this)">←</button>
-            <button class="next" onclick="nextSlide(this)">→</button>
-          </div>
+      const rawTags = typeof data.tags === "string" ? data.tags.split(" ") : data.tags || [];
 
-          <h3>${data.name}</h3>
-          <p>${data.description}</p>
-          <p><strong>Особливість:</strong> ${data.feature}</p>
-          <p><strong>Ціна:</strong> ${data.basePrice} грн</p>
-          <button onclick="openCustomizationModal(this)">📊 Розрахувати вартість</button>
-        </div>
-      `;
+const cardHTML = `
+  <div class="product-card">
+    <div class="slider">
+      ${data.images.map((src, i) => `
+        <img src="${src}" class="slide${i === 0 ? ' active' : ''}" onclick="openModal(this.src)">
+      `).join("")}
+      <button class="prev" onclick="prevSlide(this)">←</button>
+      <button class="next" onclick="nextSlide(this)">→</button>
+    </div>
 
-      const isCustom = !!data.size80 || !!data.plastic1 || !!data.manualPrices;
-      const containerId = isCustom ? "custom-order" : "ready-products";
+    <h3>${data.name}</h3>
+    <p>${data.description}</p>
+    <p><strong>Особливість:</strong> ${data.feature}</p>
+    <p><strong>Ціна:</strong> ${data.basePrice} грн</p>
+    <p class="tags">${rawTags.join(", ")}</p>
+
+    <div class="config" style="display:none;">
+      <span class="base">${data.basePrice}</span>
+      <span class="size80">${data.size80}</span>
+      <span class="size100">${data.size100}</span>
+      <span class="size120">${data.size120}</span>
+      <span class="plastic1">${data.plastic1}</span>
+      <span class="plastic2">${data.plastic2}</span>
+      <span class="plastic3">${data.plastic3}</span>
+    </div>
+
+    <button onclick="openCustomizationModal(this)">📊 Розрахувати вартість</button>
+  </div>
+`;
+
+
+      const containerId = "ready-products";
       const container = document.getElementById(containerId);
       if (container) {
         container.insertAdjacentHTML("beforeend", cardHTML);
@@ -534,6 +561,7 @@ Object.keys(orderData.telegramUser).forEach(key => {
 
 // 🧾 Логирование перед отправкой
 console.log("📤 Відправка замовлення:", orderData);
+});
 
 // 🧾 Сохраняем заказ в Firestore
 submitOrder(orderData);
