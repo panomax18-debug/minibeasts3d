@@ -417,6 +417,8 @@ if (checkoutOverlay && checkoutOverlay.style) {
 } else {
   console.warn("ℹ️ checkoutOverlay не знайдено при ініціалізації — можливо, це адмінка");
 }
+
+
 // 📦 Завантаження готових моделей з Firestore
 async function loadProducts() {
   const grid = document.getElementById("productGrid");
