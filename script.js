@@ -431,8 +431,7 @@ async function submitOrder(orderData) {
 
 // 🔗 Прив'язка обробників (тільки якщо елементи існують)
 document.getElementById("confirmBtn")?.addEventListener("click", confirmOrder);
-document.getElementById("sizeSelect")?.addEventListener("change", calculatePrice);
-document.getElementById("plasticSelect")?.addEventListener("change", calculatePrice);
+
 
 // 🧾 Ініціалізація (тільки якщо overlay існує)
 const checkoutOverlay = document.getElementById("checkoutOverlay");
