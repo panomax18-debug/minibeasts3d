@@ -513,3 +513,13 @@ async function loadProducts() {
 document.addEventListener("DOMContentLoaded", () => {
   loadProducts();
 });
+function searchByTag(query) {
+  const cards = document.querySelectorAll(".product-card");
+  const lowerQuery = query.toLowerCase();
+
+  cards.forEach(card => {
+    const tags = card.querySelector(".tags")?.textContent.toLowerCase() || "";
+    const match = tags.includes(lowerQuery);
+    card.style.display = match ? "block" : "none";
+  });
+}

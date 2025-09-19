@@ -34,7 +34,13 @@
     <button onclick="openCategory('ready')">Готові моделі</button>
     <button onclick="openCategory('custom')">Друк на замовлення</button>
   </div>
-
+<!-- 🔍 Поиск по тегам -->
+<input
+  type="text"
+  placeholder="🔍 Пошук..."
+  oninput="searchByTag(this.value)"
+  class="search-input"
+>
   <!-- 📦 Готові товари -->
   <section id="ready-products" class="visible">
     <h2>Готові моделі</h2>
