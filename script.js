@@ -529,8 +529,10 @@ function searchByTag(query) {
   const lowerQuery = query.toLowerCase();
 
   cards.forEach(card => {
-    const tags = card.querySelector(".tags")?.textContent.toLowerCase() || "";
-    const match = tags.includes(lowerQuery);
+    const tagsBlock = card.querySelector(".tags");
+    const tagsText = tagsBlock?.textContent.toLowerCase() || "";
+    const match = tagsText.includes(lowerQuery);
     card.style.display = match ? "block" : "none";
   });
 }
+
