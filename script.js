@@ -1,11 +1,11 @@
+// script.js — Часть 1
+
 let cart = [];
 let currentProduct = null;
 let currentSlideIndex = 0;
 let currentSliderImages = [];
 
-// === Привязка Firestore ===
-// Конфигурация и инициализация вынесены в firebase-init.js
-
+// ✅ Telegram WebApp емуляція (для тестів у браузері)
 window.Telegram = {
   WebApp: {
     sendData: (data) => console.log("📤 Емуляція sendData:", data),
@@ -17,24 +17,21 @@ window.Telegram = {
 const tg = window.Telegram.WebApp;
 console.log("📡 Telegram WebApp API:", tg);
 
-// == 🔧 Навигация между модулями == //
+// 🔧 Навігація між модулями адмінки
 window.showAddProductForm = function () {
   const container = document.getElementById("adminContent");
   container.innerHTML = generateAddProductForm();
 
-  // ⏳ Ждём, пока DOM точно обновится
+  // ⏳ Очікуємо DOM
   const trySetup = () => {
     const form = document.getElementById("productForm");
     if (form) {
       setupProductFormHandler();
+    } else if (trySetup.attempts < 10) {
+      trySetup.attempts++;
+      setTimeout(trySetup, 50);
     } else {
-      // 🔁 Пробуем снова через 50мс, максимум 10 раз
-      if (trySetup.attempts < 10) {
-        trySetup.attempts++;
-        setTimeout(trySetup, 50);
-      } else {
-        console.warn("⚠️ Не вдалося знайти форму після вставки.");
-      }
+      console.warn("⚠️ Не вдалося знайти форму після вставки.");
     }
   };
   trySetup.attempts = 0;
@@ -49,32 +46,7 @@ window.showOrderList = function () {
   document.getElementById("adminContent").innerHTML = "<p>📨 Список замовлень...</p>";
 };
 
-
-
-
-function calculatePrice() {
-  const plasticType = parseInt(document.getElementById("plasticSelect").value);
-  const size = parseInt(document.getElementById("sizeSelect").value);
-  let price = currentProduct.basePrice;
-
-  if (plasticType === 2) price *= 1.05;
-  if (plasticType === 3) price *= 1.15;
-
-  if (size > 80) price *= 1.6667;
-  if (size > 100) price *= 1.8;
-
-  price = Math.round(price);
-  document.getElementById("finalPrice").innerText = `Орієнтовна ціна: ${price} грн`;
-
-  const confirmButton = document.getElementById("confirmButton");
-  confirmButton.style.display = "inline-block";
-
-  // ✅ Привязываем к добавлению в корзину
-  confirmButton.onclick = confirmCustomization;
-}
-
-
-
+// 📊 Перемикач категорій (готові / кастом)
 function openCategory(category) {
   const ready = document.getElementById("ready-products");
   const custom = document.getElementById("custom-order");
@@ -91,534 +63,249 @@ function openCategory(category) {
     ready.classList.remove("visible");
   }
 }
-
-
-
-window.filterByType = function (tag) {
-  const cards = document.querySelectorAll("#productGrid .product-card");
+// 🔍 Фільтрація товарів по тегу
+function filterByType(event) {
+  const tag = event.target.dataset.tag;
+  const cards = document.querySelectorAll(".product-card");
 
   cards.forEach(card => {
     const tags = card.querySelector(".tags")?.textContent || "";
-    card.style.display = (tag === "all" || tags.includes(tag)) ? "block" : "none";
+    const match = tag === "all" || tags.includes(tag);
+    card.style.display = match ? "block" : "none";
   });
 
-  // 🎨 Обновляем активную кнопку фильтра
-  const buttons = document.querySelectorAll(".filter-button");
-  buttons.forEach(btn => {
+  // 🔘 Візуальна активність кнопки
+  document.querySelectorAll(".filter-button").forEach(btn => {
     btn.classList.remove("active-filter");
-    if (btn.dataset.tag === tag) {
-      btn.classList.add("active-filter");
-    }
   });
-};
+  event.target.classList.add("active-filter");
+}
 
+// ⬅️ Перемикання слайдів назад
+function prevSlide(button) {
+  const slider = button.closest(".slider");
+  const slides = slider.querySelectorAll("img");
+  const activeIndex = Array.from(slides).findIndex(slide => slide.classList.contains("active"));
 
+  slides[activeIndex].classList.remove("active");
+  const newIndex = (activeIndex - 1 + slides.length) % slides.length;
+  slides[newIndex].classList.add("active");
+}
 
+// ➡️ Перемикання слайдів вперед
+function nextSlide(button) {
+  const slider = button.closest(".slider");
+  const slides = slider.querySelectorAll("img");
+  const activeIndex = Array.from(slides).findIndex(slide => slide.classList.contains("active"));
 
-// === ⬅️➡️ Переключение слайдов ===
-window.nextSlide = function(button) {
-  const slider = button.parentElement;
-  const slides = slider.querySelectorAll('.slide');
-  let currentIndex = Array.from(slides).findIndex(slide => slide.classList.contains('active'));
+  slides[activeIndex].classList.remove("active");
+  const newIndex = (activeIndex + 1) % slides.length;
+  slides[newIndex].classList.add("active");
+}
 
-  slides.forEach(slide => slide.classList.remove('active'));
-  const nextIndex = (currentIndex + 1) % slides.length;
-  slides[nextIndex].classList.add('active');
-};
-
-window.prevSlide = function(button) {
-  const slider = button.parentElement;
-  const slides = slider.querySelectorAll('.slide');
-  let currentIndex = Array.from(slides).findIndex(slide => slide.classList.contains('active'));
-
-  slides.forEach(slide => slide.classList.remove('active'));
-  const prevIndex = (currentIndex - 1 + slides.length) % slides.length;
-  slides[prevIndex].classList.add('active');
-};
-
-// === 🖼️ Открытие модального окна ===
-window.openModal = function(src) {
+// 🖼️ Відкриття модального перегляду зображення
+function openModal(src) {
   const modal = document.getElementById("imageModal");
-  const modalImg = document.getElementById("modalImage");
-  modalImg.src = src;
+  const modalImage = document.getElementById("modalImage");
+
+  modalImage.src = src;
   modal.style.display = "flex";
 
-  // Найти текущий слайдер и все его изображения
-  const allSliders = document.querySelectorAll(".slider");
-  for (const slider of allSliders) {
-    const slides = slider.querySelectorAll(".slide");
-    const index = Array.from(slides).findIndex(img => img.src === src);
-    if (index !== -1) {
-      currentSliderImages = Array.from(slides);
-      currentSlideIndex = index;
-      break;
-    }
-  }
-};
+  // Збираємо всі зображення з поточного слайдера
+  const slider = Array.from(document.querySelectorAll(".slide")).find(img => img.src === src)?.closest(".slider");
+  currentSliderImages = slider ? Array.from(slider.querySelectorAll("img")) : [];
+  currentSlideIndex = currentSliderImages.findIndex(img => img.src === src);
+}
 
-window.showNextModalImage = function() {
-  if (!currentSliderImages.length) return;
-  currentSlideIndex = (currentSlideIndex + 1) % currentSliderImages.length;
-  document.getElementById("modalImage").src = currentSliderImages[currentSlideIndex].src;
-};
+// ❌ Закриття модального вікна
+function closeImageModal() {
+  document.getElementById("imageModal").style.display = "none";
+}
 
-window.showPrevModalImage = function() {
+// ⬅️⬆️ Перемикання зображень в модальному вікні
+function showPrevModalImage() {
   if (!currentSliderImages.length) return;
   currentSlideIndex = (currentSlideIndex - 1 + currentSliderImages.length) % currentSliderImages.length;
   document.getElementById("modalImage").src = currentSliderImages[currentSlideIndex].src;
-};
-
-// === ❌ Закрытие модального окна ===
-window.closeImageModal = function() {
-  document.getElementById("imageModal").style.display = "none";
-};
-
-
-function addToCart(name, price) {
-  cart.push({ name, price });
-  updateCart(); // обновляем корзину на экране
-  alert(`${name} додано до кошика!`);
 }
 
+function showNextModalImage() {
+  if (!currentSliderImages.length) return;
+  currentSlideIndex = (currentSlideIndex + 1) % currentSliderImages.length;
+  document.getElementById("modalImage").src = currentSliderImages[currentSlideIndex].src;
+}
+// 📊 Відкриття модального вікна кастомізації
+function openCustomizationModal(button) {
+  const card = button.closest(".product-card");
+  currentProduct = card;
 
+  const title = card.querySelector("h3")?.textContent || "Товар";
+  document.getElementById("modalTitle").textContent = title;
 
+  document.getElementById("customModal").style.display = "flex";
+  calculatePrice();
+}
+
+// ❌ Закриття модального вікна
+function closeModal() {
+  document.getElementById("customModal").style.display = "none";
+  currentProduct = null;
+}
+
+// 📐 Розрахунок ціни на основі вибору
+function calculatePrice() {
+  if (!currentProduct) return;
+
+  const base = parseFloat(currentProduct.querySelector(".base")?.textContent || 0);
+  const size = document.getElementById("sizeSelect").value;
+  const plastic = document.getElementById("plasticSelect").value;
+
+  const sizeCoef = parseFloat(currentProduct.querySelector(`.size${size}`)?.textContent || 1);
+  const plasticCoef = parseFloat(currentProduct.querySelector(`.plastic${plastic}`)?.textContent || 1);
+
+  const final = Math.round(base * sizeCoef * (1 + (plasticCoef / 100)));
+  document.getElementById("finalPrice").textContent = `Ціна: ${final} грн`;
+
+  document.getElementById("confirmButton").style.display = "block";
+}
+
+// ➕ Додавання товару до корзини
+function confirmCustomization() {
+  if (!currentProduct) return;
+
+  const name = currentProduct.querySelector("h3")?.textContent || "Товар";
+  const size = document.getElementById("sizeSelect").value;
+  const plastic = document.getElementById("plasticSelect").value;
+  const comment = document.getElementById("customComment").value.trim();
+  const priceText = document.getElementById("finalPrice").textContent;
+  const price = parseInt(priceText.replace(/\D/g, ""), 10);
+
+  cart.push({ name, size, plastic, comment, price });
+  updateCart();
+  closeModal();
+  showToast("➕ Товар додано до корзини");
+}
+// 🔁 Оновлення корзини
 function updateCart() {
-  const cartList = document.getElementById("cartItems");
-  const cartTotal = document.getElementById("cartTotal");
-  cartList.innerHTML = "";
-  let total = 0;
+  const list = document.getElementById("cartItems");
+  const total = document.getElementById("cartTotal");
+
+  list.innerHTML = "";
+  let sum = 0;
 
   cart.forEach((item, index) => {
     const li = document.createElement("li");
-    li.className = "cart-item";
-
-    // 🖼️ Превью изображения
-    const img = document.createElement("img");
-    img.src = item.image || "img/default.jpg";
-    img.className = "cart-preview";
-    img.alt = item.name;
-
-   // 📦 Название товара
-    const title = document.createElement("strong");
-    title.innerText = item.name;
-
-
-    // ⚙️ Характеристики
-    const details = document.createElement("div");
-    details.className = "cart-details";
-    details.innerText = `📏 ${item.size}мм, 🎨 пластик ${item.plastic}-кольоровий${item.comment ? `, 💬 ${item.comment}` : ""}`;
-
-    // 🔢 Количество
-    const qty = document.createElement("input");
-qty.type = "number";
-qty.min = "1";
-qty.value = item.quantity;
-qty.className = "cart-qty-input";
-qty.addEventListener("change", () => {
-  const newQty = parseInt(qty.value);
-  if (newQty < 1 || isNaN(newQty)) {
-    showToast("❌ Мінімум 1 шт!");
-    qty.value = item.quantity;
-    return;
-  }
-  cart[index].quantity = newQty;
-  updateCart(); // пересчитываем всё
-});
-
-
-    // 💰 Цена
-    const price = document.createElement("span");
-    price.className = "cart-price";
-    price.innerText = `${item.price * item.quantity} грн`;
-
-    // 🗑 Кнопка удаления
+    li.textContent = `${item.name} (${item.size}мм, пластик ${item.plastic}) — ${item.price} грн`;
     const delBtn = document.createElement("button");
-    delBtn.className = "cart-delete";
-    delBtn.innerText = "🗑 Видалити";
+    delBtn.textContent = "❌";
     delBtn.onclick = () => deleteFromCart(index);
-
-    // 📦 Контент справа от изображения
-    const content = document.createElement("div");
-    content.className = "cart-content";
-    content.appendChild(title);
-    content.appendChild(details);
-    content.appendChild(qty);
-    content.appendChild(price);
-    content.appendChild(delBtn);
-
-    // 📦 Собираем карточку
-    li.appendChild(img);     // превью слева
-    li.appendChild(content); // текст справа
-    cartList.appendChild(li);
-
-   total += item.price * item.quantity;
+    li.appendChild(delBtn);
+    list.appendChild(li);
+    sum += item.price;
   });
 
-  cartTotal.innerText = `Всього: ${total} грн`;
+  total.textContent = `Сума: ${sum} грн`;
 }
 
+// ❌ Видалення товару з корзини
 function deleteFromCart(index) {
   cart.splice(index, 1);
   updateCart();
   showToast("🗑 Товар видалено з корзини");
 }
 
-
-function showToast(message) {
-  const toast = document.createElement("div");
-  toast.className = "toast";
-  toast.innerText = message;
-  document.body.appendChild(toast);
-
-  setTimeout(() => {
-    toast.classList.add("visible");
-  }, 10);
-
-  setTimeout(() => {
-    toast.classList.remove("visible");
-    setTimeout(() => toast.remove(), 300);
-  }, 3000);
-}
+// 🧹 Очистка корзини
 function clearCart() {
   cart = [];
   updateCart();
-  showToast("🗑 Корзина очищена");
+  showToast("🧹 Корзина очищена");
 }
 
-function updateCart() {
-  const cartList = document.getElementById("cartItems");
-  const cartTotal = document.getElementById("cartTotal");
-
-  cartList.innerHTML = cart.map(item => `
-    <li>${item.name} — ${item.price} грн</li>
-  `).join("");
-
-  const total = calculateTotal(cart);
-  cartTotal.textContent = `Сума: ${total} грн`;
-}
-
-
-function openCustomizationModal(button) {
-  const card = button.closest('.product-card');
-  const name = card.querySelector('h3')?.innerText || "Без назви";
-  const image = card.querySelector("img")?.src || "img/default.jpg";
-
-  const config = card.querySelector('.config');
-  const get = (cls) => parseFloat(config.querySelector(`.${cls}`)?.innerText || "1");
-
-  const basePrice = get("base");
-
-  currentProduct = {
-    name,
-    basePrice,
-    image,
-    sizeFactors: {
-      80: get("size80"),
-      100: get("size100"),
-      120: get("size120")
-    },
-    plasticFactors: {
-      1: get("plastic1"),
-      2: get("plastic2"),
-      3: get("plastic3")
-    }
-  };
-
-  document.getElementById("modalTitle").innerText = name;
-  document.getElementById("customComment").value = "";
-  document.getElementById("sizeSelect").value = "100";
-  document.getElementById("plasticSelect").value = "1";
-
-  calculatePrice();
-  document.getElementById("customModal").style.display = "flex";
-}
-
-
-function confirmCustomization() {
-  calculatePrice(); // гарантируем актуальность
-
-  const size = document.getElementById("sizeSelect").value;
-  const plastic = document.getElementById("plasticSelect").value;
-  const comment = document.getElementById("customComment").value;
-  const finalPriceText = document.getElementById("finalPrice").innerText;
-  const finalPrice = parseInt(finalPriceText.replace(/\D/g, '')) || currentProduct.basePrice;
-
-  const quantity = 1; // по умолчанию 1
-  const image = currentProduct.image || "img/default.jpg"; // превью товара
-
-  cart.push({
-    name: currentProduct.name,
-    size,
-    plastic,
-    comment,
-    quantity,
-    price: finalPrice,
-    image
-  });
-
-  updateCart(); // 🔄 Обновляем корзину на экране
-  showToast("✅ Додано до корзини"); // 🔔 Показываем уведомление
-  closeModal(); // ❌ Закрываем модальное окно
-
-  // 👇 Прокрутка к корзине
-  document.getElementById("cart").scrollIntoView({ behavior: "smooth" });
-}
-
-
-function closeModal() {
-  document.getElementById("customModal").style.display = "none";
-}
-// == 🔧 Переключення категорій ==
-window.openCategory = function (category) {
-  const ready = document.getElementById("ready-products");
-  const custom = document.getElementById("custom-order");
-
-  if (category === "ready") {
-    ready.classList.add("visible");
-    ready.classList.remove("hidden");
-    custom.classList.add("hidden");
-    custom.classList.remove("visible");
-  } else {
-    custom.classList.add("visible");
-    custom.classList.remove("hidden");
-    ready.classList.add("hidden");
-    ready.classList.remove("visible");
-  }
-};
-
-document.addEventListener("DOMContentLoaded", () => {
-  // 🔍 Навішування фільтра по тегам
-  const input = document.getElementById("searchInput");
-
-  const tryAttachFilter = () => {
-    if (input && typeof window.filterProducts === "function") {
-      input.addEventListener("input", window.filterProducts);
-      console.log("✅ Фільтр навішено успішно.");
-    } else {
-      console.warn("⚠️ filterProducts ще не визначена. Повторна спроба через 200мс...");
-      setTimeout(tryAttachFilter, 200);
-    }
-  };
-  tryAttachFilter();
-
-  // 🔄 Переключення категорій: ready / custom
-  const customOrderSection = document.getElementById("custom-order");
-  const btnReady = document.getElementById("btnReady");
-  const btnCustom = document.getElementById("btnCustom");
-
-if (btnReady) {
-  btnReady.addEventListener("click", () => openCategory("ready"));
-}
-
-if (btnCustom) {
-  btnCustom.addEventListener("click", () => openCategory("custom"));
-}
-
-
-  // 🧲 Завантаження товарів з Firestore
-  const grid = document.getElementById("productGrid");
-  if (!grid) {
-    console.warn("⚠️ Контейнер #productGrid не знайдено.");
-    return;
+// 🔔 Показ повідомлення
+function showToast(message) {
+  let toast = document.querySelector(".toast");
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.className = "toast";
+    document.body.appendChild(toast);
   }
 
-firebase.firestore().collection("products").orderBy("timestamp", "desc").get()
-  .then(snapshot => {
-    snapshot.forEach(doc => {
-      const data = doc.data();
+  toast.textContent = message;
+  toast.classList.add("visible");
 
-      const rawTags = typeof data.tags === "string" ? data.tags.split(" ") : data.tags || [];
-
-const cardHTML = `
-  <div class="product-card">
-    <div class="slider">
-      ${data.images.map((src, i) => `
-        <img src="${src}" class="slide${i === 0 ? ' active' : ''}" onclick="openModal(this.src)">
-      `).join("")}
-      <button class="prev" onclick="prevSlide(this)">←</button>
-      <button class="next" onclick="nextSlide(this)">→</button>
-    </div>
-
-    <h3>${data.name}</h3>
-    <p>${data.description}</p>
-    <p><strong>Особливість:</strong> ${data.feature}</p>
-    <p><strong>Ціна:</strong> ${data.basePrice} грн</p>
-    <p class="tags">${rawTags.join(", ")}</p>
-
-    <div class="config" style="display:none;">
-      <span class="base">${data.basePrice}</span>
-      <span class="size80">${data.size80}</span>
-      <span class="size100">${data.size100}</span>
-      <span class="size120">${data.size120}</span>
-      <span class="plastic1">${data.plastic1}</span>
-      <span class="plastic2">${data.plastic2}</span>
-      <span class="plastic3">${data.plastic3}</span>
-    </div>
-
-    <button onclick="openCustomizationModal(this)">📊 Розрахувати вартість</button>
-  </div>
-`;
-
-
-      const containerId = "ready-products";
-      const container = document.getElementById(containerId);
-      if (container) {
-        container.insertAdjacentHTML("beforeend", cardHTML);
-      }
-    });
-  })
-  .catch(err => {
-    console.error("❌ Помилка завантаження товарів:", err.message);
-  });
-});
-
-
-
-// === Расчёт суммы заказа ===
-function calculateTotal(cart) {
-  return cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  setTimeout(() => {
+    toast.classList.remove("visible");
+  }, 3000);
 }
-
-// === Подтверждение заказа ===
+// ✅ Підтвердження замовлення
 function confirmOrder() {
-  const tg = window.Telegram?.WebApp || {
-      sendData: (data) => console.log("📤 Емуляція sendData:", data),
-    close: () => console.log("🛑 Емуляція закриття WebApp")
-  };
+  const name = document.getElementById("nameInput").value.trim();
+  const phone = document.getElementById("phoneInput").value.trim();
+  const city = document.getElementById("cityInput").value.trim();
+  const branch = document.getElementById("branchInput").value.trim();
+  const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
 
-console.log("📋 Значення форми:", {
-  fullName: document.getElementById("nameInput").value,
-  phone: document.getElementById("phoneInput").value,
-  city: document.getElementById("cityInput").value,
-  branch: document.getElementById("branchInput").value
-});
-
-
-  // 🧾 Безопасная сборка Telegram-пользователя
-  const rawUser = Telegram.WebApp.initDataUnsafe?.user || {};
+  const rawUser = Telegram?.WebApp?.initDataUnsafe?.user || {};
   const telegramUser = {
     id: rawUser.id || null,
-    username: rawUser.username || "",
-    first_name: rawUser.first_name || "",
-    last_name: rawUser.last_name || "",
-    language_code: rawUser.language_code || ""
+    username: rawUser.username || ""
   };
 
-const orderData = {
-  contact: {
-    name: document.getElementById("nameInput").value.trim(),
-    phone: document.getElementById("phoneInput").value.trim()
-  },
-  delivery: {
-    city: document.getElementById("cityInput").value.trim(),
-    service: document.getElementById("deliveryService").value,
-    branch: document.getElementById("branchInput").value.trim()
-  },
-  order: cart.map(item => ({
-    name: item.name,
-    size: item.size,
-    plastic: item.plastic,
-    quantity: item.quantity,
-    price: item.price,
-    comment: item.comment || ""
-  })),
-  telegramUser,
-  paymentMethod: document.querySelector('input[name="paymentMethod"]:checked')?.value || "card",
-  total: calculateTotal(cart),
-  timestamp: new Date().toISOString(),
-  status: "pending"
-};
+  const orderData = {
+    contact: { name, phone },
+    delivery: { city, branch },
+    paymentMethod,
+    order: cart,
+    telegramUser,
+    timestamp: new Date().toISOString(),
+    status: "pending"
+  };
 
-
-
-  // ✅ Валидация обязательных полей
-if (
-  !orderData.contact.name ||
-  !orderData.contact.phone ||
-  !orderData.delivery.city ||
-  !orderData.delivery.branch
-) {
-  showToast("⚠️ Заповніть усі поля перед підтвердженням замовлення");
-  return;
-}
-
-// 🧼 Удаление undefined/null-полей из telegramUser
-Object.keys(orderData.telegramUser).forEach(key => {
-  if (orderData.telegramUser[key] === null || orderData.telegramUser[key] === undefined) {
-    delete orderData.telegramUser[key];
-  }
-});
-
-// 🧾 Логирование перед отправкой
-console.log("📤 Відправка замовлення:", orderData);
-
-// 🧾 Сохраняем заказ в Firestore
-submitOrder(orderData);
-
-// 📡 Отправка в Telegram WebApp
-tg.sendData(JSON.stringify(orderData));
-
-// 💳 Реквизиты оплаты
-if (orderData.paymentMethod === "card") {
-  showToast("💳 Оплата на карту:\n4441 1144 1619 6630\nПризначення: MiniBeasts 3D");
-}
-
-if (orderData.paymentMethod === "ton") {
-  showToast("🪙 TON-переказ:\nhttps://tonkeeper.app/transfer/...");
-}
-
-// ✅ Закрываем overlay сразу
-closeCheckout();
-
-// ✅ Финальное подтверждение и закрытие WebApp
-setTimeout(() => {
-  showToast("✅ Замовлення надіслано!");
-  cart = [];
-  updateCart();
-  tg.close();
-}, 1500);
-} // ← Закрывает function confirmOrder
-
-
-
-// === Привязка обработчиков ===
-const confirmBtn = document.getElementById("confirmBtn");
-if (confirmBtn) {
-  confirmBtn.addEventListener("click", confirmOrder);
-}
-
-const sizeSelect = document.getElementById("sizeSelect");
-if (sizeSelect) {
-  sizeSelect.addEventListener("change", calculatePrice);
-}
-
-const plasticSelect = document.getElementById("plasticSelect");
-if (plasticSelect) {
-  plasticSelect.addEventListener("change", calculatePrice);
-}
-
-
-// === Инициализация ===
-document.getElementById("checkoutOverlay").style.display = "none";
-
-// === Открытие формы оформления ===
-function openCheckout() {
-  if (cart.length === 0) {
-    showToast("🚫 Корзина порожня. Додайте товари перед оформленням.");
+  // ✅ Валідація обов'язкових полів
+  if (!name || !phone || !city || !branch) {
+    showToast("⚠️ Заповніть усі поля перед підтвердженням замовлення");
     return;
   }
 
-  document.getElementById("checkoutOverlay").style.display = "flex";
+  // 🧼 Видалення пустих полів
+  Object.keys(orderData.telegramUser).forEach(key => {
+    if (orderData.telegramUser[key] === null || orderData.telegramUser[key] === undefined) {
+      delete orderData.telegramUser[key];
+    }
+  });
+
+  console.log("📤 Відправка замовлення:", orderData);
+
+  // 🧾 Запис в Firestore
+  submitOrder(orderData);
+
+  // 📡 Відправка в Telegram WebApp
+  tg.sendData(JSON.stringify(orderData));
+
+  // 💳 Реквізити оплати
+  if (paymentMethod === "card") {
+    showToast("💳 Оплата на карту:\n4441 1144 1619 6630\nПризначення: MiniBeasts 3D");
+  }
+
+  if (paymentMethod === "ton") {
+    showToast("🪙 TON-переказ:\nhttps://tonkeeper.app/transfer/...");
+  }
+
+  // ✅ Закриття overlay
+  closeCheckout();
+
+  // ✅ Завершення WebApp
+  setTimeout(() => {
+    showToast("✅ Замовлення надіслано!");
+    cart = [];
+    updateCart();
+    tg.close();
+  }, 1500);
 }
-
-
-
-// === Отправка заказа ===
-// === Подтверждение замовлення ===
+// 🧾 Запис замовлення в Firestore
 async function submitOrder(orderData) {
   try {
-    const cleanData = JSON.parse(JSON.stringify(orderData)); // 🧼 Удаляем undefined/null
-
+    const cleanData = JSON.parse(JSON.stringify(orderData)); // 🧼 Видалення null/undefined
     const docRef = await firebase.firestore().collection("orders").add(cleanData);
     console.log("📦 Замовлення записано з ID:", docRef.id);
 
@@ -634,7 +321,7 @@ async function submitOrder(orderData) {
   }
 }
 
-// === Закриття форми оформлення ===
+// ❌ Закриття overlay оформлення
 function closeCheckout() {
   const overlay = document.getElementById("checkoutOverlay");
   if (overlay && overlay.style.display !== "none") {
@@ -643,65 +330,10 @@ function closeCheckout() {
   }
 }
 
-// === Прив'язка функцій до window ===
-window.filterByType = filterByType;
-window.openCustomizationModal = openCustomizationModal;
-window.clearCart = clearCart;
-window.openCheckout = openCheckout;
-window.closeCheckout = closeCheckout;
-window.closeModal = closeModal;
-window.closeImageModal = closeImageModal;
-window.addToCart = addToCart;
-window.confirmCustomization = confirmCustomization;
-window.deleteFromCart = deleteFromCart;
-window.filterProducts = filterProducts;
+// 🔗 Прив'язка обробників
+document.getElementById("confirmBtn")?.addEventListener("click", confirmOrder);
+document.getElementById("sizeSelect")?.addEventListener("change", calculatePrice);
+document.getElementById("plasticSelect")?.addEventListener("change", calculatePrice);
 
-// === 🖨️ Друк на замовлення ===
-async function submitCustomPrint(event) {
-  event.preventDefault();
-
-  const fileInput = document.getElementById("fileInput");
-  const comment = document.getElementById("commentInput")?.value.trim();
-  const contact = document.getElementById("contactInput")?.value.trim();
-
-  if (!fileInput?.files[0] || !comment || !contact) {
-    showToast("⚠️ Додайте файл, коментар і контакт для зв'язку");
-    return;
-  }
-
-  const file = fileInput.files[0];
-  const rawUser = Telegram?.WebApp?.initDataUnsafe?.user || {};
-  const telegramUser = {
-    id: rawUser.id || null,
-    username: rawUser.username || ""
-  };
-
-  const data = {
-    fileName: file.name,
-    fileType: file.name.split('.').pop().toLowerCase(),
-    comment,
-    contact,
-    telegramUser,
-    timestamp: new Date().toISOString(),
-    status: "pending"
-  };
-
-  try {
-    const cleanData = JSON.parse(JSON.stringify(data));
-    const docRef = await firebase.firestore().collection("customPrints").add(cleanData);
-    console.log("🖨️ Запит на друк записано з ID:", docRef.id);
-    showToast("✅ Заявка прийнята! Ми зв'яжемось з вами.");
-
-    document.getElementById("orderForm").reset();
-    document.getElementById("custom-order").classList.add("hidden");
-    document.getElementById("ready-products").classList.add("visible");
-    document.getElementById("ready-products").classList.remove("hidden");
-
-    setTimeout(() => {
-      showToast("✅ Заявка надіслана!");
-    }, 1000);
-  } catch (e) {
-    console.error("❌ Помилка запису запиту:", e);
-    showToast("⚠️ Не вдалося надіслати запит. Спробуйте ще раз.");
-  }
-}
+// 🧾 Ініціалізація
+document.getElementById("checkoutOverlay").style.display = "none";
