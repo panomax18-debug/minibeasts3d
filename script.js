@@ -108,11 +108,22 @@ window.showProductList = function () {
         item.innerHTML = `
           <strong>${data.name}</strong><br>
           Ціна: ${data.base} грн<br>
-          Теги: ${data.tags?.join(", ")}<br>
-          <img src="${data.images?.[0] || ''}" alt="${data.name}" width="100"><br>
+          Теги: <div class="tags">${data.tags?.join(", ")}</div><br>
+
+          <div class="slider">
+            ${data.images?.map((src, index) => `
+              <img src="${src}" alt="${data.name}" width="100"
+                class="${index === 0 ? 'active' : ''} slide"
+                onclick="openModal('${src}')">
+            `).join("")}
+            <button class="prev-btn" onclick="prevSlide(this)">⬅️</button>
+            <button class="next-btn" onclick="nextSlide(this)">➡️</button>
+          </div>
+
           <button onclick="deleteProduct('${doc.id}')">❌ Видалити</button>
           <hr>
         `;
+
 
         list.appendChild(item);
       }); // ← закрытие forEach
