@@ -561,7 +561,6 @@ Object.keys(orderData.telegramUser).forEach(key => {
 
 // 🧾 Логирование перед отправкой
 console.log("📤 Відправка замовлення:", orderData);
-});
 
 // 🧾 Сохраняем заказ в Firestore
 submitOrder(orderData);
