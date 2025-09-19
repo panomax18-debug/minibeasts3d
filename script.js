@@ -101,28 +101,28 @@ window.showProductList = function () {
       }
 
       snapshot.forEach(doc => {
-  const data = doc.data();
-  const item = document.createElement("div");
-  item.className = "admin-product";
+        const data = doc.data();
+        const item = document.createElement("div");
+        item.className = "admin-product";
 
-  item.innerHTML = `
-    <strong>${data.name}</strong><br>
-    Ціна: ${data.base} грн<br>
-    Теги: ${data.tags?.join(", ")}<br>
-    <img src="${data.images?.[0] || ''}" alt="${data.name}" width="100"><br>
-    <button onclick="deleteProduct('${doc.id}')">❌ Видалити</button>
-    <hr>
-  `;
+        item.innerHTML = `
+          <strong>${data.name}</strong><br>
+          Ціна: ${data.base} грн<br>
+          Теги: ${data.tags?.join(", ")}<br>
+          <img src="${data.images?.[0] || ''}" alt="${data.name}" width="100"><br>
+          <button onclick="deleteProduct('${doc.id}')">❌ Видалити</button>
+          <hr>
+        `;
 
-  list.appendChild(item);
-});
-};
-    })
+        list.appendChild(item);
+      }); // ← закрытие forEach
+    }) // ← закрытие .then
     .catch(err => {
       console.error("❌ Помилка завантаження товарів:", err);
       list.innerHTML = "<p>⚠️ Не вдалося завантажити товари</p>";
     });
-}
+}; // ← закрытие window.showProductList
+
 function deleteProduct(productId) {
   if (!confirm("❌ Ви впевнені, що хочете видалити цей товар?")) return;
 
