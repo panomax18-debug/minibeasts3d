@@ -4,17 +4,7 @@ let currentSlideIndex = 0;
 let currentSliderImages = [];
 
 // === Привязка Firestore ===
-// import удалён — filterProducts уже доступна через window
-
-const firebaseConfig = {
-  apiKey: "AIzaSyA2TAQM23nj7VOiHPv8HgDuXdWV_OVjX7A",
-  authDomain: "minibeasts-3d.firebaseapp.com",
-  projectId: "minibeasts-3d",
-  storageBucket: "minibeasts-3d.firebasestorage.app",
-  messagingSenderId: "192684036080",
-  appId: "1:192684036080:web:c306f5de3f62ef87199735",
-  measurementId: "G-MHG9HCXRCB"
-};
+// Конфигурация и инициализация вынесены в firebase-init.js
 
 window.Telegram = {
   WebApp: {
@@ -659,26 +649,27 @@ async function submitCustomPrint(event) {
   event.preventDefault();
 
   const fileInput = document.getElementById("fileInput");
-  const comment = document.getElementById("commentInput").value.trim();
-  const contact = document.getElementById("contactInput").value.trim();
+  const comment = document.getElementById("commentInput")?.value.trim();
+  const contact = document.getElementById("contactInput")?.value.trim();
 
-  if (!fileInput.files[0] || !comment || !contact) {
+  if (!fileInput?.files[0] || !comment || !contact) {
     showToast("⚠️ Додайте файл, коментар і контакт для зв'язку");
     return;
   }
 
   const file = fileInput.files[0];
-  const telegramUser = Telegram.WebApp.initDataUnsafe?.user || {};
+  const rawUser = Telegram?.WebApp?.initDataUnsafe?.user || {};
+  const telegramUser = {
+    id: rawUser.id || null,
+    username: rawUser.username || ""
+  };
 
   const data = {
     fileName: file.name,
     fileType: file.name.split('.').pop().toLowerCase(),
     comment,
     contact,
-    telegramUser: {
-      id: telegramUser.id || null,
-      username: telegramUser.username || ""
-    },
+    telegramUser,
     timestamp: new Date().toISOString(),
     status: "pending"
   };
@@ -689,28 +680,16 @@ async function submitCustomPrint(event) {
     console.log("🖨️ Запит на друк записано з ID:", docRef.id);
     showToast("✅ Заявка прийнята! Ми зв'яжемось з вами.");
 
-    document.getElementById("orderForm").reset(); // 🧼 Очистка форми
-    document.getElementById("custom-order").classList.add("hidden"); // 🛑 Закриття блоку
-
-    // ✅ Повернення до готових виробів
+    document.getElementById("orderForm").reset();
+    document.getElementById("custom-order").classList.add("hidden");
     document.getElementById("ready-products").classList.add("visible");
     document.getElementById("ready-products").classList.remove("hidden");
 
     setTimeout(() => {
       showToast("✅ Заявка надіслана!");
     }, 1000);
-
   } catch (e) {
     console.error("❌ Помилка запису запиту:", e);
     showToast("⚠️ Не вдалося надіслати запит. Спробуйте ще раз.");
   }
 }
-
-// === Прив'язка обробника форми ===
-document.getElementById("orderForm").addEventListener("submit", submitCustomPrint);
-document.querySelectorAll(".filter-button").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const tag = btn.dataset.tag;
-    filterByType(tag);
-  });
-});
