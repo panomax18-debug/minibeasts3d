@@ -328,16 +328,31 @@ function updateCart() {
 
   cart.forEach((item, index) => {
     const li = document.createElement("li");
-    li.textContent = `${item.name} (${item.size}мм, пластик ${item.plastic}) — ${item.price} грн`;
+
+    const itemTotal = item.price * (item.quantity || 1);
+    sum += itemTotal;
+
+    li.innerHTML = `
+      ${item.name} (${item.size}мм, пластик ${item.plastic}) —
+      <input type="number" min="1" value="${item.quantity || 1}" onchange="updateQuantity(${index}, this.value)">
+      × ${item.price} грн = <strong>${itemTotal} грн</strong>
+    `;
+
     const delBtn = document.createElement("button");
     delBtn.textContent = "❌";
     delBtn.onclick = () => deleteFromCart(index);
     li.appendChild(delBtn);
     list.appendChild(li);
-    sum += item.price;
   });
 
   total.textContent = `Сума: ${sum} грн`;
+}
+function updateQuantity(index, value) {
+  const qty = parseInt(value);
+  if (qty > 0) {
+    cart[index].quantity = qty;
+    updateCart();
+  }
 }
 
 // ❌ Видалення товару з корзини
