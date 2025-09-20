@@ -109,7 +109,9 @@
     <form id="checkoutForm">
       <h3>Оберіть спосіб оплати:</h3>
       <label><input type="radio" name="paymentMethod" value="card" checked> 💳 На карту</label><br>
-      <label><input type="radio" name="paymentMethod" value="ton"> 🪙 TON</label><br><br>
+      <label><input type="radio" name="paymentMethod" value="ton"> 🪙 TON</label><br>
+
+      <div id="paymentDetails" style="margin:10px 0; font-weight:bold;"></div>
 
       <h3>Доставка</h3>
       <input id="cityInput" placeholder="Місто" required><br>
@@ -128,6 +130,7 @@
     </form>
   </div>
 </div>
+
 
 <!-- 📜 Підключення основного скрипта -->
 <script src="script.js"></script>

@@ -1,9 +1,26 @@
 // admin.js — Часть 1
 
-// 🧭 Перемикач вкладок адмінки
-document.getElementById("navAdd")?.addEventListener("click", showAddProductForm);
-document.getElementById("navList")?.addEventListener("click", showProductList);
-document.getElementById("navOrders")?.addEventListener("click", showOrderList);
+// 🧭 Перемикач вкладок адмінки з очищенням
+function clearAdminContent() {
+  const container = document.getElementById("adminContent");
+  container.innerHTML = "";
+}
+
+document.getElementById("navAdd")?.addEventListener("click", () => {
+  clearAdminContent();
+  document.getElementById("adminContent").innerHTML = generateAddProductForm();
+  setupProductFormHandler();
+});
+
+document.getElementById("navList")?.addEventListener("click", () => {
+  clearAdminContent();
+  showProductList(); // якщо реалізовано
+});
+
+document.getElementById("navOrders")?.addEventListener("click", () => {
+  clearAdminContent();
+  showOrderList();
+});
 
 // 🧾 Генерація форми додавання товару
 function generateAddProductForm() {
