@@ -488,37 +488,54 @@ async function loadProducts() {
     }
 
     snapshot.forEach(doc => {
-  const data = doc.data();
-  const card = document.createElement("div");
-  card.className = "product-card";
-  card.dataset.id = doc.id; // ✅ нужно для кастомизации
+      const data = doc.data();
+      const card = document.createElement("div");
+      card.className = "product-card";
+      card.dataset.id = doc.id;
 
-  // 🧩 Формування опису розмірів
-  let sizeText = "";
-  if (data.sizePriceMap && Object.keys(data.sizePriceMap).length > 0) {
-    sizeText = Object.entries(data.sizePriceMap)
-      .map(([size, price]) => `${size}мм — ${price} грн`)
-      .join("<br>");
-  } else {
-    sizeText = `${data.base} грн — базова модель (80мм, однотонний пластик)`;
-  }
+      // 🧩 Формування опису розмірів
+      let sizeText = "";
+      if (data.sizePriceMap && Object.keys(data.sizePriceMap).length > 0) {
+        sizeText = Object.entries(data.sizePriceMap)
+          .map(([size, price]) => `${size}мм — ${price} грн`)
+          .join("<br>");
+      } else {
+        sizeText = `${data.base} грн — базова модель (80мм, однотонний пластик)`;
+      }
 
-  card.innerHTML = `
-    <h3>${data.name}</h3>
-    <p class="feature">${data.feature || ""}</p>
-    <img src="${data.images?.[0] || ''}" alt="${data.name}" loading="lazy">
-    <p class="base">📐 Розміри:<br>${sizeText}</p>
-    <button onclick="openCustomizationModal(this)">⚙️ Кастомізувати</button>
-  `;
+      // 🖼️ Слайдер зображень
+      const sliderHTML = data.images?.map((src, index) => `
+        <img src="${src}" alt="${data.name}" class="slide ${index === 0 ? 'active' : ''}" onclick="openModal('${src}')">
+      `).join("") || "";
 
-  grid.appendChild(card);
-});
+      // 🏷️ Теги
+      const tagsHTML = data.tags?.map(tag => `<span class="tag">${tag}</span>`).join(" ") || "";
+
+     card.innerHTML = `
+      <h3>${data.name}</h3>
+      <p class="feature">${data.feature || ""}</p>
+
+      <div class="slider">
+        ${sliderHTML}
+        <button class="prev-btn" onclick="prevSlide(this)">⬅️</button>
+        <button class="next-btn" onclick="nextSlide(this)">➡️</button>
+      </div>
+
+      <p class="base">📐 Розміри:<br>${sizeText}</p>
+      <div class="tags">${data.tags?.join(", ") || "—"}</div>
+      <button onclick="openCustomizationModal(this)">⚙️ Кастомізувати</button>
+    `;
+
+
+      grid.appendChild(card);
+    });
 
   } catch (err) {
     console.error("❌ Помилка завантаження товарів:", err);
     grid.innerHTML = "<p>⚠️ Не вдалося завантажити товари</p>";
   }
 }
+
 
 // 🚀 Виклик при завантаженні сторінки
 document.addEventListener("DOMContentLoaded", () => {
