@@ -156,7 +156,7 @@ function setupProductFormHandler() {
     <table id="ordersTable">
       <thead>
         <tr>
-          <th>№</th>
+          <th>Дата/час</th>
           <th>Фото</th>
           <th>Товар</th>
           <th>Параметри</th>
@@ -168,7 +168,6 @@ function setupProductFormHandler() {
           <th>Оплата</th>
           <th>Статус</th>
           <th>Дії</th>
-          <th>Дата/час</th> <!-- ✅ новая колонка -->
         </tr>
       </thead>
       <tbody id="ordersBody"></tbody>
