@@ -391,35 +391,51 @@ function confirmOrder() {
   const phone = document.getElementById("phoneInput").value.trim();
   const city = document.getElementById("cityInput").value.trim();
   const branch = document.getElementById("branchInput").value.trim();
-  const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
+  const service = document.getElementById("deliveryService").value;
+  const payment = document.querySelector('input[name="paymentMethod"]:checked')?.value;
 
-  const rawUser = Telegram?.WebApp?.initDataUnsafe?.user || {};
-  const telegramUser = {
-    id: rawUser.id || null,
-    username: rawUser.username || ""
-  };
-
-  const orderData = {
-    contact: { name, phone },
-    delivery: { city, branch },
-    paymentMethod,
-    order: cart,
-    telegramUser,
-    timestamp: new Date().toISOString(),
-    status: "pending"
-  };
-
-  // ✅ Валідація обов'язкових полів
-  if (!name || !phone || !city || !branch) {
+  // ✅ Валідація
+  if (!name || !phone || !city || !branch || !service || !payment) {
     showToast("⚠️ Заповніть усі поля перед підтвердженням замовлення");
     return;
   }
 
-  // 🧼 Видалення пустих полів
+  // 🧾 Telegram-дані
+  const rawUser = Telegram?.WebApp?.initDataUnsafe?.user || {};
+  const telegramUser = {
+    id: rawUser.id || null,
+    username: rawUser.username || "",
+    first_name: rawUser.first_name || "",
+    last_name: rawUser.last_name || "",
+    language_code: rawUser.language_code || ""
+  };
+
+  // 📦 Товари
+  const items = cart.map(item => ({
+    name: item.name,
+    size: item.size,
+    material: item.plastic,
+    price: item.price,
+    quantity: item.quantity || 1
+  }));
+
+  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  // 📤 Дані замовлення
+  const orderData = {
+    customer: { fullName: name, phone },
+    delivery: { city, branch, service },
+    payment,
+    items,
+    telegramUser,
+    timestamp: new Date().toISOString(),
+    status: "pending",
+    total
+  };
+
+  // 🧼 Очистка Telegram-даних
   Object.keys(orderData.telegramUser).forEach(key => {
-    if (orderData.telegramUser[key] === null || orderData.telegramUser[key] === undefined) {
-      delete orderData.telegramUser[key];
-    }
+    if (!orderData.telegramUser[key]) delete orderData.telegramUser[key];
   });
 
   console.log("📤 Відправка замовлення:", orderData);
@@ -427,15 +443,12 @@ function confirmOrder() {
   // 🧾 Запис в Firestore
   submitOrder(orderData);
 
-  // 📡 Відправка в Telegram WebApp
-  tg.sendData(JSON.stringify(orderData));
-
   // 💳 Реквізити оплати
-  if (paymentMethod === "card") {
+  if (payment === "card") {
     showToast("💳 Оплата на карту:\n4441 1144 1619 6630\nПризначення: MiniBeasts 3D");
   }
 
-  if (paymentMethod === "ton") {
+  if (payment === "ton") {
     showToast("🪙 TON-переказ:\nhttps://tonkeeper.app/transfer/...");
   }
 
@@ -451,16 +464,37 @@ function confirmOrder() {
   }, 1500);
 }
 
+
 // 🧾 Запис замовлення в Firestore
 async function submitOrder(orderData) {
   try {
-    const cleanData = JSON.parse(JSON.stringify(orderData)); // 🧼 Видалення null/undefined
+    const cleanData = JSON.parse(JSON.stringify(orderData));
     const docRef = await firebase.firestore().collection("orders").add(cleanData);
-    console.log("📦 Замовлення записано з ID:", docRef.id);
+    const orderId = docRef.id;
+
+    console.log("📦 Замовлення записано з ID:", orderId);
+
+    const paymentText = orderData.payment === "card"
+      ? "💳 Оплата на карту: 4441 1144 1619 6630"
+      : "🪙 TON-переказ: https://tonkeeper.app/transfer/...";
+
+    const itemsText = orderData.items.map(item =>
+      `• ${item.name} (${item.size}мм, пластик ${item.material}) × ${item.quantity}`
+    ).join("\n");
+
+    const message = `
+Ваше замовлення №${orderId}
+${itemsText}
+💰 Сума: ${orderData.total} грн
+${paymentText}
+📦 Доставка: ${orderData.delivery.service} → ${orderData.delivery.city}, №${orderData.delivery.branch}
+👤 Отримувач: ${orderData.customer.fullName}, ${orderData.customer.phone}
+    `.trim();
 
     Telegram.WebApp.sendData(JSON.stringify({
       status: "success",
-      orderId: docRef.id
+      orderId,
+      message
     }));
 
     showToast("✅ Замовлення прийнято! Очікуйте підтвердження.");
@@ -469,6 +503,7 @@ async function submitOrder(orderData) {
     showToast("⚠️ Не вдалося записати замовлення. Спробуйте ще раз.");
   }
 }
+
 
 // 🔗 Прив'язка обробників (тільки якщо елементи існують)
 document.getElementById("confirmBtn")?.addEventListener("click", confirmOrder);
