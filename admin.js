@@ -187,17 +187,17 @@ function setupProductFormHandler() {
         const row = document.createElement("tr");
 
         row.innerHTML = `
-          <td>${index === 0 ? orderId : ""}</td>
-          <td><img src="${item.photo || 'https://via.placeholder.com/40'}" width="40"></td>
-          <td>${item.name}</td>
-          <td>${item.size}мм, пластик ${item.material}</td>
-          <td>${item.quantity}</td>
-          <td>${item.price} грн</td>
-          <td>${item.price * item.quantity} грн</td>
-          <td>${data.fullName || "—"}<br>${data.phone || "—"}</td>
-          <td>${data.delivery?.service || "—"}<br>${data.delivery?.city}, №${data.delivery?.branch}</td>
-          <td>${data.payment || "—"}</td>
-          <td>
+           <td>${index === 0 ? orderId : ""}</td>
+            <td>${item.photo ? `<img src="${item.photo}" width="40">` : ""}</td>
+            <td>${item.name}</td>
+            <td>${item.size}мм, пластик ${item.material}</td>
+            <td>${item.quantity}</td>
+            <td>${item.price} грн</td>
+            <td>${item.price * item.quantity} грн</td>
+            <td>${data.fullName || "—"}<br>${data.phone || "—"}</td>
+            <td>${data.delivery?.service || "—"}<br>${data.delivery?.city}, №${data.delivery?.branch}</td>
+            <td>${data.payment || "—"}</td>
+            <td>
             <select onchange="updateStatus('${orderId}', this.value)">
               ${[
                 "Очікує оплату", "Оплачено", "Готується", "Друкується",
@@ -206,6 +206,7 @@ function setupProductFormHandler() {
             </select>
           </td>
           <td><button onclick="copyOrder('${orderId}')">📋</button></td>
+          <td>${index === 0 ? formattedDate : ""}</td>
         `; // ✅ вот эта закрывающая кавычка была потеряна
 
         tbody.appendChild(row);
