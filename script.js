@@ -590,7 +590,9 @@ async function loadProducts() {
 // 🚀 Виклик при завантаженні сторінки
 document.addEventListener("DOMContentLoaded", () => {
   loadProducts();
+  setupCustomOrderHandler(); // ✅ добавляем сюда
 });
+
 function searchByTag(query) {
   const cards = document.querySelectorAll(".product-card");
   const lowerQuery = query.toLowerCase();
@@ -618,4 +620,50 @@ function closeCheckout() {
   } else {
     console.warn("❌ checkoutOverlay не знайдено");
   }
+}
+// == Відправка замовлення "Друк на замовлення"
+function setupCustomOrderHandler() {
+  const form = document.getElementById("customOrderForm");
+  if (!form) {
+    console.warn("⚠️ Форма кастомного замовлення не знайдена");
+    return;
+  }
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    console.log("📤 Відправка кастомного замовлення...");
+    handleCustomOrder();
+  });
+}
+function handleCustomOrder() {
+  const contact = document.getElementById("customContact").value.trim();
+  const comment = document.getElementById("customComment").value.trim();
+
+  if (!contact || !comment) {
+    showToast("⚠️ Заповніть контакт і коментар");
+    return;
+  }
+
+  const orderData = {
+    customer: { fullName: contact, phone: "—" },
+    delivery: { city: "—", branch: "—", service: "—" },
+    payment: "custom",
+    items: [
+      {
+        name: "Кастомний друк",
+        size: "—",
+        material: "—",
+        price: 0,
+        quantity: 1,
+        status: "Очікує оплату",
+        payment: "custom"
+      }
+    ],
+    comment,
+    timestamp: new Date().toISOString(),
+    status: "Очікує оплату",
+    total: 0
+  };
+
+  submitOrder(orderData);
 }
