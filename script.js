@@ -603,3 +603,11 @@ function searchByTag(query) {
   });
 }
 
+function openCheckout() {
+  const overlay = document.getElementById("checkoutOverlay");
+  if (overlay) {
+    overlay.style.display = "block";
+  } else {
+    console.warn("❌ checkoutOverlay не знайдено");
+  }
+}
