@@ -211,7 +211,7 @@ function showOrderList() {
       tbody.appendChild(row);
     });
   });
-});
+}
 
 // 🔧 Оновлення статусу замовлення
 function updateStatus(orderId, newStatus) {
