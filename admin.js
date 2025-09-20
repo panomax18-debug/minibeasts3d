@@ -130,3 +130,83 @@ function setupProductFormHandler() {
     }
   });
 }
+// 📄 Відображення таблиці замовлень
+function showOrderList() {
+  const container = document.getElementById("adminContent");
+  container.innerHTML = `
+    <h3>📄 Замовлення</h3>
+    <table id="ordersTable">
+      <thead>
+        <tr>
+          <th>№</th>
+          <th>Фото</th>
+          <th>Товар</th>
+          <th>Параметри</th>
+          <th>Кількість</th>
+          <th>Ціна</th>
+          <th>Сума</th>
+          <th>Отримувач</th>
+          <th>Доставка</th>
+          <th>Оплата</th>
+          <th>Статус</th>
+          <th>Дії</th>
+        </tr>
+      </thead>
+      <tbody id="ordersBody"></tbody>
+    </table>
+  `;
+
+  // 📥 Завантаження замовлень з Firestore
+  firebase.firestore().collection("orders").orderBy("timestamp", "desc").get().then(snapshot => {
+    const tbody = document.getElementById("ordersBody");
+
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const orderId = doc.id;
+      const total = data.total || 0;
+      const status = data.status || "Очікує оплату";
+
+      data.items.forEach((item, index) => {
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+          <td>${index === 0 ? orderId : ""}</td>
+          <td><img src="${item.photo || 'https://via.placeholder.com/40'}" width="40"></td>
+          <td>${item.name}</td>
+          <td>${item.size}мм, пластик ${item.material}</td>
+          <td>${item.quantity}</td>
+          <td>${item.price} грн</td>
+          <td>${item.price * item.quantity} грн</td>
+          <td>${data.customer?.fullName || "—"}<br>${data.customer?.phone || "—"}</td>
+          <td>${data.delivery?.service || "—"}<br>${data.delivery?.city}, №${data.delivery?.branch}</td>
+          <td>${data.payment || "—"}</td>
+          <td>
+            <select onchange="updateStatus('${orderId}', this.value)">
+              ${[
+                "Очікує оплату", "Оплачено", "Готується", "Друкується",
+                "Відправлено", "Завершено", "Скасовано"
+              ].map(s => `<option value="${s}" ${s === status ? "selected" : ""}>${s}</option>`).join("")}
+            </select>
+          </td>
+          <td><button onclick="copyOrder('${orderId}')">📋</button></td>
+        `;
+
+        tbody.appendChild(row);
+      });
+    });
+  });
+}
+
+// 🔧 Оновлення статусу замовлення
+function updateStatus(orderId, newStatus) {
+  firebase.firestore().collection("orders").doc(orderId).update({ status: newStatus })
+    .then(() => showToast("✅ Статус оновлено"))
+    .catch(err => showToast("⚠️ Помилка оновлення статусу"));
+}
+
+// 📋 Копіювання ID замовлення
+function copyOrder(orderId) {
+  navigator.clipboard.writeText(orderId)
+    .then(() => showToast(`📋 Скопійовано: ${orderId}`))
+    .catch(() => showToast("⚠️ Не вдалося скопіювати"));
+}
