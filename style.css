@@ -57,6 +57,7 @@ button:hover {
   text-align: center;
   transition: transform 0.2s ease;
   position: relative;
+  overflow: hidden;
 }
 #productGrid {
   display: grid;
@@ -151,8 +152,9 @@ button:hover {
   z-index: 1;
 }
 .slider img {
+  max-width: 100%;
+  height: auto;
   display: none;
-  transition: opacity 0.3s ease;
 }
 
 .slider img.active {
@@ -516,6 +518,8 @@ button:hover {
   border-radius: 6px;
   box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
-.product-card {
-  overflow: hidden;
+.tags {
+  font-size: 12px;
+  color: #666;
+  margin-top: 8px;
 }
