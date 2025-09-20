@@ -195,6 +195,7 @@ function setupProductFormHandler() {
         const row = document.createElement("tr");
 
         row.innerHTML = `
+          <td>${index === 0 ? formattedDate : ""}</td>
           <td>${index === 0 ? orderId : ""}</td>
           <td>${item.photo ? `<img src="${item.photo}" width="40">` : ""}</td>
           <td>${item.name}</td>
@@ -214,7 +215,7 @@ function setupProductFormHandler() {
             </select>
           </td>
           <td><button onclick="copyOrder('${orderId}')">📋</button></td>
-          <td>${index === 0 ? formattedDate : ""}</td>
+
         `;
 
         tbody.appendChild(row);
