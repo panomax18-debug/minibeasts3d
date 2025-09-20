@@ -148,31 +148,6 @@ function setupProductFormHandler() {
   });
 }
 // 📄 Відображення таблиці замовлень
-function showOrderList() {
-  const container = document.getElementById("adminContent");
-  container.innerHTML = `
-    <h3>📄 Замовлення</h3>
-    <table id="ordersTable">
-      <thead>
-        <tr>
-          <th>№</th>
-          <th>Фото</th>
-          <th>Товар</th>
-          <th>Параметри</th>
-          <th>Кількість</th>
-          <th>Ціна</th>
-          <th>Сума</th>
-          <th>Отримувач</th>
-          <th>Доставка</th>
-          <th>Оплата</th>
-          <th>Статус</th>
-          <th>Дії</th>
-        </tr>
-      </thead>
-      <tbody id="ordersBody"></tbody>
-    </table>
-  `;
-
   // 📥 Завантаження замовлень з Firestore
   function showOrderList() {
   const container = document.getElementById("adminContent");
