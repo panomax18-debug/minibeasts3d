@@ -168,6 +168,7 @@ function setupProductFormHandler() {
           <th>Оплата</th>
           <th>Статус</th>
           <th>Дії</th>
+          <th>Дата/час</th> <!-- ✅ новая колонка -->
         </tr>
       </thead>
       <tbody id="ordersBody"></tbody>
@@ -180,40 +181,48 @@ function setupProductFormHandler() {
     snapshot.forEach(doc => {
       const data = doc.data();
       const orderId = doc.id;
-      const total = data.total || 0;
-      const status = data.status || "Очікує оплату";
+      const createdAt = data.timestamp ? new Date(data.timestamp) : null;
+      const formattedDate = createdAt
+        ? createdAt.toLocaleString("uk-UA", { dateStyle: "short", timeStyle: "short" })
+        : "—";
+
+      if (!Array.isArray(data.items)) {
+        console.warn(`⚠️ Пропущено замовлення без items: ${orderId}`);
+        return;
+      }
 
       data.items.forEach((item, index) => {
         const row = document.createElement("tr");
 
         row.innerHTML = `
-           <td>${index === 0 ? orderId : ""}</td>
-            <td>${item.photo ? `<img src="${item.photo}" width="40">` : ""}</td>
-            <td>${item.name}</td>
-            <td>${item.size}мм, пластик ${item.material}</td>
-            <td>${item.quantity}</td>
-            <td>${item.price} грн</td>
-            <td>${item.price * item.quantity} грн</td>
-            <td>${data.fullName || "—"}<br>${data.phone || "—"}</td>
-            <td>${data.delivery?.service || "—"}<br>${data.delivery?.city}, №${data.delivery?.branch}</td>
-            <td>${data.payment || "—"}</td>
-            <td>
+          <td>${index === 0 ? orderId : ""}</td>
+          <td>${item.photo ? `<img src="${item.photo}" width="40">` : ""}</td>
+          <td>${item.name}</td>
+          <td>${item.size}мм, пластик ${item.material}</td>
+          <td>${item.quantity}</td>
+          <td>${item.price} грн</td>
+          <td>${item.price * item.quantity} грн</td>
+          <td>${data.fullName || "—"}<br>${data.phone || "—"}</td>
+          <td>${data.delivery?.service || "—"}<br>${data.delivery?.city}, №${data.delivery?.branch}</td>
+          <td>${item.payment || "—"}</td>
+          <td>
             <select onchange="updateStatus('${orderId}', this.value)">
               ${[
                 "Очікує оплату", "Оплачено", "Готується", "Друкується",
                 "Відправлено", "Завершено", "Скасовано"
-              ].map(s => `<option value="${s}" ${s === status ? "selected" : ""}>${s}</option>`).join("")}
+              ].map(s => `<option value="${s}" ${s === item.status ? "selected" : ""}>${s}</option>`).join("")}
             </select>
           </td>
           <td><button onclick="copyOrder('${orderId}')">📋</button></td>
           <td>${index === 0 ? formattedDate : ""}</td>
-        `; // ✅ вот эта закрывающая кавычка была потеряна
+        `;
 
         tbody.appendChild(row);
       });
     });
   });
-} // ✅ закрывает showOrderList
+}
+// ✅ закрывает showOrderList
 
 
 // 🔧 Оновлення статусу замовлення
