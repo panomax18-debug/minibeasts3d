@@ -611,3 +611,11 @@ function openCheckout() {
     console.warn("❌ checkoutOverlay не знайдено");
   }
 }
+function closeCheckout() {
+  const overlay = document.getElementById("checkoutOverlay");
+  if (overlay) {
+    overlay.style.display = "none";
+  } else {
+    console.warn("❌ checkoutOverlay не знайдено");
+  }
+}
