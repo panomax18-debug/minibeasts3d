@@ -67,9 +67,10 @@ function generateAddProductForm() {
       </div>
 
       <div class="form-group">
-        <label>Зображення (URL через кому)</label>
-        <textarea id="imagesInput" rows="3" placeholder="https://..."></textarea>
+      <label>Зображення товару</label>
+      <input type="file" id="productImages" multiple accept="image/*">
       </div>
+
 
       <button type="submit">📤 Додати товар</button>
     </form>
@@ -93,7 +94,6 @@ function setupProductFormHandler() {
     const plastic2 = parseFloat(document.getElementById("plastic2").value);
     const plastic3 = parseFloat(document.getElementById("plastic3").value);
     const tags = document.getElementById("tagsInput").value.trim().split(",").map(t => t.trim());
-    const images = document.getElementById("imagesInput").value.trim().split(",").map(url => url.trim());
     const feature = document.getElementById("featureInput").value.trim();
     const sizePriceRaw = document.getElementById("sizePriceMapInput").value.trim();
 
@@ -110,14 +110,25 @@ function setupProductFormHandler() {
       }
     });
 
+    // 🖼️ Зображення
+    const imageFiles = document.getElementById("productImages").files;
+    const imageURLs = [];
+
+    for (let i = 0; i < imageFiles.length; i++) {
+      const file = imageFiles[i];
+      const path = `products/temp/${Date.now()}_${file.name}`;
+      const url = await uploadImage(file, path);
+      imageURLs.push(url);
+    }
+
     // ✅ Валідація
     if (
       !name || isNaN(base) ||
       isNaN(size80) || isNaN(size100) || isNaN(size120) ||
       isNaN(plastic1) || isNaN(plastic2) || isNaN(plastic3) ||
-      images.length === 0 || !sizePriceValid || Object.keys(sizePriceMap).length === 0
+      imageURLs.length === 0 || !sizePriceValid || Object.keys(sizePriceMap).length === 0
     ) {
-      alert("⚠️ Заповніть усі поля коректно, включаючи ціни по розміру");
+      alert("⚠️ Заповніть усі поля коректно, включаючи ціни по розміру та зображення");
       return;
     }
 
@@ -131,9 +142,9 @@ function setupProductFormHandler() {
       plastic2,
       plastic3,
       tags,
-      images,
+      images: imageURLs,
       feature,
-      sizePriceMap, // ✅ нове поле
+      sizePriceMap,
       createdAt: new Date().toISOString()
     };
 
@@ -147,6 +158,7 @@ function setupProductFormHandler() {
     }
   });
 }
+
 // 📄 Відображення таблиці замовлень
   // 📥 Завантаження замовлень з Firestore
   function showOrderList() {
@@ -196,7 +208,13 @@ function setupProductFormHandler() {
         row.innerHTML = `
           <td>${index === 0 ? formattedDate : ""}</td>
           <td>${index === 0 ? orderId : ""}</td>
-          <td>${item.photo ? `<img src="${item.photo}" width="40">` : ""}</td>
+          <td>
+            ${item.photo
+              ? `<img src="${item.photo}" width="40">`
+              : data.fileURL
+                ? `<a href="${data.fileURL}" download="${data.fileName}">⬇️ ${data.fileName}</a>`
+                : "—"}
+          </td>
           <td>${item.name || "—"}</td>
           <td>${item.size ? `${item.size}мм` : "—"}, пластик ${item.material || "—"}</td>
           <td>${item.quantity ?? "—"}</td>
@@ -215,8 +233,6 @@ function setupProductFormHandler() {
           </td>
           <td><button onclick="copyOrder('${orderId}')">📋</button></td>
         `;
-
-
         tbody.appendChild(row);
       });
     });
@@ -237,4 +253,10 @@ function copyOrder(orderId) {
   navigator.clipboard.writeText(orderId)
     .then(() => showToast(`📋 Скопійовано: ${orderId}`))
     .catch(() => showToast("⚠️ Не вдалося скопіювати"));
+}
+
+async function uploadImage(file, path) {
+  const storageRef = firebase.storage().ref(path);
+  await storageRef.put(file);
+  return await storageRef.getDownloadURL();
 }

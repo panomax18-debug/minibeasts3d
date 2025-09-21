@@ -635,35 +635,58 @@ function setupCustomOrderHandler() {
     handleCustomOrder();
   });
 }
-function handleCustomOrder() {
+async function handleCustomOrder() {
   const contact = document.getElementById("customContact").value.trim();
   const comment = document.getElementById("customComment").value.trim();
+  const file = document.getElementById("customFile").files[0];
 
   if (!contact || !comment) {
     showToast("⚠️ Заповніть контакт і коментар");
     return;
   }
 
-  const orderData = {
-    customer: { fullName: contact, phone: "—" },
-    delivery: { city: "—", branch: "—", service: "—" },
-    payment: "custom",
-    items: [
-      {
-        name: "Кастомний друк",
-        size: "—",
-        material: "—",
-        price: 0,
-        quantity: 1,
-        status: "Очікує оплату",
-        payment: "custom"
-      }
-    ],
-    comment,
-    timestamp: new Date().toISOString(),
-    status: "Очікує оплату",
-    total: 0
-  };
+  if (!file) {
+    showToast("⚠️ Додайте файл для друку");
+    return;
+  }
 
-  submitOrder(orderData);
+  const orderId = Date.now().toString(); // простой ID
+  const path = `custom-orders/${orderId}/${file.name}`;
+
+  try {
+    const fileURL = await uploadImage(file, path);
+
+    const orderData = {
+      customer: { fullName: contact, phone: "—" },
+      delivery: { city: "—", branch: "—", service: "—" },
+      payment: "custom",
+      items: [
+        {
+          name: "Кастомний друк",
+          size: "—",
+          material: "—",
+          price: 0,
+          quantity: 1,
+          status: "Очікує оплату",
+          payment: "custom"
+        }
+      ],
+      comment,
+      fileURL,
+      fileName: file.name,
+      timestamp: new Date().toISOString(),
+      status: "Очікує оплату",
+      total: 0
+    };
+
+    submitOrder(orderData);
+  } catch (err) {
+    console.error("Помилка при завантаженні:", err);
+    showToast("❌ Не вдалося завантажити файл");
+  }
+}
+async function uploadImage(file, path) {
+  const storageRef = firebase.storage().ref(path);
+  await storageRef.put(file);
+  return await storageRef.getDownloadURL();
 }
