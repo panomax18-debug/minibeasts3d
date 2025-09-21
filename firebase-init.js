@@ -16,3 +16,9 @@ const db = firebase.firestore();
 
 // 📦 Експорт Firestore (опціонально)
 window.firebaseDB = db;
+
+// 📦 Ініціалізація Storage
+const storage = firebase.storage();
+
+// 📦 Експорт Storage (опціонально)
+window.firebaseStorage = storage;
