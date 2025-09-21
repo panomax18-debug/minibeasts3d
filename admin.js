@@ -197,14 +197,14 @@ function setupProductFormHandler() {
           <td>${index === 0 ? formattedDate : ""}</td>
           <td>${index === 0 ? orderId : ""}</td>
           <td>${item.photo ? `<img src="${item.photo}" width="40">` : ""}</td>
-          <td>${item.name}</td>
-          <td>${item.size}мм, пластик ${item.material}</td>
-          <td>${item.quantity}</td>
-          <td>${item.price} грн</td>
-          <td>${item.price * item.quantity} грн</td>
-          <td>${data.fullName || "—"}<br>${data.phone || "—"}</td>
-          <td>${data.delivery?.service || "—"}<br>${data.delivery?.city}, №${data.delivery?.branch}</td>
-          <td>${item.payment || "—"}</td>
+          <td>${item.name || "—"}</td>
+          <td>${item.size ? `${item.size}мм` : "—"}, пластик ${item.material || "—"}</td>
+          <td>${item.quantity ?? "—"}</td>
+          <td>${item.price ? `${item.price} грн` : "—"}</td>
+          <td>${item.price && item.quantity ? `${item.price * item.quantity} грн` : "—"}</td>
+          <td>${data.customer?.fullName || "—"}<br>${data.customer?.phone || "—"}</td>
+          <td>${data.delivery?.service || "—"}<br>${data.delivery?.city || "—"}, №${data.delivery?.branch || "—"}</td>
+          <td>${item.payment || data.payment || "—"}</td>
           <td>
             <select onchange="updateStatus('${orderId}', this.value)">
               ${[
@@ -214,8 +214,8 @@ function setupProductFormHandler() {
             </select>
           </td>
           <td><button onclick="copyOrder('${orderId}')">📋</button></td>
-
         `;
+
 
         tbody.appendChild(row);
       });
